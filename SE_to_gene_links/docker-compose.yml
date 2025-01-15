@@ -1,0 +1,20 @@
+services:
+  jupyter:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: se_gene:latest
+    ports:
+      - "8888:8888"
+    volumes:
+      # please edit "/path/to/data" to your "data" folder
+      - /path/to/data:/home/jovyan/data
+      # please edit "/path/to/work" to your "work" folder
+      - /path/to/work:/home/jovyan/work
+      # notebook
+      - ./notebook:/home/jovyan/work
+    environment:
+      - PATH=/opt/conda/envs/se_gene/bin:$PATH
+      - PYTHONPATH=/home/jovyan/code
+    working_dir: /home/jovyan/work  
+    restart: unless-stopped

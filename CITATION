@@ -1,0 +1,22 @@
+# Citation
+
+**This repository is associated with a paper currently in preparation. Once the paper is published, please cite the paper.** Please cite this repository as follows until the paper is officially published.
+
+# Additional Information
+
+## Methodology
+
+In addition, for the method implemented in the `peak_to_gene_links` folder, we have codified the approach based on the methodology described in the following paper:
+
+- Corces MR, Granja JM, Shams S, Louie BH, Seoane JA, Zhou W, Silva TC, Groeneveld C, Wong CK, Cho SW, Satpathy AT, Mumbach MR, Hoadley KA, Robertson AG, Sheffield NC, Felau I, Castro MAA, Berman BP, Staudt LM, Zenklusen JC, Laird PW, Curtis C, Greenleaf WJ, Chang HY; Cancer Genome Atlas Analysis Network. The chromatin accessibility landscape of primary human cancers. *Science*. 2018 Oct 26;362(6413):eaav1898. doi: [10.1126/science.aav1898](https://www.science.org/doi/10.1126/science.aav1898). PMID: 30361341; PMCID: PMC6408149.
+
+## Data Sources
+
+Additionally, the test sample data linked from this repository on Figshare is derived from data obtained from the following public dataset:
+*Note: The customed sample data will be released upon the publication of our SEgene paper.*
+
+- **GSE156614**: Available at [NCBI GEO](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE156614).
+
+This data was processed and used to generate the test samples in this repository, as described in the following publications:
+
+- Li QL, Lin X, Yu YL, Chen L, Qi-Xin Hu, Meng Chen, Nan Cao, Chen Zhao, Chen-Yu Wang, Cheng-Wei Huang, Lian-Yun Li, Mei Ye, Min Wu. Genome-wide profiling in colorectal cancer identifies PHF19 and TBC1D16 as oncogenic super enhancers. Nat Commun (IF: 14.92; Q1). 2021 Nov 4;12(1):6407. doi: [10.1038/s41467-021-26600-5](https://www.nature.com/articles/s41467-021-26600-5). PMID: 34737287; PMCID: PMC8568941.

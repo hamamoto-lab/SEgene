@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+description = "SE to gene link"
+authors = [
+    { name = "Norio Shinkai" }
+]
+license = { text = "MIT" } 
+keywords = ["bioinfomatics", "genomics", "Superenhancer"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+name = "SEgene_package"
+version = "0.1.0"
+requires-python = ">=3.10"
+
+[tool.setuptools.packages.find]
+where = ["src"]
