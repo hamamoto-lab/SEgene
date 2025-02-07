@@ -1,5 +1,7 @@
 # SEgene_package
 
+*(For the Japanese version of this README, please see [README_ja.md](https://github.com/hamamoto-lab/SEgene/blob/main/SE_to_gene_links/README_ja.md).)*
+
 SEgene_package is a Python package for analyzing the relationship between super-enhancers and genes. This repository provides the necessary setup instructions for both Docker and non-Docker users.
 
 ## Table of Contents
@@ -174,6 +176,7 @@ If running with Docker, these directories must be bound to Docker beforehand.
 
 - **Using the notebooks**: Refer to the [tutorial jupyter notebook](https://github.com/hamamoto-lab/SEgene/blob/main/SE_to_gene_links/notebooks/tutorial_book.ipynb) in the `notebooks/` directory to begin analyzing your data.
 - **Package features**: SEgene_package includes all tools necessary for analyzing the relationship between super-enhancers and genes.
+- **Additional Analysis Tools**: We also provide [command-line tools](https://github.com/hamamoto-lab/SEgene/tree/main/cli_tools) for analyzing correlations between SE regions and gene expression. Please refer to each tool's documentation for details.
 
 ## License
 

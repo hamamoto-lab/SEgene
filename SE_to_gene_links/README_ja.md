@@ -1,5 +1,7 @@
 # SEgene_package
 
+*(For the English version of this README, please see [README.md](https://github.com/hamamoto-lab/SEgene/blob/main/SE_to_gene_links/README.md).)*
+
 SEgene_packageは、スーパーエンハンサーと遺伝子の関係を解析するためのPythonパッケージです。このリポジトリでは、Dockerユーザーと非Dockerユーザーの両方がパッケージを利用できるよう、必要な環境構築手順を提供しています。
 
 ## 目次
@@ -173,6 +175,7 @@ sudo apt-get install docker-compose-plugin
 
 - **ノートブックの使用**: `notebooks/` ディレクトリ内に[チュートリアル用のjupyter notebook](https://github.com/hamamoto-lab/SEgene/blob/main/SE_to_gene_links/notebooks/tutorial_book_ja.ipynb)があります。これを参考にして、自身のデータ解析を始めてください。
 - **パッケージの機能**: SEgene_packageには、スーパーエンハンサーと遺伝子の関連解析に必要なツールが含まれています。
+- **追加の解析ツール**: SEで同定された領域と遺伝子発現の相関解析を行うための[コマンドラインツール群](https://github.com/hamamoto-lab/SEgene/tree/main/cli_tools/README_ja.md)も提供しています。詳細は各ツールのドキュメントを参照してください。
 
 ## ライセンス
 

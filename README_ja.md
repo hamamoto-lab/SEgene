@@ -1,5 +1,7 @@
 # SEgene
 
+*(For the English version of this README, please see [README.md](https://github.com/hamamoto-lab/SEgene/blob/main/README.md).)*
+
 **SEgene** は、遺伝子とピーク領域間の相関を明らかにする統計手法であるpeak-to-gene linksアプローチを取り入れて、スーパーエンハンサーから遺伝子へのリンク (SE-to-gene links) を特定及び分析するためのプラットフォームです。
 このリポジトリには **SEgene** 実行のためのツールとスクリプトが含まれています。
 
@@ -15,12 +17,23 @@ SEgene は現在、二つのソフトウェアプログラム [**peak_to_gene_li
 まず、**peak_to_gene_links** プログラムを使用して遺伝子発現とエンハンサーピーク間の相関情報を取得します。
 次に、**SE_to_gene_links** を使用して、前のステップで取得した相関情報を用いてスーパーエンハンサーを評価・分析します。
 
+また、[**cli_tools**](https://github.com/hamamoto-lab/SEgene/tree/main/cli_tools/README_ja.md)ディレクトリには、SE_to_gene_linksで同定されたSE領域と遺伝子発現の相関を解析するためのコマンドラインツール群が含まれています。
+
 ## 使い方
 
 インストールおよび使用方法については、それぞれの `README` を参照してください。
 
 - [peak_to_gene_links](https://github.com/hamamoto-lab/SEgene/blob/main/peak_to_gene_links/README_ja.md)
 - [SE_to_gene_links](https://github.com/hamamoto-lab/SEgene/blob/main/SE_to_gene_links/README_ja.md)
+
+## 変更履歴
+
+本プロジェクトは [Semantic Versioning](https://semver.org/spec/v2.0.0.html) に準拠し、主な更新内容は以下のファイルに記載しています。
+
+- [CHANGELOG.md (英語)](https://github.com/hamamoto-lab/SEgene/blob/main/CHANGELOG.md)
+- [CHANGELOG_ja.md (日本語)](https://github.com/hamamoto-lab/SEgene/blob/main/CHANGELOG_ja.md)
+
+それぞれのバージョンで追加された機能・修正点などの詳細を知りたい場合は、上記のファイルを参照してください。
 
 ## CITATION
 

@@ -33,7 +33,8 @@ from SEgene_package.tools import (
     return_all_se_concat_full_df,
     return_merge_se_count_df_full_edit,
     count_genes_from_bed,
-    p2gl_path_to_filter_df
+    p2gl_path_to_filter_df,
+    return_merge_se_count_df_full_with_info
 )
 from SEgene_package.graph_tools import create_ROSE_summary
 from SEgene_package.graph_tools import make_sort_se_merge_SE_count_graph
@@ -45,8 +46,6 @@ from SEgene_package.networkx_tools import csv_path_to_df_RNA
 from SEgene_package.networkx_tools import rna_data_to_dic_metadata
 
 from SEgene_package.region_visualize_tools import plot_stacked_reads_bed
-
-
 
 
 def sort_se_merge_count_by_column(
@@ -2367,15 +2366,47 @@ class SEgeneJupyter:
 
 
 
+    def analyze_merge_SE_info(
+        self,
+        save_info_tsv: Optional[str] = None,
+        save_info_pkl: Optional[str] = None
+    ) -> None:
+        """
+        Create and store additional merged SE information DataFrame.
+        
+        This method uses the internally stored `temp_concat_full` DataFrame and `bed_filter`
+        (the p2g filtered BedTool object) as inputs to call the function
+        `return_merge_se_count_df_full_with_info` from tools.py.
+        
+        If `temp_concat_full` is not available, a warning is logged and the method
+        `analyze_merge_SE()` is automatically executed to generate it before continuing.
+        
+        Optionally, the resulting DataFrame can be saved as a TSV file and/or as a pickle file.
+        """
+        self.logger.info("Starting analyze_merge_SE_info process.")
 
+        # Check if _temp_concat_full is available; if not, generate it.
+        if self._temp_concat_full is None:
+            self.logger.warning("temp_concat_full is not available. Running analyze_merge_SE() to generate temp_concat_full.")
+            self.analyze_merge_SE()  # Assumes analyze_merge_SE() populates self._temp_concat_full.
+            if self._temp_concat_full is None:
+                self.logger.error("Failed to generate temp_concat_full using analyze_merge_SE().")
+                raise ValueError("temp_concat_full is not available even after running analyze_merge_SE().")
 
-
-
-
-
-
-
-
+        try:
+            self._temp_full_df_info = return_merge_se_count_df_full_with_info(self._temp_concat_full, self.bed_filter)
+            self.logger.info("Temporary full DataFrame info computed successfully.")
+            
+            if save_info_tsv:
+                self._temp_full_df_info.to_csv(save_info_tsv, sep="\t", index=True)
+                self.logger.info(f"Temporary full DataFrame info saved to {save_info_tsv}.")
+            
+            if save_info_pkl:
+                self._temp_full_df_info.to_pickle(save_info_pkl)
+                self.logger.info(f"Temporary full DataFrame info saved as pickle to {save_info_pkl}.")
+        except Exception as e:
+            self.logger.exception(f"Error in analyze_merge_SE_info: {e}")
+            raise
 
 
     
@@ -2530,7 +2561,24 @@ class SEgeneJupyter:
     def current_sort_key(self) -> Optional[str]:
 
         return self._current_sort_key
-    
+
+
+
+    @property
+    def temp_full_df_info(self) -> pd.DataFrame:
+        """
+        Returns the DataFrame containing the merged SE information.
+        
+        Raises:
+            ValueError: If analyze_merge_SE_info() has not been executed.
+        """
+        if not hasattr(self, '_temp_full_df_info') or self._temp_full_df_info is None:
+            self.logger.error("Temporary full DataFrame info is not available. Please run analyze_merge_SE_info() first.")
+            raise ValueError("Temporary full DataFrame info is not available. Please run analyze_merge_SE_info() first.")
+        return self._temp_full_df_info
+
+
+
     @current_sort_key.setter
     def current_sort_key(self, new_sort_key: str) -> None:
 

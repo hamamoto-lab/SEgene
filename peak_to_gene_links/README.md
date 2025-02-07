@@ -1,6 +1,8 @@
 
 # P2GL: Peak-to-Gene Links Tool
 
+*(For the Japanese version of this README, please see [README_ja.md](https://github.com/hamamoto-lab/SEgene/blob/main/peak_to_gene_links/README_ja.md).)*
+
 This program is a tool for constructing links from peaks to genes using ChIP-seq peak data and RNA-seq expression data. It operates in **R 4.2.2** and **Julia 1.8.3** environments. A Docker container is also provided for simplified setup.
 
 ---

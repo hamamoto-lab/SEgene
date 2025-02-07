@@ -1,5 +1,7 @@
 # SEgene
 
+*(For the Japanese version of this README, please see [README_ja.md](https://github.com/hamamoto-lab/SEgene/blob/main/README_ja.md).)*
+
 **SEgene** is a platform designed to identify Super-Enhancer-to-gene links (SE-to-gene links) by incorporating the peak-to-gene links approach, a statistical method that uncovers correlations between genes and peak regions.
 This repository contains tools and scripts for **SEgene**.
 
@@ -15,12 +17,23 @@ SEgene currently consists of two software programs: [**peak_to_gene_links**](htt
 First, the **peak_to_gene_links** program is used to obtain correlation information between gene expression and enhancer peaks.
 Then, **SE_to_gene_links** is used to evaluate and analyze super-enhancers using the correlation information obtained in the previous step.
 
+Additionally, the [**cli_tools**](https://github.com/hamamoto-lab/SEgene/tree/main/cli_tools) directory contains command-line tools for analyzing correlations between SE regions identified by SE_to_gene_links and gene expression.
+
 ## Usage
 
 For installation and usage instructions, please refer to the respective `README` .
 
 - [peak_to_gene_links](https://github.com/hamamoto-lab/SEgene/blob/main/peak_to_gene_links/README.md)
 - [SE_to_gene_links](https://github.com/hamamoto-lab/SEgene/blob/main/SE_to_gene_links/README.md)
+
+## Changelog
+
+This project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html), and major updates are documented in:
+
+- [CHANGELOG.md](https://github.com/hamamoto-lab/SEgene/blob/main/CHANGELOG.md)
+- [CHANGELOG_ja.md (Japanese)](https://github.com/hamamoto-lab/SEgene/blob/main/CHANGELOG_ja.md)
+
+Refer to these files for information on added features, fixes, and other notable changes in each version.
 
 ## Citation
 
