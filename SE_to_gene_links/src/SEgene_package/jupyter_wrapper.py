@@ -11,14 +11,25 @@ import random
 
 import datetime
 
+
+import seaborn as sns
+
+from scipy import stats
+
 from pathlib import Path
 
 from IPython.display import display
 
 
-
 from logging import getLogger, Formatter, StreamHandler, FileHandler, DEBUG, INFO, WARNING, Logger
 from logging.handlers import RotatingFileHandler
+
+import logging
+import io
+import sys
+import contextlib
+from io import StringIO
+
 
 
 from typing import Optional, List, Dict, Tuple, Any
@@ -34,8 +45,10 @@ from SEgene_package.tools import (
     return_merge_se_count_df_full_edit,
     count_genes_from_bed,
     p2gl_path_to_filter_df,
-    return_merge_se_count_df_full_with_info
+    return_merge_se_count_df_full_with_info,
+    find_gene_linked_super_enhancers
 )
+
 from SEgene_package.graph_tools import create_ROSE_summary
 from SEgene_package.graph_tools import make_sort_se_merge_SE_count_graph
 
@@ -46,6 +59,9 @@ from SEgene_package.networkx_tools import csv_path_to_df_RNA
 from SEgene_package.networkx_tools import rna_data_to_dic_metadata
 
 from SEgene_package.region_visualize_tools import plot_stacked_reads_bed
+
+import glob
+from SEgene_package.tools import find_gene_linked_super_enhancers_in_directory
 
 
 def sort_se_merge_count_by_column(
@@ -283,7 +299,17 @@ class SEgeneJupyter:
         
         self._current_sort_key: Optional[str] = None  
 
+
+        # Variables for directory search results
+        self._se_directory_results = {}  # Dictionary to store directory search results by gene symbol
+        self._last_searched_gene_directory = None  # Last searched gene symbol in directory
+
         self.logger.info("SEGENE_jupyter instance initialized successfully.")
+
+        #for search gene 
+        self._gene_enhancer_results = {}  # Dictionary to store search results by gene symbol
+        self._last_searched_gene = None   # Last searched gene symbol
+        self._gene_bed_filter = None      # BedTool object for the last searched gene
 
     
 
@@ -2409,7 +2435,1528 @@ class SEgeneJupyter:
             raise
 
 
-    
+    def display_se_files(self, use_absolute_paths: bool = False) -> None:
+        """
+        Display the list of SE files being analyzed.
+        
+        Args:
+            use_absolute_paths: Whether to display absolute paths (True) or
+                            relative paths (False, default).
+        """
+        if not self._input_se_file_list:
+            self.logger.warning("No SE files found.")
+            print("No SE files found.")
+            return
+        
+        path_type = "absolute" if use_absolute_paths else "relative"
+        self.logger.info(f"Displaying list of {len(self._input_se_file_list)} SE files using {path_type} paths.")
+        
+        original_setting = self.log_relative_paths
+        
+        if use_absolute_paths:
+            self.log_relative_paths = False
+        
+        try:
+            for i, file_path in enumerate(self._input_se_file_list, 1):
+                print(f"{i}. {self._get_log_path(str(file_path))}")
+        finally:
+            self.log_relative_paths = original_setting
+
+    def search_gene_enhancer_links(
+        self, 
+        gene_symbol: str, 
+        display_full_info: bool = True,
+        save_tsv: bool = False,
+        output_dir: str = './output',
+        output_prefix: Optional[str] = None,
+        store_bed_filter: bool = True
+    ) -> None:
+        """
+        Search for enhancer links associated with a specific gene symbol.
+        
+        Args:
+            gene_symbol (str): Gene symbol to search for.
+            display_full_info (bool): Whether to display all columns or just the key information.
+            save_tsv (bool): Whether to save results as TSV files.
+            output_dir (str): Directory to save TSV files (default: './output').
+            output_prefix (Optional[str]): Prefix for output filenames. If None, uses gene_symbol.
+            store_bed_filter (bool): Whether to store the filtered BED object internally for later use.
+        """
+        self.logger.info(f"Searching for enhancer links for gene '{gene_symbol}'.")
+        
+        try:
+            if not self._bed_filter:
+                self.logger.error("P2G data is not filtered. Please run filter_p2g_file first.")
+                print("Error: P2G data is not filtered. Please run filter_p2g_file first.")
+                return
+            
+            # Get gene location information
+            gene_info = self._get_gene_info(gene_symbol)
+            
+            bed_df = self._bed_filter.to_dataframe()
+            if "score" in bed_df.columns and "symbol" not in bed_df.columns:
+                bed_df = bed_df.rename(columns={
+                    "name": "PeakID", 
+                    "score": "symbol",
+                    "strand": "strand"
+                })
+            
+            gene_enhancers = bed_df[bed_df["symbol"] == gene_symbol]
+            
+            if gene_enhancers.empty:
+                self.logger.info(f"No enhancer links found for gene '{gene_symbol}' with current filter settings (FDR≤{self._FDR}, r≥{self._r}).")
+                
+                # Store search information even if no results found
+                self._gene_enhancer_results[gene_symbol] = {
+                    "gene_symbol": gene_symbol,
+                    "gene_enhancers": None,
+                    "enriched_df": None,
+                    "search_params": {
+                        "FDR": self._FDR,
+                        "r": self._r
+                    },
+                    "timestamp": datetime.datetime.now().isoformat(),
+                    "found": False,
+                    "gene_info": gene_info
+                }
+                self._last_searched_gene = gene_symbol
+                
+                # Display gene information even if no enhancers found
+                if gene_info:
+                    print(f"Search gene: {gene_symbol} - Location: {gene_info.get('chr', 'Unknown')}:{gene_info.get('start', 'Unknown')}-{gene_info.get('end', 'Unknown')}")
+                
+                print(f"No enhancer links found for gene '{gene_symbol}' with current filter settings (FDR≤{self._FDR}, r≥{self._r}).")
+                return
+
+
+            enriched_df = None
+            if display_full_info and hasattr(self, 'p2g_file') and self.p2g_file:
+                try:
+                    original_p2gl = pd.read_table(self.p2g_file)
+                    
+                    peak_ids = gene_enhancers["PeakID"].tolist()
+                    
+                    detailed_data = original_p2gl[
+                        (original_p2gl["symbol"] == gene_symbol) & 
+                        (original_p2gl["PeakID"].isin(peak_ids))
+                    ].copy()
+                    
+                    if not detailed_data.empty:
+                        self.logger.debug(f"Found {len(detailed_data)} entries in P2GL file matching gene '{gene_symbol}'")
+                        self.logger.debug(f"Using filter settings from filter_p2g_file: FDR≤{self._FDR}, r≥{self._r}")
+                        
+                        display_columns = ["chr", "Start", "End", "PeakID", "symbol", "FDR", "r"]
+                        
+                        self._add_signed_distance(detailed_data, gene_info)
+                        
+                        if 'signed_distance' in detailed_data.columns:
+                            display_columns.append("signed_distance")
+                            
+                        min_fdr = detailed_data["FDR"].min() if "FDR" in detailed_data.columns else "N/A"
+                        max_fdr = detailed_data["FDR"].max() if "FDR" in detailed_data.columns else "N/A"
+                        min_r = detailed_data["r"].min() if "r" in detailed_data.columns else "N/A"
+                        max_r = detailed_data["r"].max() if "r" in detailed_data.columns else "N/A"
+                        self.logger.debug(f"FDR range in matched data: {min_fdr} to {max_fdr}")
+                        self.logger.debug(f"r value range in matched data: {min_r} to {max_r}")
+                        
+                        enriched_df = detailed_data[display_columns].sort_values(by=["chr", "Start"])
+                except Exception as e:
+                    self.logger.warning(f"Could not load additional information from original P2GL file: {e}")
+                    self.logger.debug(f"Exception details: {str(e)}")
+
+            # enriched_df = None
+            # if display_full_info and hasattr(self, 'p2g_file') and self.p2g_file:
+            #     try:
+            #         original_p2gl = pd.read_table(self.p2g_file)
+                    
+            #         original_gene_data = original_p2gl[original_p2gl["symbol"] == gene_symbol]
+                    
+            #         original_gene_data = original_gene_data[
+            #             (original_gene_data["FDR"] <= self._FDR) & 
+            #             (original_gene_data["r"] >= self._r)
+            #         ]
+                    
+            #         if "PeakID" in original_gene_data.columns:
+            #             peak_ids = gene_enhancers["PeakID"].tolist()
+            #             original_gene_data = original_gene_data[original_gene_data["PeakID"].isin(peak_ids)]
+                        
+            #             if not original_gene_data.empty:
+            #                 display_columns = ["chr", "Start", "End", "PeakID", "symbol", "FDR", "r"]
+                            
+            #                 # Always calculate and add signed distance
+            #                 self._add_signed_distance(original_gene_data, gene_info)
+                            
+            #                 # Add signed_distance column to display if it was successfully added
+            #                 if 'signed_distance' in original_gene_data.columns:
+            #                     display_columns.append("signed_distance")
+                                
+            #                 enriched_df = original_gene_data[display_columns].sort_values(by=["chr", "Start"])
+            #     except Exception as e:
+            #         self.logger.warning(f"Could not load additional information from original P2GL file: {e}")
+
+            # Store search results
+            self._gene_enhancer_results[gene_symbol] = {
+                "gene_symbol": gene_symbol,
+                "gene_enhancers": gene_enhancers.copy() if not gene_enhancers.empty else None,
+                "enriched_df": enriched_df.copy() if enriched_df is not None and not enriched_df.empty else None,
+                "search_params": {
+                    "FDR": self._FDR,
+                    "r": self._r
+                },
+                "timestamp": datetime.datetime.now().isoformat(),
+                "found": True,
+                "gene_info": gene_info
+            }
+            self._last_searched_gene = gene_symbol
+
+            # Display results with gene information first
+            self._display_gene_enhancer_results(
+                gene_symbol=gene_symbol,
+                gene_enhancers=gene_enhancers,
+                enriched_df=enriched_df,
+                display_full_info=display_full_info,
+                gene_info=gene_info
+            )
+            
+            # Save results as TSV if requested
+            if save_tsv:
+                self._save_gene_enhancer_results_tsv(
+                    gene_symbol=gene_symbol,
+                    gene_enhancers=gene_enhancers,
+                    enriched_df=enriched_df,
+                    output_dir=output_dir,
+                    output_prefix=output_prefix
+                )
+            
+            # Store filtered BED object if requested
+            if store_bed_filter and not gene_enhancers.empty:
+                # Create a BED filter containing only this gene's enhancers
+                try:
+                    self._gene_bed_filter = BedTool.from_dataframe(gene_enhancers)
+                    self.logger.info(f"Stored filtered BED object for gene '{gene_symbol}' with {len(gene_enhancers)} enhancers.")
+                except Exception as e:
+                    self.logger.error(f"Error creating gene-specific BED filter: {e}")
+                    print(f"Error creating gene-specific BED filter: {e}")
+                        
+        except Exception as e:
+            self.logger.exception(f"Error in search_gene_enhancer_links: {e}")
+            print(f"Error searching for enhancer links: {e}")
+
+    def _get_gene_info(self, gene_symbol: str) -> dict:
+        """
+        Get gene location information from RNA info file.
+        
+        Args:
+            gene_symbol (str): Gene symbol to look up
+            
+        Returns:
+            dict: Gene location information
+            
+        Raises:
+            ValueError: If RNA info file is not available or gene not found
+        """
+        # Check if RNA info file is available
+        if not hasattr(self, 'rna_info_file') or not self.rna_info_file:
+            self.logger.error("RNA info file is not specified. Cannot get gene location information.")
+            raise ValueError("RNA info file is not specified. Cannot get gene location information.")
+        
+        try:
+            
+            df_rna = csv_path_to_df_RNA(self.rna_info_file)
+            dic_rna = rna_data_to_dic_metadata(df_rna, gtf=True)
+            
+            if gene_symbol not in dic_rna:
+                self.logger.error(f"Gene '{gene_symbol}' not found in RNA info file.")
+                raise ValueError(f"Gene '{gene_symbol}' not found in RNA info file.")
+            
+            gene_data = dic_rna[gene_symbol]
+            gene_info = {
+                'chr': gene_data.get('chr'),
+                'start': gene_data.get('start'),
+                'end': gene_data.get('end'),
+                'strand': gene_data.get('strand', '.'),
+                'source': 'RNA info file'
+            }
+            self.logger.debug(f"Gene info for {gene_symbol} found in RNA info file.")
+            return gene_info
+        except Exception as e:
+            self.logger.exception(f"Error loading gene info from RNA info file: {e}")
+            raise ValueError(f"Error loading gene info from RNA info file: {e}")
+
+    def _add_signed_distance(self, df: pd.DataFrame, gene_info: dict) -> None:
+        """
+        Add signed distance information to enhancer DataFrame based on gene location.
+        Always calculates distance dynamically from genomic coordinates.
+        
+        Args:
+            df (pd.DataFrame): DataFrame containing enhancer information
+            gene_info (dict): Gene location information
+        """
+        if 'Start' not in df.columns or 'End' not in df.columns:
+            self.logger.warning("Cannot add signed distance: enhancer position columns not found in DataFrame.")
+            return
+        
+        if not gene_info or 'start' not in gene_info or 'end' not in gene_info or 'strand' not in gene_info:
+            self.logger.warning("Cannot add signed distance: gene location information incomplete.")
+            return
+        
+        # Calculate enhancer midpoint
+        df['peak_mid'] = (df['Start'] + df['End']) // 2
+        
+        # Get gene TSS based on strand
+        gene_start = gene_info['start']
+        gene_end = gene_info['end']
+        gene_strand = gene_info['strand']
+        
+        # TSS is at start for '+' strand, at end for '-' strand
+        tss = gene_start if gene_strand == '+' else gene_end
+        
+        # Calculate signed distance for each enhancer
+        signed_distance = []
+        
+        for _, row in df.iterrows():
+            peak_mid = row['peak_mid']
+            
+            # Always calculate absolute distance from TSS to enhancer midpoint
+            dist_value = abs(peak_mid - tss)
+            
+            # Determine sign based on strand and relative position
+            if gene_strand == '+':
+                # For + strand: positive if enhancer is downstream of TSS, negative if upstream
+                sign = 1 if peak_mid > tss else -1
+            else:  # strand == '-'
+                # For - strand: negative if enhancer is downstream of TSS, positive if upstream
+                sign = -1 if peak_mid > tss else 1
+            
+            signed_distance.append(sign * dist_value)
+        
+        # Add the calculated distances to the DataFrame
+        df['signed_distance'] = signed_distance
+        
+        # Remove temporary column
+        if 'peak_mid' in df.columns:
+            df.drop('peak_mid', axis=1, inplace=True)
+
+
+
+    def _display_gene_enhancer_results(
+        self, 
+        gene_symbol: str, 
+        gene_enhancers: pd.DataFrame,
+        enriched_df: Optional[pd.DataFrame] = None,
+        display_full_info: bool = True,
+        gene_info: Optional[dict] = None
+    ) -> None:
+        """
+        Helper method to display gene enhancer results.
+        This separates display logic from data processing logic.
+        
+        Args:
+            gene_symbol (str): Gene symbol
+            gene_enhancers (pd.DataFrame): DataFrame containing enhancer information
+            enriched_df (Optional[pd.DataFrame]): DataFrame with detailed enhancer information
+            display_full_info (bool): Whether to display all columns
+            gene_info (Optional[dict]): Gene location information
+        """
+        # Display gene information on separate lines for better readability
+        print(f"Search gene: {gene_symbol}")
+        
+        if gene_info:
+            location = f"{gene_info.get('chr', 'Unknown')}:{gene_info.get('start', 'Unknown')}-{gene_info.get('end', 'Unknown')}"
+            strand = gene_info.get('strand', 'Unknown')
+            strand_symbol = "+" if strand == "+" else "-" if strand == "-" else strand
+            
+            # Determine TSS based on strand
+            if strand == "+":
+                tss = gene_info.get('start', 'Unknown')
+            elif strand == "-":
+                tss = gene_info.get('end', 'Unknown')
+            else:
+                tss = 'Unknown'
+                
+            print(f"Location: {location}")
+            print(f"TSS: {tss}")
+            print(f"Strand: {strand_symbol}")
+        else:
+            print("Location information not available")
+        
+        if gene_enhancers is None or gene_enhancers.empty:
+            print(f"No enhancer links found for gene '{gene_symbol}'.")
+            return
+            
+        print(f"\nFOUND {len(gene_enhancers)} ENHANCERS LINKED TO GENE '{gene_symbol}':")
+        print("-" * 50)
+        
+        # Display detailed information if available and requested
+        if display_full_info and enriched_df is not None and not enriched_df.empty:
+            # Rename columns for better readability
+            renamed_df = enriched_df.copy()
+            if 'signed_distance' in renamed_df.columns:
+                renamed_df.rename(columns={'signed_distance': 'distance(bp)'}, inplace=True)
+            elif 'distance' in renamed_df.columns:
+                renamed_df.rename(columns={'distance': 'distance(bp)'}, inplace=True)
+            
+            # Reset index and add 1 to make it 1-based
+            display_df = renamed_df.reset_index(drop=True)
+            display_df.index += 1
+            
+            display(display_df)
+        else:
+            # Display basic enhancer information if detailed info not available or not requested
+            gene_enhancers_sorted = gene_enhancers.sort_values(by=['chrom', 'start'])
+            
+            display_columns = ['chrom', 'start', 'end', 'PeakID']
+            if display_full_info:
+                display_df = gene_enhancers_sorted
+            else:
+                display_df = gene_enhancers_sorted[display_columns]
+            
+            # Reset index and add 1 to make it 1-based
+            display_df = display_df.reset_index(drop=True)
+            display_df.index += 1
+            
+            display(display_df)
+        
+        # Always show genomic coordinates for copy/paste
+        print("\nGENOMIC COORDINATES FOR COPY/PASTE:")
+        print("-" * 50)
+        
+        # Use sorted data frame for consistent order with displayed table
+        sorted_enhancers = gene_enhancers.sort_values(by=['chrom', 'start']).reset_index(drop=True)
+        
+        # Add index (1-based) to each coordinate for reference
+        for i, row in enumerate(sorted_enhancers.itertuples(), 1):
+            # Format index with leading zeros for better readability when copying
+            formatted_index = f"{i:02d}"
+            print(f"{formatted_index}: {row.chrom}:{row.start}-{row.end}")
+
+
+
+
+
+    def _save_gene_enhancer_results_tsv(
+        self,
+        gene_symbol: str,
+        gene_enhancers: pd.DataFrame,
+        enriched_df: Optional[pd.DataFrame] = None,
+        output_dir: str = './output',
+        output_prefix: Optional[str] = None
+    ) -> None:
+        """
+        Helper method to save gene enhancer results as TSV files.
+        
+        Args:
+            gene_symbol (str): Gene symbol.
+            gene_enhancers (pd.DataFrame): Basic enhancer information.
+            enriched_df (Optional[pd.DataFrame]): Detailed enhancer information with FDR and r values.
+            output_dir (str): Directory to save TSV files.
+            output_prefix (Optional[str]): Prefix for output filenames.
+        """
+        try:
+            # Create output directory if it doesn't exist
+            os.makedirs(output_dir, exist_ok=True)
+            
+            # Generate timestamp for unique filenames
+            timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+            
+            # Use provided prefix or default to gene_symbol
+            prefix = output_prefix if output_prefix else gene_symbol
+            
+            # Save basic enhancer information
+            if gene_enhancers is not None and not gene_enhancers.empty:
+                basic_file = os.path.join(output_dir, f"{prefix}_enhancers_{timestamp}.tsv")
+                gene_enhancers.to_csv(basic_file, sep='\t', index=False)
+                self.logger.info(f"Basic enhancer data saved to {basic_file}")
+                print(f"Basic enhancer data saved to {basic_file}")
+            
+            # Save detailed enhancer information if available
+            if enriched_df is not None and not enriched_df.empty:
+                # Rename distance column for clarity
+                save_df = enriched_df.copy()
+                if 'signed_distance' in save_df.columns:
+                    save_df.rename(columns={'signed_distance': 'distance(bp)'}, inplace=True)
+                    
+                detailed_file = os.path.join(output_dir, f"{prefix}_enhancers_detailed_{timestamp}.tsv")
+                save_df.to_csv(detailed_file, sep='\t', index=False)
+                self.logger.info(f"Detailed enhancer data saved to {detailed_file}")
+                print(f"Detailed enhancer data saved to {detailed_file}")
+            
+            # Save genomic coordinates as a text file for convenient copy-paste
+            if gene_enhancers is not None and not gene_enhancers.empty:
+                coords_file = os.path.join(output_dir, f"{prefix}_coordinates_{timestamp}.txt")
+                with open(coords_file, 'w') as f:
+                    for _, row in gene_enhancers.iterrows():
+                        f.write(f"{row['chrom']}:{row['start']}-{row['end']}\n")
+                self.logger.info(f"Genomic coordinates saved to {coords_file}")
+                print(f"Genomic coordinates saved to {coords_file}")
+        
+        except Exception as e:
+            self.logger.error(f"Error saving enhancer results to TSV: {e}")
+            print(f"Error saving enhancer results to TSV: {e}")
+
+    def save_gene_search_results(
+        self,
+        gene_symbol: Optional[str] = None,
+        output_dir: str = './output',
+        output_prefix: Optional[str] = None
+    ) -> None:
+        """
+        Save previously searched gene enhancer results to TSV files.
+        
+        Args:
+            gene_symbol (Optional[str]): Gene symbol to save results for. 
+                                        If None, uses the last searched gene.
+            output_dir (str): Directory to save TSV files.
+            output_prefix (Optional[str]): Prefix for output filenames.
+        """
+        self.logger.info(f"Saving gene search results for gene_symbol={gene_symbol if gene_symbol else 'last searched gene'}.")
+        
+        try:
+            if gene_symbol is None:
+                if self._last_searched_gene is None:
+                    self.logger.error("No gene has been searched. Please specify a gene symbol.")
+                    print("Error: No gene has been searched. Please specify a gene symbol.")
+                    return
+                gene_symbol = self._last_searched_gene
+            
+            if gene_symbol not in self._gene_enhancer_results:
+                self.logger.error(f"No results found for gene '{gene_symbol}'. Please search for this gene first.")
+                print(f"Error: No results found for gene '{gene_symbol}'. Please search for this gene first.")
+                return
+            
+            result_data = self._gene_enhancer_results[gene_symbol]
+            
+            if not result_data.get("found", False):
+                self.logger.warning(f"No enhancer links were found for gene '{gene_symbol}' during the search.")
+                print(f"Warning: No enhancer links were found for gene '{gene_symbol}' during the search.")
+                return
+            
+            self._save_gene_enhancer_results_tsv(
+                gene_symbol=result_data["gene_symbol"],
+                gene_enhancers=result_data["gene_enhancers"],
+                enriched_df=result_data["enriched_df"],
+                output_dir=output_dir,
+                output_prefix=output_prefix
+            )
+            
+            # Save search parameters
+            params_file = os.path.join(output_dir, f"{output_prefix or gene_symbol}_search_params_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt")
+            with open(params_file, 'w') as f:
+                f.write(f"Gene: {gene_symbol}\n")
+                f.write(f"Search timestamp: {result_data['timestamp']}\n")
+                f.write(f"FDR threshold: {result_data['search_params']['FDR']}\n")
+                f.write(f"r threshold: {result_data['search_params']['r']}\n")
+                if result_data["gene_enhancers"] is not None:
+                    f.write(f"Number of enhancers found: {len(result_data['gene_enhancers'])}\n")
+                else:
+                    f.write("Number of enhancers found: 0\n")
+            
+            self.logger.info(f"Search parameters saved to {params_file}")
+            print(f"Search parameters saved to {params_file}")
+            
+        except Exception as e:
+            self.logger.exception(f"Error in save_gene_search_results: {e}")
+            print(f"Error saving gene search results: {e}")
+
+
+
+
+
+    def find_gene_name_linked_super_enhancers(self, gene_symbol):
+        """
+        Find super enhancers linked to a specific gene and display the results.
+        
+        Parameters:
+        -----------
+        gene_symbol : str
+            Gene symbol to search for
+        
+        Returns:
+        --------
+        pd.DataFrame
+            DataFrame containing information about super enhancers linked to the specified gene
+        """
+        self.logger.info(f"Finding super enhancers linked to gene '{gene_symbol}'")
+        
+        try:
+            # 1. Create gene-specific BED filter using the existing method
+            self.search_gene_enhancer_links(
+                gene_symbol=gene_symbol,
+                display_full_info=False,  # Suppress extra information display
+                save_tsv=False,
+                store_bed_filter=True     # Important: This sets _gene_bed_filter
+            )
+            
+            # Check if _gene_bed_filter was properly set
+            if not hasattr(self, '_gene_bed_filter') or self._gene_bed_filter is None:
+                self.logger.error(f"Could not create BED filter for gene '{gene_symbol}'")
+                print(f"Error: No enhancers found for gene '{gene_symbol}'")
+                return None
+            
+            # 2. Call find_gene_linked_super_enhancers function
+            
+            if not self.rose_file:
+                self.logger.error("No ROSE file specified")
+                print("Error: No ROSE file specified. Please set a ROSE file first.")
+                return None
+            
+            self.logger.info(f"Filtering ROSE file '{self.rose_file}' for gene-linked super enhancers")
+            result_df = find_gene_linked_super_enhancers(self.rose_file, self._gene_bed_filter)
+            
+            # 3. Display results
+            if result_df.empty:
+                self.logger.info(f"No super enhancers linked to gene '{gene_symbol}' found")
+                print(f"No super enhancers linked to gene '{gene_symbol}' found in the current ROSE file.")
+                return result_df
+            
+            # Create display dataframe with only necessary columns
+            display_cols = ['enhancerRank', 'total_super_enhancers', 'REGION_ID', 
+                            'CHROM', 'START', 'STOP', 'linked_genes']
+            
+            if 'linked_peaks' in result_df.columns:
+                display_cols.append('linked_peaks')
+            
+            display_df = result_df[display_cols].copy()
+            
+            # Display summary information
+            total_ses = result_df['total_super_enhancers'].iloc[0]
+            found_ses = len(result_df)
+            
+            print(f"Search results for super enhancers linked to gene '{gene_symbol}':")
+            print(f"Total super enhancers in ROSE file: {total_ses}")
+            print(f"Super enhancers linked to gene '{gene_symbol}': {found_ses} ({found_ses/total_ses*100:.1f}%)")
+            print("")
+            
+            # Display the dataframe
+            display(display_df)
+            
+            return result_df
+            
+        except Exception as e:
+            self.logger.exception(f"Error in find_gene_name_linked_super_enhancers: {e}")
+            print(f"Error: {e}")
+            return None
+
+
+
+
+
+
+
+
+
+
+
+
+
+    ##### find_gene_linked_super_enhancers #####
+
+    def find_gene_linked_super_enhancers_in_directory(
+        self,
+        gene_symbol: str,
+        output_dir: Optional[str] = None,
+        save_results: bool = False,
+        output_prefix: Optional[str] = None,
+        file_format: str = "csv",
+        verbose: bool = True
+    ) -> Tuple[pd.DataFrame, pd.DataFrame, Dict]:
+        """
+        Finds super enhancers linked to the specified gene across all samples in the ROSE directory.
+        
+        Parameters:
+        -----------
+        gene_symbol : str
+            Gene symbol to search for.
+        output_dir : Optional[str]
+            Directory to save results (default: './output').
+        save_results : bool
+            Whether to save results to files.
+        output_prefix : Optional[str]
+            Prefix for output filenames (default: gene_symbol).
+        file_format : str
+            File format for results: "csv" or "tsv" (default: "csv").
+        verbose : bool
+            Whether to print progress and summary information.
+            
+        Returns:
+        --------
+        Tuple[pd.DataFrame, pd.DataFrame, Dict]
+            - Combined results from all samples
+            - Summary information for all samples
+            - Statistics summary with sample counts and lists
+        """
+        self.logger.info(f"Finding super enhancers linked to gene '{gene_symbol}' across all samples in ROSE directory.")
+        
+        try:
+            # Create gene-specific BED filter
+            self.search_gene_enhancer_links(
+                gene_symbol=gene_symbol,
+                display_full_info=False,  # Suppress additional information display
+                save_tsv=False,
+                store_bed_filter=True     # This sets _gene_bed_filter
+            )
+            
+            # Check if gene_bed_filter was created
+            if not hasattr(self, '_gene_bed_filter') or self._gene_bed_filter is None:
+                self.logger.error(f"Could not create BED filter for gene '{gene_symbol}'")
+                print(f"Error: No enhancers found for gene '{gene_symbol}'")
+                return pd.DataFrame(), pd.DataFrame(), {}
+            
+            # Verify ROSE files directory is valid
+            if not self.rose_files_dir or not os.path.exists(self.rose_files_dir):
+                self.logger.error("ROSE files directory is not specified or does not exist.")
+                print("Error: ROSE files directory is not specified or does not exist.")
+                return pd.DataFrame(), pd.DataFrame(), {}
+            
+            # Call the function with directory and BED filter
+            self.logger.info(f"Processing all samples in directory: {self.rose_files_dir}")
+            combined_results, samples_df, stats_summary = find_gene_linked_super_enhancers_in_directory(
+                self.rose_files_dir, 
+                self._gene_bed_filter
+            )
+            
+            # Filter to get only super enhancers (isSuper == 1)
+            super_only_results = pd.DataFrame()
+            if not combined_results.empty and 'isSuper' in combined_results.columns:
+                super_only_results = combined_results[combined_results['isSuper'] == 1].copy()
+
+
+                # Make sure isSuper is also at the rightmost position in super_only_results
+                if 'isSuper' in super_only_results.columns:
+                    isSuper_col = super_only_results.pop('isSuper')
+                    super_only_results['isSuper'] = isSuper_col
+
+            
+            # Store results in internal variables
+            self._se_directory_results[gene_symbol] = {
+                "gene_symbol": gene_symbol,
+                "combined_results": combined_results,
+                "super_only_results": super_only_results,
+                "samples_df": samples_df,
+                "stats_summary": stats_summary,
+                "timestamp": datetime.datetime.now().isoformat()
+            }
+            self._last_searched_gene_directory = gene_symbol
+            
+            # Save results to files if requested
+            if save_results:
+                self.save_directory_search_results(
+                    gene_symbol=gene_symbol,
+                    output_dir=output_dir,
+                    output_prefix=output_prefix,
+                    file_format=file_format
+                )
+            
+            # Display summary if verbose is True
+            if verbose:
+                self._display_directory_search_summary(gene_symbol)
+            
+            return combined_results, samples_df, stats_summary
+            
+        except Exception as e:
+            self.logger.exception(f"Error in find_gene_linked_super_enhancers_in_directory: {e}")
+            print(f"Error searching for super enhancers: {e}")
+            return pd.DataFrame(), pd.DataFrame(), {}
+
+    def _display_directory_search_summary(self, gene_symbol: str) -> None:
+        """
+        Helper method to display a summary of directory search results.
+        
+        Parameters:
+        -----------
+        gene_symbol : str
+            Gene symbol to display results for
+        """
+        if gene_symbol not in self._se_directory_results:
+            print(f"No directory search results found for gene '{gene_symbol}'.")
+            return
+        
+        result_data = self._se_directory_results[gene_symbol]
+        stats = result_data["stats_summary"]
+        
+        print("\n" + "="*80)
+        print(f"SUPER ENHANCER SEARCH SUMMARY FOR GENE: {gene_symbol}")
+        print("="*80)
+        
+        print(f"\nTotal samples processed: {stats['total_sample_count']}")
+        print(f"Samples with any enhancers linked to {gene_symbol}: {stats['all_matched']['count']} ({stats['all_matched']['percentage']}%)")
+        print(f"Samples with super enhancers linked to {gene_symbol}: {stats['super_matched']['count']} ({stats['super_matched']['percentage']}%)")
+        
+        # Display sample list if it's short enough
+        if len(stats['super_matched']['sample_list']) <= 10:
+            print(f"\nSamples with super enhancers: {', '.join(stats['super_matched']['sample_list'])}")
+        else:
+            print(f"\nSamples with super enhancers: {', '.join(stats['super_matched']['sample_list'][:5])}... (and {len(stats['super_matched']['sample_list'])-5} more)")
+        
+        # Display sample DataFrame if available
+        if not result_data["samples_df"].empty:
+            print("\nSAMPLE SUMMARY TABLE:")
+            display(result_data["samples_df"])
+        
+        # Display counts of super enhancers
+        super_only = result_data.get("super_only_results", pd.DataFrame())
+        if not super_only.empty:
+            super_count = len(super_only)
+            super_samples = super_only['sample_name'].nunique() if 'sample_name' in super_only.columns else 0
+            print(f"\nFound {super_count} super enhancers across {super_samples} samples linked to gene {gene_symbol}")
+
+    def save_directory_search_results(
+        self,
+        gene_symbol: Optional[str] = None,
+        output_dir: str = './output',
+        output_prefix: Optional[str] = None,
+        file_format: str = "csv"
+    ) -> None:
+        """
+        Save previously searched gene's directory results to files.
+        
+        Parameters:
+        -----------
+        gene_symbol : Optional[str]
+            Gene symbol to save results for. If None, uses the last searched gene.
+        output_dir : str
+            Directory to save files.
+        output_prefix : Optional[str]
+            Prefix for output filenames.
+        file_format : str
+            File format: "csv" or "tsv" (default: "csv").
+        """
+        self.logger.info(f"Saving directory search results for gene_symbol={gene_symbol if gene_symbol else 'last searched gene'}.")
+        
+        try:
+            # Validate file format
+            if file_format.lower() not in ["csv", "tsv"]:
+                self.logger.warning(f"Invalid file format: {file_format}. Using 'csv' instead.")
+                file_format = "csv"
+            
+            # Set delimiter and extension based on file format
+            delimiter = "," if file_format.lower() == "csv" else "\t"
+            extension = file_format.lower()
+            
+            if gene_symbol is None:
+                if self._last_searched_gene_directory is None:
+                    self.logger.error("No gene has been searched. Please specify a gene symbol.")
+                    print("Error: No gene has been searched. Please specify a gene symbol.")
+                    return
+                gene_symbol = self._last_searched_gene_directory
+            
+            if gene_symbol not in self._se_directory_results:
+                self.logger.error(f"No directory results found for gene '{gene_symbol}'. Please search for this gene first.")
+                print(f"Error: No directory results found for gene '{gene_symbol}'. Please search for this gene first.")
+                return
+            
+            result_data = self._se_directory_results[gene_symbol]
+            
+            # Create output directory if it doesn't exist
+            os.makedirs(output_dir, exist_ok=True)
+            
+            # Generate timestamp for unique filenames
+            timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+            
+            # Use specified prefix or default to gene symbol
+            prefix = output_prefix if output_prefix else gene_symbol
+            
+            # Save combined results DataFrame
+            if not result_data["combined_results"].empty:
+                combined_file = os.path.join(output_dir, f"{prefix}_all_enhancers_{timestamp}.{extension}")
+                result_data["combined_results"].to_csv(combined_file, sep=delimiter, index=False)
+                self.logger.info(f"All enhancers results saved to {combined_file}")
+                print(f"All enhancers results saved to {combined_file}")
+            
+            # Save super enhancers only DataFrame
+            if "super_only_results" in result_data and not result_data["super_only_results"].empty:
+                super_file = os.path.join(output_dir, f"{prefix}_super_enhancers_only_{timestamp}.{extension}")
+                result_data["super_only_results"].to_csv(super_file, sep=delimiter, index=False)
+                self.logger.info(f"Super enhancers only results saved to {super_file}")
+                print(f"Super enhancers only results saved to {super_file}")
+            
+            # Save samples summary DataFrame
+            if not result_data["samples_df"].empty:
+                samples_file = os.path.join(output_dir, f"{prefix}_samples_summary_{timestamp}.{extension}")
+                result_data["samples_df"].to_csv(samples_file, sep=delimiter, index=False)
+                self.logger.info(f"Samples summary saved to {samples_file}")
+                print(f"Samples summary saved to {samples_file}")
+            
+            # Save statistics summary as JSON
+            stats_file = os.path.join(output_dir, f"{prefix}_stats_summary_{timestamp}.json")
+            with open(stats_file, 'w') as f:
+                # Convert sets to lists for JSON serialization
+                json.dump(result_data["stats_summary"], f, indent=2)
+            self.logger.info(f"Statistics summary saved to {stats_file}")
+            print(f"Statistics summary saved to {stats_file}")
+            
+        except Exception as e:
+            self.logger.exception(f"Error in save_directory_search_results: {e}")
+            print(f"Error saving directory search results: {e}")
+
+    def get_directory_super_enhancers(self, gene_symbol: str) -> Optional[pd.DataFrame]:
+        """
+        Returns the Super Enhancers only (isSuper==1) DataFrame for the specified gene.
+        
+        Parameters:
+        -----------
+        gene_symbol : str
+            Gene symbol to retrieve Super Enhancers for
+            
+        Returns:
+        --------
+        Optional[pd.DataFrame]
+            DataFrame containing only Super Enhancers, or None if no search results exist for the gene
+        """
+        if gene_symbol not in self._se_directory_results:
+            self.logger.warning(f"No directory search results found for gene '{gene_symbol}'.")
+            return None
+        
+        result = self._se_directory_results.get(gene_symbol)
+        if "super_only_results" in result:
+            return result["super_only_results"]
+        return None
+
+
+
+
+
+
+
+
+
+
+    ##### find super enhancer only #####
+
+
+    def find_gene_linked_super_enhancers_only(
+        self,
+        gene_symbol: str,
+        output_dir: Optional[str] = None,
+        save_results: bool = False,
+        output_prefix: Optional[str] = None,
+        file_format: str = "csv",
+        verbose: bool = True,
+        log_level: str = "INFO"
+    ) -> pd.DataFrame:
+        """
+        Find only super enhancers (isSuper == 1) linked to the specified gene
+        across all samples in the ROSE directory.
+        The order of display is:
+        (1) "P2GL Search Results..." line
+        (2) P2GL table (via search_gene_enhancer_links)
+        (3) "Super Enhancer Search Results..." line
+        (4) super enhancer table
+        """
+        self.logger.info(f"Finding only super enhancers linked to gene '{gene_symbol}' across all samples in ROSE directory.")
+        try:
+            from IPython.display import Markdown, display
+            
+            # (1) Show "P2GL Search Results..." first
+            display(Markdown(f"**P2GL Search Results for gene: {gene_symbol}**"))
+            
+            # (2) Call search_gene_enhancer_links without redirect_stdout
+            #     so that the P2GL table is displayed as-is.
+            self.search_gene_enhancer_links(
+                gene_symbol=gene_symbol,
+                display_full_info=False,
+                save_tsv=False,
+                store_bed_filter=True
+            )
+            
+            # Check if the gene-specific BedTool was created
+            if not hasattr(self, '_gene_bed_filter') or self._gene_bed_filter is None:
+                self.logger.error(f"Could not create BED filter for gene '{gene_symbol}'")
+                if verbose:
+                    self.logger.error(f"No enhancers found for gene '{gene_symbol}'")
+                return pd.DataFrame()
+            
+            # Check ROSE directory
+            if not self.rose_files_dir or not os.path.exists(self.rose_files_dir):
+                self.logger.error("ROSE files directory is not specified or does not exist.")
+                if verbose:
+                    self.logger.error("ROSE files directory is not specified or does not exist.")
+                return pd.DataFrame()
+            
+            # Temporarily change log level
+            original_level = self.logger.level
+            try:
+                if log_level:
+                    level_value = getattr(logging, log_level.upper())
+                    self.logger.setLevel(level_value)
+                
+                # Use the existing function to get combined_results etc.
+                combined_results, samples_df, stats_summary = self._find_gene_linked_super_enhancers_in_directory(
+                    self.rose_files_dir,
+                    self._gene_bed_filter,
+                    verbose=verbose
+                )
+            finally:
+                self.logger.setLevel(original_level)
+            
+            # Filter only super enhancers
+            super_only_results = pd.DataFrame()
+            if not combined_results.empty and 'isSuper' in combined_results.columns:
+                super_only_results = combined_results[combined_results['isSuper'] == 1].copy()
+                if 'isSuper' in super_only_results.columns:
+                    isSuper_col = super_only_results.pop('isSuper')
+                    super_only_results['isSuper'] = isSuper_col
+            
+            # Store results internally
+            self._se_directory_results[gene_symbol] = {
+                "gene_symbol": gene_symbol,
+                "combined_results": combined_results,
+                "super_only_results": super_only_results,
+                "samples_df": samples_df,
+                "stats_summary": stats_summary,
+                "timestamp": datetime.datetime.now().isoformat()
+            }
+            self._last_searched_gene_directory = gene_symbol
+            
+            # Save if requested
+            if save_results and not super_only_results.empty:
+                self.save_super_enhancers_only(
+                    gene_symbol=gene_symbol,
+                    output_dir=output_dir,
+                    output_prefix=output_prefix,
+                    file_format=file_format
+                )
+            
+            if verbose:
+                self._display_super_enhancers_only_summary(gene_symbol)
+            
+            # (3) Show "Super Enhancer Search Results..." line
+            display(Markdown(f"**Super Enhancer Search Results for gene: {gene_symbol}**"))
+            
+            # (4) Display super enhancers table with 1-based index
+            if not super_only_results.empty:
+                display_columns = [
+                    'sample_name', 'REGION_ID', 'CHROM', 'START', 'STOP',
+                    'NUM_LOCI', 'SIGNAL', 'enhancerRank', 'super_percentile'
+                ]
+                available_cols = [col for col in display_columns if col in super_only_results.columns]
+                display_df = super_only_results[available_cols].reset_index(drop=True)
+                display_df.index += 1
+                display(display_df)
+
+            return super_only_results
+        
+        except Exception as e:
+            self.logger.exception(f"Error in find_gene_linked_super_enhancers_only: {e}")
+            if verbose:
+                self.logger.error(f"Error searching for super enhancers: {e}")
+            return pd.DataFrame()
+
+
+
+
+
+
+    def _find_gene_linked_super_enhancers_in_directory(
+        self,
+        directory_path: str,
+        gene_bed_filter: BedTool,
+        verbose: bool = True
+    ) -> Tuple[pd.DataFrame, pd.DataFrame, Dict]:
+        """
+        Internal method that wraps find_gene_linked_super_enhancers_in_directory function 
+        but captures its output and redirects to the logger system.
+        
+        Parameters:
+        -----------
+        directory_path : str
+            Path to directory containing ROSE files (*_AllEnhancers.table.txt)
+        gene_bed_filter : BedTool
+            BedTool object containing gene filter information
+        verbose : bool
+            Whether to log detailed information
+            
+        Returns:
+        --------
+        tuple of (pd.DataFrame, pd.DataFrame, dict)
+            - First DataFrame: Combined results from all samples
+            - Second DataFrame: Summary information for all samples
+            - Third dict: Simple statistical summary with sample counts and lists
+        """
+        # Create a StringIO object to capture stdout
+        output_buffer = StringIO()
+        
+        # Use a context manager to redirect stdout temporarily
+        with contextlib.redirect_stdout(output_buffer):
+            # Call the original function
+            combined_results, samples_df, stats_summary = find_gene_linked_super_enhancers_in_directory(
+                directory_path, gene_bed_filter
+            )
+        
+        # Get the captured output and split into lines
+        captured_output = output_buffer.getvalue()
+        output_lines = captured_output.strip().split('\n')
+        
+        # Log each line that was printed
+        for line in output_lines:
+            if line.strip():  # Skip empty lines
+                # Log different types of lines with appropriate log levels
+                if "Error" in line or "Exception" in line:
+                    self.logger.error(line)
+                elif "Warning" in line:
+                    self.logger.warning(line)
+                elif verbose:  # Only log detailed info if verbose is True
+                    self.logger.info(line)
+        
+        return combined_results, samples_df, stats_summary
+
+    def _display_super_enhancers_only_summary(self, gene_symbol: str) -> None:
+        """
+        Helper method to display a summary of super enhancers only for a gene.
+        Uses logger instead of print statements.
+        
+        Parameters:
+        -----------
+        gene_symbol : str
+            Gene symbol to display super enhancers summary for
+        """
+        if gene_symbol not in self._se_directory_results:
+            self.logger.info(f"No directory search results found for gene '{gene_symbol}'.")
+            return
+        
+        result_data = self._se_directory_results[gene_symbol]
+        
+        super_only = result_data.get("super_only_results", pd.DataFrame())
+        if super_only.empty:
+            self.logger.info(f"No super enhancers (isSuper==1) found for gene '{gene_symbol}'.")
+            return
+                
+        # Count stats
+        super_count = len(super_only)
+        super_samples = super_only['sample_name'].nunique() if 'sample_name' in super_only.columns else 0
+        
+        self.logger.info("\n" + "="*80)
+        self.logger.info(f"SUPER ENHANCERS ONLY SUMMARY FOR GENE: {gene_symbol}")
+        self.logger.info("="*80)
+        
+        self.logger.info(f"\nFound {super_count} super enhancers across {super_samples} samples linked to gene {gene_symbol}")
+        
+        # List samples with super enhancers if not too many
+        if super_samples <= 10 and 'sample_name' in super_only.columns:
+            sample_list = sorted(super_only['sample_name'].unique())
+            self.logger.info(f"Samples with super enhancers: {', '.join(sample_list)}")
+        
+        # Show summary table by sample if available
+        if 'sample_name' in super_only.columns:
+            sample_counts = super_only.groupby('sample_name').size().reset_index(name='count')
+            sample_counts = sample_counts.sort_values('count', ascending=False)
+            self.logger.info("\nSUPER ENHANCERS PER SAMPLE:")
+            # For each sample, log the count (as tables can't be directly logged)
+            for _, row in sample_counts.iterrows():
+                self.logger.info(f"  {row['sample_name']}: {row['count']} super enhancers")
+        
+        # Show first few super enhancers if available
+        if not super_only.empty:
+            self.logger.info("\nSAMPLE SUPER ENHANCERS (first 5):")
+            display_columns = ['sample_name', 'CHROM', 'START', 'STOP', 'REGION_ID', 'enhancerRank']
+            display_cols = [col for col in display_columns if col in super_only.columns]
+            
+            # Show only first 5 rows
+            for i, (_, row) in enumerate(super_only[display_cols].head().iterrows()):
+                self.logger.info(f"  {i+1}. {' | '.join([f'{col}: {row[col]}' for col in display_cols])}")
+
+
+
+
+
+
+    def save_super_enhancers_only(
+        self,
+        gene_symbol: Optional[str] = None,
+        output_dir: str = './output',
+        output_prefix: Optional[str] = None,
+        file_format: str = "csv"
+    ) -> None:
+        """
+        Save previously searched gene's super enhancers only (isSuper==1) results to a file.
+        
+        Parameters:
+        -----------
+        gene_symbol : Optional[str]
+            Gene symbol to save results for. If None, uses the last searched gene.
+        output_dir : str
+            Directory to save files.
+        output_prefix : Optional[str]
+            Prefix for output filenames.
+        file_format : str
+            File format: "csv" or "tsv" (default: "csv").
+        """
+        self.logger.info(f"Saving super enhancers only for gene_symbol={gene_symbol if gene_symbol else 'last searched gene'}.")
+        
+        try:
+            # Validate file format
+            if file_format.lower() not in ["csv", "tsv"]:
+                self.logger.warning(f"Invalid file format: {file_format}. Using 'csv' instead.")
+                file_format = "csv"
+            
+            # Set delimiter and extension based on file format
+            delimiter = "," if file_format.lower() == "csv" else "\t"
+            extension = file_format.lower()
+            
+            if gene_symbol is None:
+                if self._last_searched_gene_directory is None:
+                    self.logger.error("No gene has been searched. Please specify a gene symbol.")
+                    print("Error: No gene has been searched. Please specify a gene symbol.")
+                    return
+                gene_symbol = self._last_searched_gene_directory
+            
+            if gene_symbol not in self._se_directory_results:
+                self.logger.error(f"No directory results found for gene '{gene_symbol}'. Please search for this gene first.")
+                print(f"Error: No directory results found for gene '{gene_symbol}'. Please search for this gene first.")
+                return
+            
+            result_data = self._se_directory_results[gene_symbol]
+            
+            # Check if super enhancers only data exists
+            if "super_only_results" not in result_data or result_data["super_only_results"].empty:
+                self.logger.warning(f"No super enhancers found for gene '{gene_symbol}'.")
+                print(f"Warning: No super enhancers found for gene '{gene_symbol}'.")
+                return
+            
+            # Create output directory if it doesn't exist
+            os.makedirs(output_dir, exist_ok=True)
+            
+            # Generate timestamp for unique filenames
+            timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+            
+            # Use specified prefix or default to gene symbol
+            prefix = output_prefix if output_prefix else gene_symbol
+            
+            # Save super enhancers only DataFrame
+            super_file = os.path.join(output_dir, f"{prefix}_super_enhancers_only_{timestamp}.{extension}")
+            result_data["super_only_results"].to_csv(super_file, sep=delimiter, index=False)
+            self.logger.info(f"Super enhancers only results saved to {super_file}")
+            print(f"Super enhancers only results saved to {super_file}")
+            
+        except Exception as e:
+            self.logger.exception(f"Error in save_super_enhancers_only: {e}")
+            print(f"Error saving super enhancers only results: {e}")
+
+
+
+
+
+    def plot_super_enhancers_overall_distribution(
+        self,
+        gene_symbol: Optional[str] = None,
+        figsize: Tuple[int, int] = (15, 8),
+        colors: List[str] = None,
+        title: Optional[str] = None,
+        save_fig: bool = False,
+        fig_format: str = 'png',
+        output_dir: str = './output',
+        output_prefix: Optional[str] = None,
+        save_data: bool = False,
+        data_format: str = 'csv',
+        show_plot: bool = True,
+        percentile_column: str = 'super_percentile',
+        bins: int = 20
+    ) -> Optional[Tuple[plt.Figure, plt.Figure, plt.Figure]]:
+        """
+        Plot distribution of super enhancer percentiles across all samples.
+        Creates three separate plots: histogram, boxplot+swarm, and a pie chart showing sample distribution.
+        
+        Parameters:
+        -----------
+        gene_symbol : Optional[str]
+            Gene symbol to plot. If None, uses the last searched gene.
+        figsize : Tuple[int, int]
+            Figure size (width, height) in inches
+        colors : List[str]
+            List of colors for the different plots
+        title : Optional[str]
+            Custom title for plots. If None, a default title is generated.
+        save_fig : bool
+            Whether to save the figures
+        fig_format : str
+            Figure format: 'png', 'svg', or 'pdf' (default: 'png')
+        output_dir : str
+            Directory to save figure and data
+        output_prefix : Optional[str]
+            Prefix for output filenames. If None, uses gene symbol.
+        save_data : bool
+            Whether to save the data used for visualization
+        data_format : str
+            Data format: 'csv' or 'tsv' (default: 'csv')
+        show_plot : bool
+            Whether to display the plots in Jupyter
+        percentile_column : str
+            Column name for percentile data (default: 'super_percentile')
+        bins : int
+            Number of bins for histogram (default: 20)
+                    
+        Returns:
+        --------
+        Optional[Tuple[plt.Figure, plt.Figure, plt.Figure]]
+            If show_plot is True, returns the three figures (histogram_fig, boxswarm_fig, pie_fig)
+        """
+        self.logger.info(f"Plotting super enhancers percentile distribution for gene_symbol={gene_symbol if gene_symbol else 'last searched gene'}.")
+        
+        try:
+
+            
+            # Set default colors if not provided
+            if colors is None:
+                colors = ['#3498db', '#2ecc71', '#e74c3c', '#9b59b6']
+            
+            # Get the super enhancers DataFrame
+            if gene_symbol is None:
+                if self._last_searched_gene_directory is None:
+                    self.logger.error("No gene has been searched. Please specify a gene symbol.")
+                    print("Error: No gene has been searched. Please specify a gene symbol.")
+                    return None
+                gene_symbol = self._last_searched_gene_directory
+                
+            se_df = self.get_directory_super_enhancers(gene_symbol)
+            if se_df is None or se_df.empty:
+                self.logger.warning(f"No super enhancers found for gene '{gene_symbol}'.")
+                print(f"Warning: No super enhancers found for gene '{gene_symbol}'.")
+                return None
+            
+            # Check if percentile column exists - terminate if not found
+            if percentile_column not in se_df.columns:
+                self.logger.error(f"Column '{percentile_column}' not found in the DataFrame. Available columns: {list(se_df.columns)}")
+                print(f"Error: Percentile column '{percentile_column}' not found. This column should be present in the original data.")
+                return None
+            
+            # Extract percentile values
+            percentiles = se_df[percentile_column].dropna().values
+            
+            if len(percentiles) == 0:
+                self.logger.warning(f"No valid percentile values found for gene '{gene_symbol}'.")
+                print(f"Warning: No valid percentile values found for gene '{gene_symbol}'.")
+                return None
+            
+            # Generate title if not provided
+            if title is None:
+                title_base = f"Super Enhancer Percentile Distribution for Gene: {gene_symbol}"
+            else:
+                title_base = title
+            
+            # Calculate statistics for display
+            stats_text = (
+                f"Count: {len(percentiles)}\n"
+                f"Mean: {np.mean(percentiles):.2f}\n"
+                f"Median: {np.median(percentiles):.2f}\n"
+                f"Std Dev: {np.std(percentiles):.2f}\n"
+                f"Min: {np.min(percentiles):.2f}\n"
+                f"Max: {np.max(percentiles):.2f}\n"
+                f"25th: {np.percentile(percentiles, 25):.2f}\n"
+                f"75th: {np.percentile(percentiles, 75):.2f}"
+            )
+            
+            # ---------- FIGURE 1: HISTOGRAM ----------
+            self.logger.info("Creating histogram plot...")
+            histogram_fig = plt.figure(figsize=figsize)
+            ax = histogram_fig.add_subplot(111)
+            
+            # Plot histogram
+            sns.histplot(percentiles, bins=bins, kde=False, color=colors[0], ax=ax)
+            
+            # Set labels and title
+            ax.set_title(f"{title_base} - Histogram", fontsize=16)
+            ax.set_xlabel('Percentile', fontsize=14)
+            ax.set_ylabel('Frequency', fontsize=14)
+            
+            # Add stats text box
+            props = dict(boxstyle='round', facecolor='white', alpha=0.8)
+            ax.text(0.05, 0.95, stats_text, transform=ax.transAxes, 
+                    fontsize=10, verticalalignment='top', bbox=props)
+            
+            # Adjust layout
+            histogram_fig.tight_layout()
+            
+            # Save histogram if requested
+            if save_fig:
+                os.makedirs(output_dir, exist_ok=True)
+                prefix = output_prefix if output_prefix else gene_symbol
+                hist_fig_path = os.path.join(output_dir, f"{prefix}_histogram.{fig_format}")
+                histogram_fig.savefig(hist_fig_path, format=fig_format, dpi=300, bbox_inches='tight')
+                self.logger.info(f"Histogram saved to {hist_fig_path}")
+                print(f"Histogram saved to {hist_fig_path}")
+            
+            # ---------- FIGURE 2: BOXPLOT + SWARM ----------
+            self.logger.info("Creating boxplot with swarm plot...")
+            boxswarm_fig = plt.figure(figsize=figsize)
+            ax = boxswarm_fig.add_subplot(111)
+            
+            # Create a DataFrame for seaborn
+            box_data = pd.DataFrame({percentile_column: percentiles})
+            
+            # Plot boxplot
+            sns.boxplot(y=percentile_column, data=box_data, color=colors[1], ax=ax)
+            
+            # Add swarm plot on top of the boxplot
+            sns.swarmplot(y=percentile_column, data=box_data, color=colors[2], 
+                        size=8, alpha=0.7, ax=ax)
+            
+            # Set labels and title
+            ax.set_title(f"{title_base} - Boxplot with Distribution", fontsize=16)
+            ax.set_ylabel('Percentile', fontsize=14)
+            ax.set_xticks([])  # Remove x-ticks
+            
+            # Add stats text box
+            props = dict(boxstyle='round', facecolor='white', alpha=0.8)
+            ax.text(0.05, 0.95, stats_text, transform=ax.transAxes, 
+                    fontsize=10, verticalalignment='top', bbox=props)
+            
+            # Adjust layout
+            boxswarm_fig.tight_layout()
+            
+            # Save boxplot+swarm if requested
+            if save_fig:
+                os.makedirs(output_dir, exist_ok=True)
+                prefix = output_prefix if output_prefix else gene_symbol
+                box_fig_path = os.path.join(output_dir, f"{prefix}_boxswarm.{fig_format}")
+                boxswarm_fig.savefig(box_fig_path, format=fig_format, dpi=300, bbox_inches='tight')
+                self.logger.info(f"Boxplot+swarm saved to {box_fig_path}")
+                print(f"Boxplot+swarm saved to {box_fig_path}")
+            
+            # ---------- FIGURE 3: PIE CHART FOR SAMPLE DISTRIBUTION ----------
+            self.logger.info("Creating pie chart for sample distribution...")
+            
+            # Access sample statistics
+            stats_summary = None
+            if gene_symbol in self._se_directory_results:
+                if "stats_summary" in self._se_directory_results[gene_symbol]:
+                    stats_summary = self._se_directory_results[gene_symbol]["stats_summary"]
+            
+            if stats_summary is None:
+                self.logger.warning("Sample statistics not found. Skipping pie chart.")
+                pie_fig = None
+            else:
+                pie_fig = plt.figure(figsize=(10, 8))
+                ax = pie_fig.add_subplot(111)
+                
+                # Extract data for pie chart
+                total_samples = stats_summary.get('total_sample_count', 0)
+                super_matched_count = stats_summary.get('super_matched', {}).get('count', 0)
+                samples_without_se = total_samples - super_matched_count
+                
+                # Data for pie chart
+                labels = [f'Samples with SE ({super_matched_count})', 
+                        f'Samples without SE ({samples_without_se})']
+                sizes = [super_matched_count, samples_without_se]
+                
+                # Create pie chart
+                wedges, texts, autotexts = ax.pie(
+                    sizes, 
+                    labels=None,  # We'll add custom legend instead
+                    autopct='%1.1f%%',
+                    startangle=90,
+                    wedgeprops={'edgecolor': 'w', 'linewidth': 1},
+                    textprops={'fontsize': 14}
+                )
+                
+                # Set equal aspect ratio to ensure circular pie
+                ax.axis('equal')
+                
+                # Add title
+                ax.set_title(f"SE Distribution Across Samples for Gene: {gene_symbol}", fontsize=16)
+                
+                # Add legend
+                ax.legend(wedges, labels, loc='center left', bbox_to_anchor=(0.9, 0.5), 
+                        fontsize=12, frameon=True)
+                
+                # Add some additional sample statistics as text
+                sample_stats_text = (
+                    f"Total Samples: {total_samples}\n"
+                    f"Samples with SE: {super_matched_count} ({stats_summary.get('super_matched', {}).get('percentage', 0):.1f}%)\n"
+                    f"Samples without SE: {samples_without_se} ({100 - stats_summary.get('super_matched', {}).get('percentage', 0):.1f}%)"
+                )
+                
+                # Add text box with sample statistics
+                props = dict(boxstyle='round', facecolor='white', alpha=0.8)
+                ax.text(-0.2, -0.15, sample_stats_text, transform=ax.transAxes, 
+                        fontsize=12, va='top', bbox=props)
+                
+                # Adjust layout
+                pie_fig.tight_layout()
+                
+                # Save pie chart if requested
+                if save_fig and pie_fig is not None:
+                    os.makedirs(output_dir, exist_ok=True)
+                    prefix = output_prefix if output_prefix else gene_symbol
+                    pie_fig_path = os.path.join(output_dir, f"{prefix}_sample_pie.{fig_format}")
+                    pie_fig.savefig(pie_fig_path, format=fig_format, dpi=300, bbox_inches='tight')
+                    self.logger.info(f"Sample distribution pie chart saved to {pie_fig_path}")
+                    print(f"Sample distribution pie chart saved to {pie_fig_path}")
+            
+            # Display quartile information
+            q1 = np.percentile(percentiles, 25)
+            q2 = np.percentile(percentiles, 50)
+            q3 = np.percentile(percentiles, 75)
+            iqr = q3 - q1
+            
+            quartile_text = (
+                f"Quartiles for {gene_symbol} Super Enhancer Percentiles:\n"
+                f"Q1 (25%): {q1:.2f}\n"
+                f"Q2 (50%, Median): {q2:.2f}\n"
+                f"Q3 (75%): {q3:.2f}\n"
+                f"IQR: {iqr:.2f}"
+            )
+            print(quartile_text)
+            
+            # Save data if requested
+            if save_data:
+                try:
+                    # Get the dataframe with relevant data
+                    se_df = self.get_directory_super_enhancers(gene_symbol)
+                    if se_df is not None and not se_df.empty:
+                        # Validate file format
+                        if data_format.lower() not in ["csv", "tsv"]:
+                            self.logger.warning(f"Invalid file format: {data_format}. Using 'csv' instead.")
+                            data_format = "csv"
+                        
+                        # Set delimiter and extension based on file format
+                        delimiter = "," if data_format.lower() == "csv" else "\t"
+                        extension = data_format.lower()
+                        
+                        # Ensure output directory exists
+                        os.makedirs(output_dir, exist_ok=True)
+                        
+                        # Use specified prefix or default to gene symbol
+                        prefix = output_prefix if output_prefix else gene_symbol
+                        
+                        # Define filename without timestamp
+                        filename = f"{prefix}_percentile_data.{extension}"
+                        output_path = os.path.join(output_dir, filename)
+                        
+                        # Save the data
+                        se_df.to_csv(output_path, sep=delimiter, index=False)
+                        
+                        self.logger.info(f"Super enhancers percentile data saved to {output_path}")
+                        print(f"Super enhancers percentile data saved to {output_path}")
+                    else:
+                        self.logger.warning(f"No data to save for gene '{gene_symbol}'")
+                        print(f"Warning: No data to save for gene '{gene_symbol}'")
+                except Exception as e:
+                    self.logger.exception(f"Error saving super enhancers percentile data: {e}")
+                    print(f"Error saving super enhancers percentile data: {e}")
+            
+            # Show plots if requested
+            if show_plot:
+                plt.show()
+            else:
+                plt.close(histogram_fig)
+                plt.close(boxswarm_fig)
+                if pie_fig is not None:
+                    plt.close(pie_fig)
+            
+            # Return figures for further customization
+            if show_plot:
+                return histogram_fig, boxswarm_fig, pie_fig
+            else:
+                return None
+        
+        except Exception as e:
+            self.logger.exception(f"Error in plot_super_enhancers_overall_distribution: {e}")
+            print(f"Error plotting super enhancers overall distribution: {e}")
+            return None
+
+
+
+
 
     @property
     def FDR(self) -> float:
@@ -2578,9 +4125,190 @@ class SEgeneJupyter:
         return self._temp_full_df_info
 
 
+    @property
+    def gene_bed_filter(self) -> Optional[BedTool]:
+        """
+        Returns the gene-specific BED filter created by search_gene_enhancer_links.
+        
+        Returns:
+            Optional[BedTool]: BedTool object containing enhancers for the last searched gene,
+                            or None if no filter has been created.
+        """
+        if hasattr(self, '_gene_bed_filter'):
+            return self._gene_bed_filter
+        else:
+            self.logger.warning("No gene-specific BED filter available. Run search_gene_enhancer_links first.")
+            return None
+
+    @property
+    def gene_enhancer_results(self) -> dict:
+        """
+        Returns a dictionary of all gene enhancer search results.
+        
+        Returns:
+            dict: Dictionary with gene symbols as keys and search results as values
+        """
+        return self._gene_enhancer_results
+
+    @property
+    def last_gene_search_result(self) -> Optional[dict]:
+        """
+        Returns the search result for the last searched gene.
+        
+        Returns:
+            Optional[dict]: Result dictionary for the last searched gene, or None if no gene has been searched
+        """
+        if self._last_searched_gene is None:
+            self.logger.warning("No gene has been searched yet.")
+            return None
+        return self._gene_enhancer_results.get(self._last_searched_gene)
+
+    @property
+    def last_searched_gene(self) -> Optional[str]:
+        """
+        Returns the symbol of the last searched gene.
+        
+        Returns:
+            Optional[str]: Last searched gene symbol, or None if no gene has been searched
+        """
+        return self._last_searched_gene
+
+    @property
+    def available_gene_results(self) -> List[str]:
+        """
+        Returns a list of gene symbols for which search results are available.
+        
+        Returns:
+            List[str]: List of gene symbols with available search results
+        """
+        return list(self._gene_enhancer_results.keys())
+
 
     @current_sort_key.setter
     def current_sort_key(self, new_sort_key: str) -> None:
 
         self.logger.info(f"Setting current_sort_key to '{new_sort_key}'.")
         self._current_sort_key = new_sort_key
+
+
+
+
+
+
+
+
+
+    @property
+    def se_directory_results(self) -> dict:
+        """
+        Returns a dictionary of all directory search results.
+        
+        Returns:
+            dict: Dictionary with gene symbols as keys and search results as values
+        """
+        return self._se_directory_results
+
+    @property
+    def last_directory_search_result(self) -> Optional[dict]:
+        """
+        Returns the search result for the last searched gene directory.
+        
+        Returns:
+            Optional[dict]: Result dictionary for the last searched gene directory, or None if no search has been performed
+        """
+        if self._last_searched_gene_directory is None:
+            self.logger.warning("No gene directory has been searched yet.")
+            return None
+        return self._se_directory_results.get(self._last_searched_gene_directory)
+
+    @property
+    def last_directory_search_gene(self) -> Optional[str]:
+        """
+        Returns the symbol of the last searched gene directory.
+        
+        Returns:
+            Optional[str]: Last searched gene directory symbol, or None if no search has been performed
+        """
+        return self._last_searched_gene_directory
+
+    @property
+    def available_directory_results(self) -> List[str]:
+        """
+        Returns a list of gene symbols for which directory search results are available.
+        
+        Returns:
+            List[str]: List of gene symbols with available directory search results
+        """
+        return list(self._se_directory_results.keys())
+
+    @property
+    def directory_super_enhancers(self) -> Optional[pd.DataFrame]:
+        """
+        Returns the Super Enhancers only (isSuper==1) DataFrame for the last searched gene.
+        
+        Returns:
+            Optional[pd.DataFrame]: DataFrame containing only Super Enhancers, or None if no search has been performed
+        """
+        if self._last_searched_gene_directory is None:
+            self.logger.warning("No gene directory has been searched yet.")
+            return None
+        
+        result = self._se_directory_results.get(self._last_searched_gene_directory)
+        if result and "super_only_results" in result:
+            return result["super_only_results"]
+        return None
+    
+
+
+
+
+
+    @property
+    def all_super_enhancers(self) -> Dict[str, pd.DataFrame]:
+        """
+        Returns a dictionary of all super enhancers (isSuper==1) DataFrames for all searched genes.
+        
+        Returns:
+            Dict[str, pd.DataFrame]: Dictionary with gene symbols as keys and super enhancers DataFrames as values
+        """
+        result = {}
+        for gene_symbol in self._se_directory_results:
+            se_data = self._se_directory_results[gene_symbol].get("super_only_results")
+            if se_data is not None and not se_data.empty:
+                result[gene_symbol] = se_data
+        return result
+
+    @property
+    def super_enhancers_count(self) -> Dict[str, int]:
+        """
+        Returns counts of super enhancers for each gene that has been searched.
+        
+        Returns:
+            Dict[str, int]: Dictionary with gene symbols as keys and counts of super enhancers as values
+        """
+        result = {}
+        for gene_symbol in self._se_directory_results:
+            se_data = self._se_directory_results[gene_symbol].get("super_only_results")
+            if se_data is not None:
+                result[gene_symbol] = len(se_data)
+            else:
+                result[gene_symbol] = 0
+        return result
+
+    @property
+    def super_enhancers_sample_counts(self) -> Dict[str, Dict[str, int]]:
+        """
+        Returns counts of super enhancers per sample for each gene.
+        
+        Returns:
+            Dict[str, Dict[str, int]]: Dictionary with gene symbols as keys and dictionaries of sample counts as values
+        """
+        result = {}
+        for gene_symbol in self._se_directory_results:
+            se_data = self._se_directory_results[gene_symbol].get("super_only_results")
+            if se_data is not None and not se_data.empty and 'sample_name' in se_data.columns:
+                sample_counts = se_data['sample_name'].value_counts().to_dict()
+                result[gene_symbol] = sample_counts
+            else:
+                result[gene_symbol] = {}
+        return result

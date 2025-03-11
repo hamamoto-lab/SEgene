@@ -24,6 +24,8 @@ import matplotlib.ticker as ticker
 import random
 import string
 
+import glob
+
 
 def sort_bed(bed_object):
     bed_df=bed_object.to_dataframe()
@@ -1216,3 +1218,290 @@ def se_list_to_filtered_region_bed_custom(
         bed_after_threshold = bed_before_threshold
     
     return bed_after_threshold, bed_before_threshold, bed_df_concat_sort
+
+
+def find_gene_linked_super_enhancers(se_file, gene_bed_filter):
+    """
+    Find super enhancers in the given SE file that are linked to genes in the gene_bed_filter.
+    Improved version that includes all enhancers (both super and typical) in the results.
+    
+    Parameters:
+    -----------
+    se_file : str
+        Path to ROSE *_AllEnhancers.table.txt file
+    gene_bed_filter : BedTool
+        BedTool object containing gene filter information
+    
+    Returns:
+    --------
+    pd.DataFrame
+        DataFrame containing filtered super enhancer information
+    """
+    try:
+        # Get all enhancers, super enhancers, and typical enhancers
+        bed_table_all, bed_table_super, bed_table_typical = return_bed_obj_tupple_from_rose_all_table(se_file)
+        
+        # Get the total count of super enhancers for percentile calculation
+        total_super_enhancers = len(bed_table_super)
+        
+        # Check intersection with gene filter for ALL enhancers
+        intersection_all = bed_table_all.intersect(gene_bed_filter, wa=True)
+        
+        # Convert to DataFrame
+        if intersection_all:
+            # Create DataFrame from the intersection
+            df_all = intersection_all.to_dataframe(names=['CHROM', 'START', 'STOP', 'REGION_ID', 'FIXED_SIGNAL', 'STRAND'])
+            
+            # Get the full data from the original enhancer table
+            # Since the intersection only gives us partial information
+            table_new_index = [
+                'REGION_ID', 'CHROM', 'START', 'STOP', 'NUM_LOCI', 
+                'CONSTITUENT_SIZE', 'SIGNAL', 'CONTROL_SIGNAL', 
+                'enhancerRank', 'isSuper'
+            ]
+            
+            # Read the original table
+            df_original = pd.read_table(se_file, comment="#").set_axis(table_new_index, axis='columns')
+            
+            # Filter to only keep the intersected REGION_IDs and create an explicit copy
+            df_filtered = df_original[df_original['REGION_ID'].isin(df_all['REGION_ID'])].copy()
+            
+            # Add the total super enhancers count to the result
+            df_filtered['total_super_enhancers'] = total_super_enhancers
+            
+            return df_filtered
+        else:
+            # Return empty DataFrame if no intersections found
+            return pd.DataFrame()
+    
+    except Exception as e:
+        print(f"Error processing {se_file}: {e}")
+        return pd.DataFrame()
+
+
+
+def find_gene_linked_super_enhancers_in_directory(directory_path, gene_bed_filter):
+    """
+    Processes all SE files in the specified directory to find enhancers (both regular and super)
+    linked to genes in the given gene_bed_filter.
+    
+    Parameters:
+    -----------
+    directory_path : str
+        Path to directory containing ROSE files (*_AllEnhancers.table.txt)
+    gene_bed_filter : BedTool
+        BedTool object containing gene filter information
+    
+    Returns:
+    --------
+    tuple of (pd.DataFrame, pd.DataFrame, dict)
+        - First DataFrame: Combined results from all samples
+        - Second DataFrame: Summary information for all samples
+        - Third dict: Simple statistical summary with sample counts and lists
+    """
+    # Get all *_AllEnhancers.table.txt files in the directory
+    pattern = os.path.join(directory_path, "*_AllEnhancers.table.txt")
+    se_files = glob.glob(pattern)
+    
+    if not se_files:
+        print(f"No enhancer files matching the pattern '*_AllEnhancers.table.txt' found in {directory_path}")
+        return pd.DataFrame(), pd.DataFrame(), {}
+    
+    # Store total sample count
+    total_sample_count = len(se_files)
+    print(f"Found {total_sample_count} enhancer files in {directory_path}")
+    
+    # Process each file and collect results
+    all_results = []
+    sample_info = []
+    
+    for se_file in se_files:
+        # Extract sample name from filename (remove _AllEnhancers.table.txt)
+        filename = os.path.basename(se_file)
+        sample_name = filename.replace("_AllEnhancers.table.txt", "")
+        
+        # Process this file
+        print(f"Processing {filename}...")
+        result_df = find_gene_linked_super_enhancers(se_file, gene_bed_filter)
+        
+        # Get total number of super enhancers in the file
+        total_ses = 0
+        if not result_df.empty and 'total_super_enhancers' in result_df.columns:
+            total_ses = result_df['total_super_enhancers'].iloc[0]
+        else:
+            # If result_df is empty, we need to extract total super enhancers directly
+            try:
+                # Use the return_bed_obj_tupple_from_rose_all_table function to get SE information
+                _, bed_table_super, _ = return_bed_obj_tupple_from_rose_all_table(se_file)
+                total_ses = len(bed_table_super)
+            except Exception as e:
+                print(f"  Warning: Could not determine total super enhancers in {filename}: {e}")
+        
+        # Count super enhancers and regular enhancers separately
+        super_enhancers_count = 0
+        regular_enhancers_count = 0
+        if not result_df.empty and 'isSuper' in result_df.columns:
+            super_enhancers_count = result_df[result_df['isSuper'] == 1].shape[0]
+            regular_enhancers_count = result_df[result_df['isSuper'] == 0].shape[0]
+        
+        # Create sample info record
+        sample_record = {
+            'sample_name': sample_name,
+            'file_path': se_file,
+            'total_super_enhancers': total_ses,
+            'linked_super_enhancers_count': super_enhancers_count,
+            'linked_regular_enhancers_count': regular_enhancers_count,
+            'linked_total_enhancers_count': super_enhancers_count + regular_enhancers_count,
+            'has_matches': not result_df.empty
+        }
+        sample_info.append(sample_record)
+        
+        if not result_df.empty:
+            # Add sample name to results
+            result_df = result_df.copy()  # Create explicit copy
+            result_df.loc[:, 'sample_name'] = sample_name
+            all_results.append(result_df)
+            print(f"  Found {super_enhancers_count} gene-linked super enhancers and {regular_enhancers_count} regular enhancers (out of {total_ses} total super enhancers)")
+        else:
+            # Create a placeholder entry for samples with no matches
+            placeholder = pd.DataFrame({
+                'sample_name': [sample_name],
+                'total_super_enhancers': [total_ses],
+                'has_matches': [False],
+                'REGION_ID': [None],
+                'CHROM': [None],
+                'START': [None],
+                'STOP': [None],
+                'enhancerRank': [None],
+                'isSuper': [None]
+            })
+            all_results.append(placeholder)
+            print(f"  No gene-linked enhancers found")
+    
+    # Create summary dataframe for samples
+    samples_df = pd.DataFrame(sample_info)
+    
+    # Combine all results
+    combined_results = pd.concat(all_results, ignore_index=True)
+    combined_results = combined_results.copy()  # Create explicit copy
+    
+    # Calculate super enhancer percentile - only for super enhancers (isSuper=1)
+    if 'enhancerRank' in combined_results.columns and 'total_super_enhancers' in combined_results.columns and 'isSuper' in combined_results.columns:
+        # Calculate percentile as (enhancerRank / total_super_enhancers) * 100 only for super enhancers
+        combined_results.loc[:, 'super_percentile'] = combined_results.apply(
+            lambda row: 100 - ((row['enhancerRank'] / row['total_super_enhancers']) * 100) 
+            if pd.notna(row['enhancerRank']) and pd.notna(row['total_super_enhancers']) 
+               and row['total_super_enhancers'] > 0 and row.get('isSuper') == 1
+            else None, 
+            axis=1
+        )
+        
+        # Format to 2 decimal places
+        combined_results.loc[:, 'super_percentile'] = combined_results['super_percentile'].apply(
+            lambda x: round(x, 2) if pd.notna(x) else None
+        )
+        
+        # Reorder columns to put super_percentile next to total_super_enhancers
+        cols = combined_results.columns.tolist()
+        total_se_index = cols.index('total_super_enhancers')
+        cols.remove('super_percentile')
+        cols.insert(total_se_index + 1, 'super_percentile')
+        combined_results = combined_results[cols]
+    
+    # Convert numeric columns to integer type where appropriate
+    integer_columns = ['NUM_LOCI', 'isSuper', 'enhancerRank', 'CONSTITUENT_SIZE', 
+                       'total_super_enhancers', 'START', 'STOP']
+    for col in integer_columns:
+        if col in combined_results.columns:
+            # Use pandas Int64 type which supports NaN values
+            try:
+                combined_results[col] = combined_results[col].astype('Int64')
+            except Exception as e:
+                print(f"Warning: Could not convert column '{col}' to integer: {e}")
+    
+    # Add additional information
+    combined_results.loc[:, 'has_matches'] = combined_results['REGION_ID'].notna()
+    
+    # Reorder columns to put sample_name first
+    cols = combined_results.columns.tolist()
+    if 'sample_name' in cols:
+        cols.remove('sample_name')
+        cols = ['sample_name'] + cols
+        combined_results = combined_results[cols]
+    
+    # Print summary for samples
+    samples_with_matches = samples_df[samples_df['has_matches']].shape[0]
+    samples_with_se = samples_df[samples_df['linked_super_enhancers_count'] > 0].shape[0]
+    total_samples = len(samples_df)
+    
+    print(f"\nSummary:")
+    print(f"Total samples processed: {total_samples}")
+    print(f"Samples with gene-linked enhancers: {samples_with_matches} ({samples_with_matches/total_samples*100:.1f}%)")
+    print(f"Samples with gene-linked SE: {samples_with_se} ({samples_with_se/total_samples*100:.1f}%)")
+    
+    # Also convert integer columns in the samples_df
+    for col in ['total_super_enhancers', 'linked_super_enhancers_count', 
+                'linked_regular_enhancers_count', 'linked_total_enhancers_count']:
+        if col in samples_df.columns:
+            try:
+                samples_df[col] = samples_df[col].astype('Int64')
+            except Exception as e:
+                print(f"Warning: Could not convert column '{col}' in samples_df to integer: {e}")
+    
+    # --- Generate simple statistics ---
+    
+    # Extract valid results only
+    valid_results = combined_results[combined_results['REGION_ID'].notna()]
+    
+    # 1. Total sample count
+    total_samples = total_sample_count
+    
+    # 2. All matched samples (including regular enhancers)
+    all_matched_samples = set(valid_results['sample_name'].unique())
+    all_matched_count = len(all_matched_samples)
+    all_matched_percentage = (all_matched_count / total_samples) * 100
+    
+    # 3. Super enhancer matched samples
+    super_enhancer_results = valid_results[valid_results['isSuper'] == 1]
+    super_matched_samples = set(super_enhancer_results['sample_name'].unique())
+    super_matched_count = len(super_matched_samples)
+    super_matched_percentage = (super_matched_count / total_samples) * 100
+    
+    # Create simple statistics dictionary
+    stats_summary = {
+        'total_sample_count': total_samples,
+        'all_matched': {
+            'count': all_matched_count,
+            'percentage': round(all_matched_percentage, 2),
+            'sample_list': sorted(list(all_matched_samples))
+        },
+        'super_matched': {
+            'count': super_matched_count,
+            'percentage': round(super_matched_percentage, 2),
+            'sample_list': sorted(list(super_matched_samples))
+        }
+    }
+    
+    # Print statistics summary
+    print("\n--- Statistics Summary ---")
+    print(f"1. Total sample count: {stats_summary['total_sample_count']}")
+    print(f"2. Samples matched with any enhancers (including regular):")
+    print(f"   - Count: {stats_summary['all_matched']['count']} ({stats_summary['all_matched']['percentage']}%)")
+
+    # Print all matched sample list if not too long
+    if len(stats_summary['all_matched']['sample_list']) <= 10:
+        print(f"   - Sample list: {', '.join(stats_summary['all_matched']['sample_list'])}")
+    else:
+        print(f"   - Sample list: {', '.join(stats_summary['all_matched']['sample_list'][:5])} ... (and {len(stats_summary['all_matched']['sample_list']) - 5} more)")
+    
+    print(f"3. Samples matched with super enhancers:")
+    print(f"   - Count: {stats_summary['super_matched']['count']} ({stats_summary['super_matched']['percentage']}%)")
+    
+    # Print super matched sample list if not too long
+    if len(stats_summary['super_matched']['sample_list']) <= 10:
+        print(f"   - Sample list: {', '.join(stats_summary['super_matched']['sample_list'])}")
+    else:
+        print(f"   - Sample list: {', '.join(stats_summary['super_matched']['sample_list'][:5])} ... (and {len(stats_summary['super_matched']['sample_list']) - 5} more)")
+    
+    # Return the three objects
+    return combined_results, samples_df, stats_summary

@@ -174,7 +174,9 @@ If running with Docker, these directories must be bound to Docker beforehand.
 
 ## Usage
 
-- **Using the notebooks**: Refer to the [tutorial jupyter notebook](https://github.com/hamamoto-lab/SEgene/blob/main/SE_to_gene_links/notebooks/tutorial_book.ipynb) in the `notebooks/` directory to begin analyzing your data.
+- **Using the notebooks**: 
+  - [Main analysis notebook (including network analysis)](https://github.com/hamamoto-lab/SEgene/blob/main/SE_to_gene_links/notebooks/tutorial_book.ipynb): Comprehensive tutorial covering the core analytical functions and network analysis capabilities.
+  - [SE rank distribution analysis notebook](https://github.com/hamamoto-lab/SEgene/blob/main/SE_to_gene_links/notebooks/tutorial_book_SE_rank_disribution.ipynb): Added in v1.2.0, this notebook demonstrates how to analyze the ranking status (position and percentile in SE lists) of super-enhancers corresponding to specific genes within SE file datasets.
 - **Package features**: SEgene_package includes all tools necessary for analyzing the relationship between super-enhancers and genes.
 - **Additional Analysis Tools**: We also provide [command-line tools](https://github.com/hamamoto-lab/SEgene/tree/main/cli_tools) for analyzing correlations between SE regions and gene expression. Please refer to each tool's documentation for details.
 

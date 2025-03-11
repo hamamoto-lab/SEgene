@@ -5,7 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.0] - 2024-02-07
+
+## [1.2.0] - 2025-03-11
+
+### Added
+- **New core analysis capabilities** for SE rank distribution:
+  - Added functionality to search for gene-linked super-enhancers across multiple samples
+  - Implemented super-enhancer ranking analysis within datasets 
+  - Developed statistical tools for percentile calculation and distribution analysis
+  - Created visualization methods for SE rank distributions across samples
+- **New tutorial notebooks** to demonstrate the new analysis features:
+  - `tutorial_book_SE_rank_disribution.ipynb` (English)
+  - `tutorial_book_SE_rank_disribution_ja.ipynb` (Japanese)
+  - These notebooks guide users through analyzing the ranking status (position and percentile) of super-enhancers corresponding to specific genes
+
+### Notes
+- Documentation in README files has been updated to include information about the new notebooks
+
+## [1.1.0] - 2025-02-07
 
 ### Added
 - **New CLI tools (`cli_tools/`)** for streamlined featureCounts processing, CPM calculation, and SE–gene correlation analysis
@@ -22,7 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The newly added documents provide usage instructions and workflow details in both English and Japanese  
 - Enables advanced or extended analyses on top of the existing `SE_to_gene_links` functionalities
 
-## [1.0.0] - 2024-01-15
+## [1.0.0] - 2025-01-15
 
 ### Added
 - Initial release of SEgene, a comprehensive platform for identifying and analyzing Super-Enhancer-to-gene links through statistical approaches
@@ -35,5 +52,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Interactive analysis with Jupyter Notebook
 - Detailed installation instructions and documentation in the GitHub repository
 
+[1.2.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.2.0
 [1.1.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.1.0
 [1.0.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.0.0
+

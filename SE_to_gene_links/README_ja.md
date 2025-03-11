@@ -173,7 +173,9 @@ sudo apt-get install docker-compose-plugin
 
 ## 使い方
 
-- **ノートブックの使用**: `notebooks/` ディレクトリ内に[チュートリアル用のjupyter notebook](https://github.com/hamamoto-lab/SEgene/blob/main/SE_to_gene_links/notebooks/tutorial_book_ja.ipynb)があります。これを参考にして、自身のデータ解析を始めてください。
+- **ノートブックの使用**: 
+  - [メイン解析用notebook（ネットワーク解析含む）](https://github.com/hamamoto-lab/SEgene/blob/main/SE_to_gene_links/notebooks/tutorial_book_ja.ipynb): 主要な解析機能とネットワーク解析機能をカバーするメインのチュートリアルです。
+  - [SEランク分布解析用notebook](https://github.com/hamamoto-lab/SEgene/blob/main/SE_to_gene_links/notebooks/tutorial_book_SE_rank_disribution_ja.ipynb): v1.2.0で追加された機能で、特定の遺伝子に注目してSEファイルデータセット内の対応SEのランキング状況（SEリスト中の順位とそのパーセンタイル）を解析する方法を説明します。
 - **パッケージの機能**: SEgene_packageには、スーパーエンハンサーと遺伝子の関連解析に必要なツールが含まれています。
 - **追加の解析ツール**: SEで同定された領域と遺伝子発現の相関解析を行うための[コマンドラインツール群](https://github.com/hamamoto-lab/SEgene/tree/main/cli_tools/README_ja.md)も提供しています。詳細は各ツールのドキュメントを参照してください。
 
