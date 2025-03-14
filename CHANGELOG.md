@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2025-03-15
+
+### Added
+- **Enhanced visualization options** for ROSE summary plots:
+  - Added customizable parameters for DPI, figure size, and output format
+  - Improved figure saving capabilities with format selection
+
+### Fixed
+- Fixed threshold comparison in `p2gl_path_to_filter_df` function to correct filtering behavior
+
+### Notes
+- Added pronunciation guide for SEgene ("S-E-gene") in documentation
 
 ## [1.2.0] - 2025-03-11
 
@@ -52,6 +64,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Interactive analysis with Jupyter Notebook
 - Detailed installation instructions and documentation in the GitHub repository
 
+[1.3.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.3.0
 [1.2.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.2.0
 [1.1.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.1.0
 [1.0.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.0.0

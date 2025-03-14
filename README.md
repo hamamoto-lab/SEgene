@@ -2,7 +2,7 @@
 
 *(For the Japanese version of this README, please see [README_ja.md](https://github.com/hamamoto-lab/SEgene/blob/main/README_ja.md).)*
 
-**SEgene** is a platform designed to identify Super-Enhancer-to-gene links (SE-to-gene links) by incorporating the peak-to-gene links approach, a statistical method that uncovers correlations between genes and peak regions.
+**SEgene**  (pronounced "S-E-gene") is a platform designed to identify Super-Enhancer-to-gene links (SE-to-gene links) by incorporating the peak-to-gene links approach, a statistical method that uncovers correlations between genes and peak regions.
 This repository contains tools and scripts for **SEgene**.
 
 ## Features

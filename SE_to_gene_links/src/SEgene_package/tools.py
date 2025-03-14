@@ -175,8 +175,8 @@ def filter_p2g_df(p2g_df,
                     fdr_filter=0.01,
                     r_filter=0.5):
     df_temp=p2g_df
-    df_temp_fdr=df_temp.query("FDR <= " + str(fdr_filter))
-    df_temp_fdr_r=df_temp_fdr.query("r >= " + str(r_filter))
+    df_temp_fdr=df_temp.query("FDR < " + str(fdr_filter))
+    df_temp_fdr_r=df_temp_fdr.query("r > " + str(r_filter))
 
     return df_temp_fdr_r
 
@@ -555,9 +555,9 @@ def p2gl_path_to_filter_df(path_p2g_output,
     
     df_p2gl["distance"] = series_distance
     
-    df_p2gl_FDR = df_p2gl.query(f'FDR <= {fdr_filter}')
+    df_p2gl_FDR = df_p2gl.query(f'FDR < {fdr_filter}')
 
-    df_p2gl_FDR_r = df_p2gl_FDR.query(f'r >= {r_filter}')
+    df_p2gl_FDR_r = df_p2gl_FDR.query(f'r > {r_filter}')
     return df_p2gl_FDR_r
 
 def get_SE_sample_count(temp_merge_SE_name, mergeSE_wa_wb_sample_add):

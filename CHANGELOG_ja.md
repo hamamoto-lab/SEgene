@@ -5,6 +5,19 @@
 形式は [Keep a Changelog](https://keepachangelog.com/ja/1.1.0/) をベースとし、
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html) に準拠しています。
 
+## [1.3.0] - 2025-03-15
+
+### Added
+- **ROSE概要プロットの視覚化オプション強化**:
+  - DPI、図のサイズ、出力形式をカスタマイズするパラメータを追加
+  - 形式選択による図の保存機能を改善
+
+### Fixed
+- `p2gl_path_to_filter_df`関数の閾値比較を修正し、フィルタリング動作を正常化
+
+### Notes
+- ドキュメントにSEgene（「エスイージーン」と発音、英語では "S-E-gene"）の発音ガイドを追加
+
 ## [1.2.0] - 2025-03-11
 
 ### Added
@@ -51,6 +64,7 @@
     - Jupyter Notebook での対話的解析
 - GitHub リポジトリ内の詳細なインストール手順とドキュメント
 
+[1.3.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.3.0
 [1.2.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.2.0
 [1.1.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.1.0
 [1.0.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.0.0

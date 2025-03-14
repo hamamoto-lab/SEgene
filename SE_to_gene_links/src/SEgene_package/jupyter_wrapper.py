@@ -49,8 +49,7 @@ from SEgene_package.tools import (
     find_gene_linked_super_enhancers
 )
 
-from SEgene_package.graph_tools import create_ROSE_summary
-from SEgene_package.graph_tools import make_sort_se_merge_SE_count_graph
+#from SEgene_package.graph_tools import make_sort_se_merge_SE_count_graph
 
 
 from SEgene_package.networkx_tools import create_3_layer_DiGraph_mergeSE_to_gene_custom
@@ -63,6 +62,7 @@ from SEgene_package.region_visualize_tools import plot_stacked_reads_bed
 import glob
 from SEgene_package.tools import find_gene_linked_super_enhancers_in_directory
 
+from SEgene_package.graph_tools import create_ROSE_summary as plot_ROSE_summary
 
 def sort_se_merge_count_by_column(
     merge_se_count_df: pd.DataFrame, 
@@ -911,11 +911,10 @@ class SEgeneJupyter:
 
 
 
-
     def create_ROSE_summary(
         self,
         show_plot: bool = True,
-        save_svg: Optional[str] = None,
+        save_path: Optional[str] = None,
         save_text: Optional[str] = None,
         save_and_show: bool = False,
         include_pie_chart: bool = True,
@@ -923,9 +922,43 @@ class SEgeneJupyter:
         color_all: str = "blue",
         color_super: str = "red",
         line_color: str = "green",
-        line_style: str = "-"
+        line_style: str = "-",
+        dpi: int = 300,
+        figsize: Tuple[float, float] = (10, 8),
+        output_format: str = "svg"
     ) -> None:
-
+        """
+        Create a summary visualization of ROSE Super Enhancers analysis.
+        
+        Parameters:
+        -----------
+        show_plot : bool, default=True
+            Whether to display the plot
+        save_path : Optional[str], default=None
+            Path to save the figure (without extension)
+        save_text : Optional[str], default=None
+            Path to save the summary text
+        save_and_show : bool, default=False
+            Whether to save and show the plot
+        include_pie_chart : bool, default=True
+            Whether to include a pie chart
+        title : str, default="ROSE SE Summary"
+            Plot title
+        color_all : str, default="blue"
+            Color for all enhancers
+        color_super : str, default="red"
+            Color for super enhancers
+        line_color : str, default="green"
+            Color for threshold line
+        line_style : str, default="-"
+            Style for threshold line
+        dpi : int, default=300
+            Resolution in dots per inch for saved figure (higher = better quality)
+        figsize : Tuple[float, float], default=(10, 8)
+            Figure size (width, height) in inches
+        output_format : str, default="svg"
+            Output format for the figure: 'svg', 'png', 'jpg', 'pdf', 'eps'
+        """
         self.logger.info("Starting ROSE summary creation.")  
         try:
             if not self._bed_filter:
@@ -934,12 +967,13 @@ class SEgeneJupyter:
             if not self.rose_file or not os.path.exists(self.rose_file):
                 raise FileNotFoundError(f"Enhancer table not found: {self.rose_file}")
 
+            # Call the create_ROSE_summary function with all parameters
             
-            create_ROSE_summary(
+            plot_ROSE_summary(
                 bed_obj_bed_filter=self._bed_filter,
                 path_enhancer_table=self.rose_file,
                 show_plot=show_plot,
-                save_svg=save_svg,
+                save_path=save_path,
                 save_text=save_text,
                 save_and_show=save_and_show,
                 include_pie_chart=include_pie_chart,
@@ -947,14 +981,21 @@ class SEgeneJupyter:
                 color_all=color_all,
                 color_super=color_super,
                 line_color=line_color,
-                line_style=line_style
+                line_style=line_style,
+                dpi=dpi,
+                figsize=figsize,
+                output_format=output_format
             )
+            
+            self.logger.info(f"ROSE summary created successfully.")
+            if save_path:
+                self.logger.info(f"Saved main figure to {save_path}.{output_format} (DPI: {dpi})")
+                if include_pie_chart:
+                    self.logger.info(f"Saved pie chart to {save_path}_pie.{output_format} (DPI: {dpi})")
+                        
         except Exception as e:
             self.logger.exception(f"Error in create_ROSE_summary: {e}")
             raise
-        self.logger.info("ROSE summary created successfully.")  
-
-
 
 
 

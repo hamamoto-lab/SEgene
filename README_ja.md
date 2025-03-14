@@ -2,7 +2,7 @@
 
 *(For the English version of this README, please see [README.md](https://github.com/hamamoto-lab/SEgene/blob/main/README.md).)*
 
-**SEgene** は、遺伝子とピーク領域間の相関を明らかにする統計手法であるpeak-to-gene linksアプローチを取り入れて、スーパーエンハンサーから遺伝子へのリンク (SE-to-gene links) を特定及び分析するためのプラットフォームです。
+**SEgene** （「エスイージーン」と発音、英語では "S-E-gene"）は、遺伝子とピーク領域間の相関を明らかにする統計手法であるpeak-to-gene linksアプローチを取り入れて、スーパーエンハンサーから遺伝子へのリンク (SE-to-gene links) を特定及び分析するためのプラットフォームです。
 このリポジトリには **SEgene** 実行のためのツールとスクリプトが含まれています。
 
 ## 特徴
