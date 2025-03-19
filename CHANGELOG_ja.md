@@ -5,6 +5,30 @@
 形式は [Keep a Changelog](https://keepachangelog.com/ja/1.1.0/) をベースとし、
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html) に準拠しています。
 
+## [1.4.0] - 2025-03-19
+
+### Added
+- **ネットワーク可視化機能の強化**:
+  - 詳細なグラフ描画メソッド（`draw_network_detailed`、`draw_subnetwork_detailed`、`draw_two_layer_subnetwork_detailed`）を追加
+  - すべての可視化機能で複数の出力形式（SVG、PNG、EPS、PDF）をサポート
+  - ノードスタイリング、エッジスタイリング、サブグラフ境界のカスタマイズオプションを追加
+- **データエクスポート機能の改善**:
+  - 可視化と共にグラフデータを保存する機能を追加
+  - 再現性のためのログ出力機能を追加
+  - 様々な形式（CSV、TSV、JSON）でのデータエクスポートをサポート
+- **視覚化パラメータの拡張**:
+  - ラスター形式出力の解像度（DPI）制御を追加
+  - 図のサイズとスタイリングのカスタマイズオプションを追加
+  - すべてのネットワーク可視化メソッド（`draw_network`、`draw_subnetwork`、`draw_two_layer_subnetwork`）にカスタムタイトルのサポートを追加
+
+### Changed
+- 既存の可視化メソッドを拡張して複数の形式オプションをサポート
+- グラフレンダリングインターフェースに追加のカスタマイズパラメータを追加
+- 出力ファイル命名規則等を改善
+
+### Notes
+- これらの視覚化機能の強化は、既存のネットワーク解析機能との互換性を維持するよう設計
+
 ## [1.3.0] - 2025-03-15
 
 ### Added
@@ -41,8 +65,8 @@
   - `generate_gtf.py`, `generate_file_list.sh`, `run_featurecounts_array.sh` などのスクリプトを追加
   - `correlation_analysis.py` により、SE (CPM) と遺伝子 (TPM) のピアソン相関を計算
 - **ドキュメントの更新**:
-  - `/cli_tools/` ディレクトリに英語版 (`README.md`) と日本語版 (`README_ja.md`) のドキュメントを新設
-  - リポジトリ全体の `README.md` および `/SE_to_gene_links/` のドキュメントを更新し、新しい CLI ツールとの連携方法を追加
+  - `cli_tools/` ディレクトリに英語版 (`README.md`) と日本語版 (`README_ja.md`) のドキュメントを新設
+  - リポジトリ全体の `README.md` および `SE_to_gene_links/` のドキュメントを更新し、新しい CLI ツールとの連携方法を追加
 
 ### Changed
 - `SEgene_package` から独立した CLI スクリプトを `cli_tools/` ディレクトリに整理し、リポジトリ構造を調整
@@ -64,6 +88,7 @@
     - Jupyter Notebook での対話的解析
 - GitHub リポジトリ内の詳細なインストール手順とドキュメント
 
+[1.4.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.4.0
 [1.3.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.3.0
 [1.2.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.2.0
 [1.1.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.1.0

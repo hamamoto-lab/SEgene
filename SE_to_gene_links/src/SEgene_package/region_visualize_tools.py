@@ -15,6 +15,7 @@ def plot_stacked_reads_bed(
     color: str = "blue",
     grid: bool = True,
     save_path: Optional[str] = None,
+    save_format: str = "svg", 
     save_region_bed: Optional[str] = None,
     save_full_bed: Optional[str] = None,
     show_plot: bool = True
@@ -65,9 +66,15 @@ def plot_stacked_reads_bed(
         plt.grid(axis='x', linestyle='--', alpha=0.7)
 
     # Save the plot if a path is specified
-    if save_path:
-        plt.savefig(save_path, format='svg')
-        print(f"Plot saved as {save_path}.")
+        # if save_path:
+        #     plt.savefig(save_path, format='svg')
+        #     print(f"Plot saved as {save_path}.")
+
+        if save_path:
+            plt.savefig(save_path, format=save_format, dpi=600, bbox_inches='tight')
+            # plt.savefig(save_path, format=save_format, dpi=600)
+
+            print(f"Plot saved as {save_path} in {save_format.upper()} format.")
 
     # Show the plot if requested
     if show_plot:

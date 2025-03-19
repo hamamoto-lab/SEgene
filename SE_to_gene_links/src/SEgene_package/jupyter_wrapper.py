@@ -1,28 +1,5 @@
 import os
 import sys
-import numpy as np
-import pandas as pd
-import pathlib
-import pickle 
-import matplotlib.pyplot as plt
-import matplotlib.ticker as ticker 
-import json
-import random
-
-import datetime
-
-
-import seaborn as sns
-
-from scipy import stats
-
-from pathlib import Path
-
-from IPython.display import display
-
-
-from logging import getLogger, Formatter, StreamHandler, FileHandler, DEBUG, INFO, WARNING, Logger
-from logging.handlers import RotatingFileHandler
 
 import logging
 import io
@@ -31,8 +8,35 @@ import contextlib
 from io import StringIO
 
 
+import datetime
+
+from pathlib import Path
 
 from typing import Optional, List, Dict, Tuple, Any
+
+import numpy as np
+import pandas as pd
+import pathlib
+import pickle 
+import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
+import japanize_matplotlib
+import json
+import random
+import glob
+
+import seaborn as sns
+
+from scipy import stats
+
+
+from IPython.display import display
+
+
+from logging import getLogger, Formatter, StreamHandler, FileHandler, DEBUG, INFO, WARNING, Logger
+from logging.handlers import RotatingFileHandler
+
+
 
 from pybedtools import BedTool
 import networkx as nx
@@ -59,7 +63,7 @@ from SEgene_package.networkx_tools import rna_data_to_dic_metadata
 
 from SEgene_package.region_visualize_tools import plot_stacked_reads_bed
 
-import glob
+
 from SEgene_package.tools import find_gene_linked_super_enhancers_in_directory
 
 from SEgene_package.graph_tools import create_ROSE_summary as plot_ROSE_summary
@@ -450,24 +454,63 @@ class SEgeneJupyter:
         return filtered_graph
 
 
-
-
     def _draw_graph(self, 
-                graph: nx.DiGraph,
-                layout: str,
-                node_size: int,
-                with_labels: bool,
-                font_size: int,
-                figsize: Tuple[int, int],
-                node_colors: list,
-                edge_colors: list,
-                edge_widths: list,
-                seed: Optional[int],
-                verbose: bool) -> None:
-
-        self.logger.info(f"Drawing graph with layout={layout}, node_size={node_size}, with_labels={with_labels}, font_size={font_size}, figsize={figsize}, seed={seed}.")  
-        try:
+                    graph: nx.DiGraph,
+                    layout: str,
+                    node_size: int,
+                    with_labels: bool,
+                    font_size: int,
+                    figsize: Tuple[int, int],
+                    node_colors: list,
+                    edge_colors: list,
+                    edge_widths: list,
+                    seed: Optional[int],
+                    verbose: bool,
+                    save_path: Optional[str] = None,
+                    save_format: str = 'svg',
+                    dpi: int = 300) -> plt.Figure:
+        """
+        Draw a graph using matplotlib and optionally save it to a file.
+        
+        Parameters:
+        -----------
+        graph : nx.DiGraph
+            The graph to draw
+        layout : str
+            Layout algorithm to use ('spring', 'circular', etc.)
+        node_size : int
+            Size of nodes in the plot
+        with_labels : bool
+            Whether to display node labels
+        font_size : int
+            Size of label fonts
+        figsize : Tuple[int, int]
+            Figure size (width, height) in inches
+        node_colors : list
+            List of colors for nodes
+        edge_colors : list
+            List of colors for edges
+        edge_widths : list
+            List of widths for edges
+        seed : Optional[int]
+            Random seed for layout algorithms
+        verbose : bool
+            Whether to print detailed information
+        save_path : Optional[str]
+            Path to save the figure. If None, the figure is not saved.
+        save_format : str
+            Format to save the figure ('svg', 'png', 'eps', 'pdf', etc.)
+        dpi : int
+            Resolution for raster formats (png, jpg) in dots per inch
             
+        Returns:
+        --------
+        plt.Figure
+            The matplotlib figure object
+        """
+        self.logger.info(f"Drawing graph with layout={layout}, node_size={node_size}, font_size={font_size}, figsize={figsize}, seed={seed}.")  
+        try:
+            # Determine layout
             if layout == 'spring':
                 pos = nx.spring_layout(graph, seed=seed)
             elif layout == 'circular':
@@ -483,31 +526,58 @@ class SEgeneJupyter:
             if verbose:
                 self.logger.debug(f"Node positions: {pos}")
             
+            # Create figure
+            fig = plt.figure(figsize=figsize)
+            ax = fig.add_subplot(111)
             
-            plt.figure(figsize=figsize)
+            # Draw nodes
+            nx.draw_networkx_nodes(graph, pos, node_size=node_size, node_color=node_colors, 
+                                alpha=0.8, ax=ax)
             
-            
-            nx.draw_networkx_nodes(graph, pos, node_size=node_size, node_color=node_colors, alpha=0.8)
-            
-            
+            # Draw edges if available
             if edge_widths:
-                nx.draw_networkx_edges(graph, pos, edge_color=edge_colors, width=edge_widths, arrowstyle='->', arrowsize=15, alpha=0.5)
+                nx.draw_networkx_edges(graph, pos, edge_color=edge_colors, width=edge_widths, 
+                                    arrowstyle='->', arrowsize=15, alpha=0.5, ax=ax)
             else:
                 self.logger.warning("No edges to draw.")
             
-            
+            # Draw labels if requested
             if with_labels:
-                nx.draw_networkx_labels(graph, pos, font_size=font_size, font_color='black')
+                nx.draw_networkx_labels(graph, pos, font_size=font_size, font_color='black', ax=ax)
             
-            
-            plt.axis('off')
+            # Configure plot appearance
+            ax.axis('off')
             plt.tight_layout()
-            plt.show()
+            
+            # Save figure if path is provided
+            if save_path:
+                # Process save path
+                save_dir = os.path.dirname(save_path)
+                if save_dir and not os.path.exists(save_dir):
+                    os.makedirs(save_dir, exist_ok=True)
+                    
+                # Check if path has extension
+                _, ext = os.path.splitext(save_path)
+                if not ext:
+                    # No extension, add the format as extension
+                    full_save_path = f"{save_path}.{save_format}"
+                else:
+                    # Extension exists, check if it matches format
+                    ext_format = ext.lstrip('.')
+                    if ext_format != save_format:
+                        self.logger.warning(f"Save path has extension '{ext_format}' but format is '{save_format}'. Using '{save_format}'.")
+                        full_save_path = f"{os.path.splitext(save_path)[0]}.{save_format}"
+                    else:
+                        full_save_path = save_path
+                
+                # Save the figure with specified format and dpi
+                plt.savefig(full_save_path, format=save_format, dpi=dpi, bbox_inches='tight')
+                self.logger.info(f"Graph saved to {full_save_path} with format={save_format}, dpi={dpi}.")
+                
+            return fig
         except Exception as e:
             self.logger.exception(f"Error in _draw_graph: {e}")
             raise
-        self.logger.info("Graph drawn successfully.")  
-
 
 
     def display_subgraph(
@@ -519,16 +589,66 @@ class SEgeneJupyter:
         font_size: Optional[int] = None,
         figsize: Optional[Tuple[int, int]] = None,
         verbose: Optional[bool] = None,
-        seed: Optional[int] = None
-    ) -> None:
-
+        seed: Optional[int] = None,
+        save_path: Optional[str] = None,
+        save_format: str = 'svg',
+        dpi: int = 300,
+        save_data: bool = False,
+        data_format: str = 'csv',
+        data_path: Optional[str] = None,
+        include_attributes: bool = True,
+        save_log: bool = True
+    ) -> Optional[plt.Figure]:
+        """
+        Display and optionally save a subgraph with text data export and detailed log.
+        
+        Parameters:
+        -----------
+        subgraph_id : Optional[int]
+            ID of the subgraph to display. If None, uses the currently selected subgraph.
+        layout : Optional[str]
+            Layout algorithm to use ('spring', 'circular', etc.)
+        node_size : Optional[int]
+            Size of nodes in the plot
+        with_labels : Optional[bool]
+            Whether to display node labels
+        font_size : Optional[int]
+            Size of label fonts
+        figsize : Optional[Tuple[int, int]]
+            Figure size (width, height) in inches
+        verbose : Optional[bool]
+            Whether to print detailed information
+        seed : Optional[int]
+            Random seed for layout algorithms
+        save_path : Optional[str]
+            Path to save the figure. If None, the figure is not saved.
+        save_format : str
+            Format to save the figure ('svg', 'png', 'eps', 'pdf', etc.)
+        dpi : int
+            Resolution for raster formats (png, jpg) in dots per inch
+        save_data : bool
+            Whether to save subgraph data as text files
+        data_format : str
+            Format for saving data ('csv', 'tsv', or 'json')
+        data_path : Optional[str]
+            Path for saved data files. If None, uses the same base path as save_path.
+        include_attributes : bool
+            Whether to include all node and edge attributes in the saved data
+        save_log : bool
+            Whether to save a detailed log file with reproduction information
+            
+        Returns:
+        --------
+        Optional[plt.Figure]
+            The matplotlib figure object if successful, None otherwise
+        """
         self.logger.info(f"Displaying subgraph with subgraph_id={subgraph_id}.")  
 
         try:
-            
+            # Set seed for reproducible layouts
             current_seed = self._set_seed('3layer', seed)
             
-            
+            # Merge user settings with defaults
             settings = self.default_settings.copy()
             if layout is not None:
                 settings['layout'] = layout
@@ -543,13 +663,13 @@ class SEgeneJupyter:
             if verbose is not None:
                 settings['verbose'] = verbose
             
-            
+            # Prepare the graph
             graph = self._prepare_graph(subgraph_id=subgraph_id, layers=3)
             if graph is None:
                 self.logger.warning("No graph to display.")
-                return
+                return None
             
-            
+            # Prepare node colors
             node_colors = []
             color_map = self.default_settings.get('color_map', {
                 'gene': 'red',
@@ -561,7 +681,7 @@ class SEgeneJupyter:
                 node_type = attr.get('node_type', 'default')
                 node_colors.append(color_map.get(node_type, color_map['default']))
             
-            
+            # Prepare edge colors and widths
             edge_colors = ['gray' for _ in graph.edges()]
             edge_widths = [1 for _ in graph.edges()]
             
@@ -570,8 +690,51 @@ class SEgeneJupyter:
                 for u, v, attr in graph.edges(data=True):
                     self.logger.debug(f"Edge from {u} to {v} with attributes {attr}")
             
+            # Save subgraph data and/or log if requested
+            if save_data or save_log:
+                # Use the same base path as the image if data_path is not specified
+                if data_path is None and save_path is not None:
+                    # Extract base path without extension
+                    data_path, _ = os.path.splitext(save_path)
+                
+                # Collect all settings for logging
+                all_settings = {
+                    'layout': settings['layout'],
+                    'node_size': settings['node_size'],
+                    'with_labels': settings['with_labels'],
+                    'font_size': settings['font_size'],
+                    'figsize': settings['figsize'],
+                    'seed': current_seed,
+                    'date_generated': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    'subgraph_id': subgraph_id,
+                    'layers': 3,
+                    'network_params': {
+                        'FDR': getattr(self, '_network_FDR', None),
+                        'r': getattr(self, '_network_r', None),
+                        'threshold': getattr(self, '_threshold_network', None)
+                    },
+                    'color_map': color_map,
+                    'verbose': settings['verbose']
+                }
+                
+                # Save the data and/or log
+                data_files = self._save_subgraph_data(
+                    graph=graph,
+                    subgraph_id=subgraph_id,
+                    data_path=data_path,
+                    data_format=data_format,
+                    include_attributes=include_attributes,
+                    save_log=save_log,
+                    settings=all_settings
+                )
+                
+                if settings['verbose'] and data_files:
+                    self.logger.info("Saved subgraph data files:")
+                    for file_type, file_path in data_files.items():
+                        self.logger.info(f"  {file_type}: {file_path}")
             
-            self._draw_graph(
+            # Draw the graph
+            fig = self._draw_graph(
                 graph=graph,
                 layout=settings['layout'],
                 node_size=settings['node_size'],
@@ -582,7 +745,10 @@ class SEgeneJupyter:
                 edge_colors=edge_colors,
                 edge_widths=edge_widths,
                 seed=current_seed,
-                verbose=settings['verbose']
+                verbose=settings['verbose'],
+                save_path=save_path,
+                save_format=save_format,
+                dpi=dpi
             )
             
             if settings['verbose']:
@@ -596,11 +762,17 @@ class SEgeneJupyter:
                 self.logger.info("  Edge Types:")
                 for et, count in stats['edge_types'].items():
                     self.logger.info(f"    {et}: {count}")
+            
+            # Show the plot
+            plt.show()
+            
+            # Return the figure object
+            return fig
         except Exception as e:
             self.logger.exception(f"Error in display_subgraph: {e}")
             raise
-        self.logger.info("Subgraph displayed successfully.")  
-
+        finally:
+            self.logger.info("Subgraph displayed successfully.")
 
 
 
@@ -616,15 +788,69 @@ class SEgeneJupyter:
         edge_scale: Optional[float] = None,
         node_color_map: Optional[Dict[str, str]] = None,
         verbose: Optional[bool] = None,
-        seed: Optional[int] = None
-    ) -> None:
-
+        seed: Optional[int] = None,
+        save_path: Optional[str] = None,
+        save_format: str = 'svg',
+        dpi: int = 300,
+        save_data: bool = False,
+        data_format: str = 'csv',
+        data_path: Optional[str] = None,
+        include_attributes: bool = True,
+        save_log: bool = True
+    ) -> Optional[plt.Figure]:
+        """
+        Display and optionally save a two-layer subgraph (mergeSE and gene layers only) with text data and log export.
+        
+        Parameters:
+        -----------
+        subgraph_id : Optional[int]
+            ID of the subgraph to display. If None, uses the currently selected subgraph.
+        layout : Optional[str]
+            Layout algorithm to use ('spring', 'circular', etc.)
+        node_size : Optional[int]
+            Size of nodes in the plot
+        with_labels : Optional[bool]
+            Whether to display node labels
+        font_size : Optional[int]
+            Size of label fonts
+        figsize : Optional[Tuple[int, int]]
+            Figure size (width, height) in inches
+        edge_scale : Optional[float]
+            Scaling factor for edge widths
+        node_color_map : Optional[Dict[str, str]]
+            Dictionary mapping node types to colors
+        verbose : Optional[bool]
+            Whether to print detailed information
+        seed : Optional[int]
+            Random seed for layout algorithms
+        save_path : Optional[str]
+            Path to save the figure. If None, the figure is not saved.
+        save_format : str
+            Format to save the figure ('svg', 'png', 'eps', 'pdf', etc.)
+        dpi : int
+            Resolution for raster formats (png, jpg) in dots per inch
+        save_data : bool
+            Whether to save subgraph data as text files
+        data_format : str
+            Format for saving data ('csv', 'tsv', or 'json')
+        data_path : Optional[str]
+            Path for saved data files. If None, uses the same base path as save_path.
+        include_attributes : bool
+            Whether to include all node and edge attributes in the saved data
+        save_log : bool
+            Whether to save a detailed log file with reproduction information
+            
+        Returns:
+        --------
+        Optional[plt.Figure]
+            The matplotlib figure object if successful, None otherwise
+        """
         self.logger.info(f"Displaying two-layer subgraph with subgraph_id={subgraph_id}.")  
         try:
-            
+            # Set seed for reproducible layouts
             current_seed = self._set_seed('2layer', seed)
             
-            
+            # Merge user settings with defaults
             settings = self.default_settings.copy()
             
             settings.update({
@@ -649,20 +875,20 @@ class SEgeneJupyter:
             if node_color_map is not None:
                 settings['node_color_map'] = node_color_map
             
-            
+            # Prepare the 2-layer graph
             graph = self._prepare_graph(subgraph_id=subgraph_id, layers=2)
             if graph is None:
                 self.logger.warning("No graph to display.")
-                return
+                return None
             
-            
+            # Prepare node colors
             node_colors = []
             color_map = settings['node_color_map']
             for node, attr in graph.nodes(data=True):
                 node_type = attr.get('node_type', 'default')
                 node_colors.append(color_map.get(node_type, 'gray'))
             
-            
+            # Prepare edge colors and widths
             edge_colors = ['black' for _ in graph.edges()]
             edge_widths = [max(attr.get('weight', 1) * settings['edge_scale'], 1) for _, _, attr in graph.edges(data=True)]
             
@@ -671,8 +897,54 @@ class SEgeneJupyter:
                 for u, v, attr in graph.edges(data=True):
                     self.logger.debug(f"Edge from {u} to {v} with weight {attr.get('weight', 1)}")
             
+            # Save subgraph data and/or log if requested
+            if save_data or save_log:
+                # Use the same base path as the image if data_path is not specified
+                if data_path is None and save_path is not None:
+                    # Extract base path without extension
+                    data_path, _ = os.path.splitext(save_path)
+                    # Add suffix to indicate this is a two-layer graph
+                    data_path = f"{data_path}_2layer"
+                
+                # Collect all settings for logging
+                all_settings = {
+                    'layout': settings['layout'],
+                    'node_size': settings['node_size'],
+                    'with_labels': settings['with_labels'],
+                    'font_size': settings['font_size'],
+                    'figsize': settings['figsize'],
+                    'edge_scale': settings['edge_scale'],
+                    'seed': current_seed,
+                    'date_generated': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    'subgraph_id': subgraph_id,
+                    'layers': 2,
+                    'network_params': {
+                        'FDR': getattr(self, '_network_FDR', None),
+                        'r': getattr(self, '_network_r', None),
+                        'threshold': getattr(self, '_threshold_network', None)
+                    },
+                    'node_color_map': str(color_map),  # Convert to string as it might contain complex objects
+                    'verbose': settings['verbose']
+                }
+                
+                # Save the data and/or log
+                data_files = self._save_subgraph_data(
+                    graph=graph,
+                    subgraph_id=subgraph_id,
+                    data_path=data_path,
+                    data_format=data_format,
+                    include_attributes=include_attributes,
+                    save_log=save_log,
+                    settings=all_settings
+                )
+                
+                if settings['verbose'] and data_files:
+                    self.logger.info("Saved two-layer subgraph data files:")
+                    for file_type, file_path in data_files.items():
+                        self.logger.info(f"  {file_type}: {file_path}")
             
-            self._draw_graph(
+            # Draw the graph
+            fig = self._draw_graph(
                 graph=graph,
                 layout=settings['layout'],
                 node_size=settings['node_size'],
@@ -683,7 +955,10 @@ class SEgeneJupyter:
                 edge_colors=edge_colors,
                 edge_widths=edge_widths,
                 seed=current_seed,
-                verbose=settings['verbose']
+                verbose=settings['verbose'],
+                save_path=save_path,
+                save_format=save_format,
+                dpi=dpi
             )
             
             if settings['verbose']:
@@ -698,12 +973,16 @@ class SEgeneJupyter:
                 self.logger.info("  Edge Types:")
                 for et, count in stats['edge_types'].items():
                     self.logger.info(f"    {et}: {count}")
+            
+            # Show the plot
+            plt.show()
+            
+            # Return the figure object
+            return fig
         except Exception as e:
             self.logger.exception(f"Error in display_two_layer_subgraph: {e}")
             raise
-        self.logger.info("Two-layer subgraph displayed successfully.")  
-
-
+        self.logger.info("Two-layer subgraph displayed successfully.")
 
 
 
@@ -1404,28 +1683,47 @@ class SEgeneJupyter:
         output_path: Optional[str] = None,
         prog: str = 'fdp',
         format: str = 'svg',
-        italic_genes: bool = False  
+        italic_genes: bool = False,
+        dpi: int = 600,
+        title: Optional[str] = None
     ) -> None:
-
-        self.logger.info("Drawing network graph.")  
+        """
+        Draw the network graph and save it to a file.
+        
+        Parameters:
+        -----------
+        output_path : Optional[str], default=None
+            Path to save the output file. If None, a default path will be used.
+        prog : str, default='fdp'
+            The graphviz layout program to use (e.g., 'dot', 'neato', 'fdp', 'twopi', 'circo')
+        format : str, default='svg'
+            Output format for the saved graph. Supported formats include 'svg', 'png', 'eps', 'pdf', etc.
+            The format must be supported by graphviz.
+        italic_genes : bool, default=False
+            Whether to display gene names in italic font.
+        dpi : int, default=600
+            Resolution in dots per inch for raster formats (png, jpg)
+        title : Optional[str], default=None
+            Custom title for the graph. If None, no title is displayed.
+        """
+        self.logger.info(f"Drawing network graph in {format} format.")  
 
         try:
             if self._DG_network is None:
                 raise ValueError("Network graph is not set. Please run create_network first.")
             
-            
+            # Create an AGraph from the DiGraph
             agraph_DG = to_agraph(self._DG_network)
             
-            
+            # Apply italic font to gene nodes if requested
             if italic_genes:
                 for node in agraph_DG.nodes():
                     node_type = self._DG_network.nodes[node].get('node_type', 'default')
                     if node_type == 'gene':
                         agraph_DG.get_node(node).attr['fontstyle'] = 'italic'
             
-            
+            # Determine output path
             if output_path is None:
-                
                 try:
                     default_filename = f"network_FDR{self.network_FDR}_r{self.network_r}_threshold{self.network_threshold}.{format}"
                 except AttributeError as e:
@@ -1436,25 +1734,1225 @@ class SEgeneJupyter:
                 os.makedirs(output_dir, exist_ok=True)
                 output_path = os.path.join(output_dir, default_filename)
             else:
+                # Check if output_path has an extension
+                _, ext = os.path.splitext(output_path)
+                if not ext:
+                    # If no extension, append the format as extension
+                    output_path = f"{output_path}.{format}"
+                else:
+                    # If extension exists but doesn't match format, issue a warning
+                    ext_format = ext.lstrip('.')
+                    if ext_format != format:
+                        self.logger.warning(f"Output path has extension '{ext_format}' but format is set to '{format}'. Using '{format}' as the output format.")
+                        # Replace the extension with the specified format
+                        output_path = f"{os.path.splitext(output_path)[0]}.{format}"
                 
+                # Create output directory if it doesn't exist
                 output_dir = os.path.dirname(output_path)
                 if output_dir and not os.path.exists(output_dir):
                     os.makedirs(output_dir, exist_ok=True)
             
-            
             self.logger.info(f"Saving network graph to {output_path} with prog={prog} and format={format}.")
             
+            # Set DPI for raster formats
+            if format.lower() in ['png', 'jpg', 'jpeg']:
+                agraph_DG.graph_attr.update(dpi=str(dpi))
             
-            
-            
-            
+            # set title
+            if title is not None:
+                agraph_DG.graph_attr['label'] = title
+                agraph_DG.graph_attr['fontsize'] = '20'
+
+            # Draw the graph
             agraph_DG.draw(output_path, prog=prog, format=format)
 
             self.logger.info(f"Network graph saved successfully to {output_path} in {format} format.")
         except Exception as e:
             self.logger.exception(f"Error in draw_network: {e}")
             raise
-        self.logger.info("Network graph drawing process completed successfully.")  
+        self.logger.info("Network graph drawing process completed successfully.")
+
+
+
+    def draw_subnetwork(
+        self,
+        subgraph_id: Optional[int] = None,
+        output_path: Optional[str] = None,
+        prog: str = 'fdp',
+        format: str = 'svg',
+        italic_genes: bool = False,
+        dpi: int = 300,
+        title: Optional[str] = None
+    ) -> None:
+        """
+        Draw the specified subgraph using the same style as draw_network.
+        
+        This function is a simpler version that maintains full consistency with 
+        the main network visualization style.
+        
+        Parameters:
+        -----------
+        subgraph_id : Optional[int]
+            ID of the subgraph to draw. If None, uses the currently selected subgraph.
+        output_path : Optional[str]
+            Path to save the output file. If None, a default path will be used.
+        prog : str
+            The graphviz layout program to use (e.g., 'dot', 'neato', 'fdp', 'twopi', 'circo')
+        format : str
+            Output format for the saved graph. Supported formats include 'svg', 'png', 'eps', 'pdf', etc.
+        italic_genes : bool
+            Whether to display gene names in italic font.
+        dpi : int
+            Resolution in dots per inch for raster formats (png, jpg)
+        title : Optional[str], default=None
+            Custom title for the graph. If None, no title is displayed.
+        """
+        self.logger.info(f"Drawing subnetwork for subgraph {subgraph_id} using {prog} layout.")
+        
+        try:
+            # Get the appropriate subgraph
+            if subgraph_id is not None:
+                # Get nodes in the specified subgraph
+                nodes_in_subgraph = [
+                    n for n, d in self._DG_network.nodes(data=True) 
+                    if d.get('subgraph_id') == subgraph_id
+                ]
+                
+                if not nodes_in_subgraph:
+                    raise ValueError(f"No nodes found for Subgraph ID {subgraph_id}.")
+                    
+                # Create subgraph
+                subgraph = self._DG_network.subgraph(nodes_in_subgraph).copy()
+            else:
+                # Use currently selected subgraph
+                if self._selected_subgraph is None:
+                    raise ValueError("No subgraph selected. Please specify a subgraph_id or use search_subnetwork first.")
+                subgraph = self._selected_subgraph
+                subgraph_id = self._selected_subgraph_id
+            
+            # Create an AGraph from the DiGraph
+            agraph_DG = nx.nx_agraph.to_agraph(subgraph)
+            
+            # Apply italic font to gene nodes if requested
+            if italic_genes:
+                for node in agraph_DG.nodes():
+                    node_type = subgraph.nodes[node].get('node_type', 'default')
+                    if node_type == 'gene':
+                        agraph_DG.get_node(node).attr['fontstyle'] = 'italic'
+            
+            # Determine output path
+            if output_path is None:
+                try:
+                    default_filename = f"subnetwork_{subgraph_id}_FDR{self._network_FDR}_r{self._network_r}_threshold{self._threshold_network}.{format}"
+                except AttributeError as e:
+                    self.logger.error(f"Failed to generate default filename: {e}")
+                    raise ValueError("Network parameters are not properly set.")
+                
+                output_dir = './output'
+                os.makedirs(output_dir, exist_ok=True)
+                output_path = os.path.join(output_dir, default_filename)
+            else:
+                # Check if output_path has an extension
+                _, ext = os.path.splitext(output_path)
+                if not ext:
+                    # If no extension, append the format as extension
+                    output_path = f"{output_path}.{format}"
+                else:
+                    # If extension exists but doesn't match format, issue a warning
+                    ext_format = ext.lstrip('.')
+                    if ext_format != format:
+                        self.logger.warning(f"Output path has extension '{ext_format}' but format is set to '{format}'. Using '{format}' as the output format.")
+                        # Replace the extension with the specified format
+                        output_path = f"{os.path.splitext(output_path)[0]}.{format}"
+                
+                # Create output directory if it doesn't exist
+                output_dir = os.path.dirname(output_path)
+                if output_dir and not os.path.exists(output_dir):
+                    os.makedirs(output_dir, exist_ok=True)
+            
+            # Set DPI for raster formats
+            if format.lower() in ['png', 'jpg', 'jpeg']:
+                agraph_DG.graph_attr.update(dpi=str(dpi))
+            
+            self.logger.info(f"Saving subnetwork to {output_path} with prog={prog} and format={format}.")
+            
+            # set title
+            if title is not None:
+                agraph_DG.graph_attr['label'] = title
+                agraph_DG.graph_attr['fontsize'] = '20'
+
+            # Draw the graph
+            agraph_DG.draw(output_path, prog=prog, format=format)
+
+            self.logger.info(f"Subnetwork saved successfully to {output_path} in {format} format.")
+        except Exception as e:
+            self.logger.exception(f"Error in draw_subnetwork: {e}")
+            raise
+
+
+
+
+    def draw_two_layer_subnetwork(
+        self,
+        subgraph_id: Optional[int] = None,
+        output_path: Optional[str] = None,
+        prog: str = 'fdp',
+        format: str = 'svg',
+        italic_genes: bool = False,
+        dpi: int = 600,
+        edge_width_multiplier: float = 0.5,
+        title: Optional[str] = None
+    ) -> None:
+        """
+        Draw a two-layer subnetwork (mergeSE and gene nodes only) using the same style as draw_network.
+        
+        This function creates a simplified view where enhancer nodes are removed and 
+        direct edges connect mergeSE nodes to gene nodes, with edge thickness proportional 
+        to the number of enhancers that connect them.
+        
+        Parameters:
+        -----------
+        subgraph_id : Optional[int]
+            ID of the subgraph to draw. If None, uses the currently selected subgraph.
+        output_path : Optional[str]
+            Path to save the output file. If None, a default path will be used.
+        prog : str
+            The graphviz layout program to use (e.g., 'dot', 'neato', 'fdp', 'twopi', 'circo')
+        format : str
+            Output format for the saved graph. Supported formats include 'svg', 'png', 'eps', 'pdf', etc.
+        italic_genes : bool
+            Whether to display gene names in italic font.
+        dpi : int
+            Resolution in dots per inch for raster formats (png, jpg)
+        edge_width_multiplier : float
+            Multiplier for edge width based on the number of enhancers connecting two nodes
+        title : Optional[str], default=None
+            Custom title for the graph. If None, no title is displayed.
+        """
+        self.logger.info(f"Drawing two-layer subnetwork for subgraph {subgraph_id} using {prog} layout.")
+        
+        try:
+            # Get the appropriate subgraph
+            full_subgraph = None
+            if subgraph_id is not None:
+                # Get nodes in the specified subgraph
+                nodes_in_subgraph = [
+                    n for n, d in self._DG_network.nodes(data=True) 
+                    if d.get('subgraph_id') == subgraph_id
+                ]
+                
+                if not nodes_in_subgraph:
+                    raise ValueError(f"No nodes found for Subgraph ID {subgraph_id}.")
+                    
+                # Create full subgraph (with all nodes)
+                full_subgraph = self._DG_network.subgraph(nodes_in_subgraph).copy()
+            else:
+                # Use currently selected subgraph
+                if self._selected_subgraph is None:
+                    raise ValueError("No subgraph selected. Please specify a subgraph_id or use search_subnetwork first.")
+                full_subgraph = self._selected_subgraph
+                subgraph_id = self._selected_subgraph_id
+            
+            # Create a new DiGraph for the two-layer network
+            two_layer_graph = nx.DiGraph()
+            
+            # Add only mergeSE and gene nodes
+            for node, attrs in full_subgraph.nodes(data=True):
+                node_type = attrs.get('node_type', 'default')
+                if node_type in ['mergeSE', 'gene']:
+                    two_layer_graph.add_node(node, **attrs)
+            
+            # Create direct edges between mergeSE and gene nodes
+            # Keep track of edge weights (number of enhancers connecting the nodes)
+            edge_weights = {}
+            
+            for mergeSE_node, attrs in full_subgraph.nodes(data=True):
+                if attrs.get('node_type') != 'mergeSE':
+                    continue
+                    
+                # Get all enhancers connected to this mergeSE
+                for _, enhancer_node in full_subgraph.out_edges(mergeSE_node):
+                    enhancer_attrs = full_subgraph.nodes[enhancer_node]
+                    if enhancer_attrs.get('node_type') != 'enhancer':
+                        continue
+                    
+                    # Get all genes connected to this enhancer
+                    for _, gene_node in full_subgraph.out_edges(enhancer_node):
+                        gene_attrs = full_subgraph.nodes[gene_node]
+                        if gene_attrs.get('node_type') != 'gene':
+                            continue
+                        
+                        # Add or increment edge weight
+                        edge_key = (mergeSE_node, gene_node)
+                        if edge_key in edge_weights:
+                            edge_weights[edge_key] += 1
+                        else:
+                            edge_weights[edge_key] = 1
+            
+            # Add the weighted edges to the two-layer graph
+            for (source, target), weight in edge_weights.items():
+                two_layer_graph.add_edge(source, target, weight=weight, edge_type='mergeSE-gene')
+            
+            # Convert to AGraph for Graphviz rendering
+            agraph_DG = nx.nx_agraph.to_agraph(two_layer_graph)
+            
+            # Apply styles consistently with the main network
+            for edge in agraph_DG.edges():
+                source, target = edge
+                weight = two_layer_graph[source][target].get('weight', 1)
+                
+                # Scale edge width based on the number of enhancers
+                edge.attr['penwidth'] = str(max(1, weight * edge_width_multiplier))
+                
+                # Optionally add weight as label
+                edge.attr['label'] = str(weight)
+                edge.attr['fontsize'] = '8'
+            
+            # Apply italic font to gene nodes if requested
+            if italic_genes:
+                for node in agraph_DG.nodes():
+                    node_type = two_layer_graph.nodes[node].get('node_type', 'default')
+                    if node_type == 'gene':
+                        agraph_DG.get_node(node).attr['fontstyle'] = 'italic'
+            
+            # Determine output path
+            if output_path is None:
+                try:
+                    default_filename = f"two_layer_subnetwork_{subgraph_id}_FDR{self._network_FDR}_r{self._network_r}_threshold{self._threshold_network}.{format}"
+                except AttributeError as e:
+                    self.logger.error(f"Failed to generate default filename: {e}")
+                    raise ValueError("Network parameters are not properly set.")
+                
+                output_dir = './output'
+                os.makedirs(output_dir, exist_ok=True)
+                output_path = os.path.join(output_dir, default_filename)
+            else:
+                # Check if output_path has an extension
+                _, ext = os.path.splitext(output_path)
+                if not ext:
+                    # If no extension, append the format as extension
+                    output_path = f"{output_path}.{format}"
+                else:
+                    # If extension exists but doesn't match format, issue a warning
+                    ext_format = ext.lstrip('.')
+                    if ext_format != format:
+                        self.logger.warning(f"Output path has extension '{ext_format}' but format is set to '{format}'. Using '{format}' as the output format.")
+                        # Replace the extension with the specified format
+                        output_path = f"{os.path.splitext(output_path)[0]}.{format}"
+                
+                # Create output directory if it doesn't exist
+                output_dir = os.path.dirname(output_path)
+                if output_dir and not os.path.exists(output_dir):
+                    os.makedirs(output_dir, exist_ok=True)
+            
+            # Set DPI for raster formats
+            if format.lower() in ['png', 'jpg', 'jpeg']:
+                agraph_DG.graph_attr.update(dpi=str(dpi))
+            
+            self.logger.info(f"Saving two-layer subnetwork to {output_path} with prog={prog} and format={format}.")
+            
+            # set title
+            if title is not None:
+                agraph_DG.graph_attr['label'] = title
+                agraph_DG.graph_attr['fontsize'] = '20'
+
+            # Draw the graph
+            agraph_DG.draw(output_path, prog=prog, format=format)
+
+            self.logger.info(f"Two-layer subnetwork saved successfully to {output_path} in {format} format.")
+        except Exception as e:
+            self.logger.exception(f"Error in draw_two_layer_subnetwork: {e}")
+            raise
+
+
+    ##### detailed network #####
+
+
+
+    def draw_network_detailed(
+        self,
+        output_path: Optional[str] = None,
+        prog: str = 'fdp',
+        format: str = 'svg',
+        italic_genes: bool = False,
+        dpi: int = 600,
+        node_attrs: Optional[Dict[str, Dict[str, str]]] = None,
+        edge_attrs: Optional[Dict[str, Dict[str, str]]] = None,
+        include_subgraph_borders: bool = True,
+        save_log: bool = True,
+        title: Optional[str] = None 
+    ) -> None:
+        """
+        Draw the entire network graph with detailed customization and logging capabilities.
+        
+        Parameters:
+        -----------
+        output_path : Optional[str]
+            Path to save the output file. If None, a default path will be used.
+        prog : str
+            The graphviz layout program to use (e.g., 'dot', 'neato', 'fdp', 'twopi', 'circo')
+        format : str
+            Output format for the saved graph. Supported formats include 'svg', 'png', 'eps', 'pdf', etc.
+        italic_genes : bool
+            Whether to display gene names in italic font.
+        dpi : int
+            Resolution in dots per inch for raster formats (png, jpg)
+        node_attrs : Optional[Dict[str, Dict[str, str]]]
+            Additional node attributes by node type. Example: {'gene': {'color': 'red'}}
+        edge_attrs : Optional[Dict[str, Dict[str, str]]]
+            Additional edge attributes by edge type. Example: {'mergeSE-enhancer': {'style': 'dashed'}}
+        include_subgraph_borders : bool
+            Whether to draw subgraph boundaries using different colors for each subgraph
+        save_log : bool
+            Whether to save a detailed log file with reproduction information
+        title : Optional[str]
+            Custom title for the graph. If None, uses default title format.
+        """
+        self.logger.info(f"Drawing detailed network graph in {format} format.")  
+
+        try:
+            if self._DG_network is None:
+                raise ValueError("Network graph is not set. Please run create_network first.")
+            
+            # Create an AGraph from the DiGraph
+            agraph_DG = nx.nx_agraph.to_agraph(self._DG_network)
+            
+            # Set default styles for nodes by type
+            default_node_attrs = {
+                'gene': {'color': 'red', 'shape': 'ellipse', 'style': 'filled', 'fillcolor': '#ffdddd'},
+                'mergeSE': {'color': 'blue', 'shape': 'box', 'style': 'filled', 'fillcolor': '#ddddff'},
+                'enhancer': {'color': 'green', 'shape': 'diamond', 'style': 'filled', 'fillcolor': '#ddffdd'},
+                'default': {'color': 'gray', 'shape': 'circle'}
+            }
+            
+            # Apply node attributes
+            for node in agraph_DG.nodes():
+                node_type = self._DG_network.nodes[node].get('node_type', 'default')
+                
+                # Apply default attributes for this node type
+                for attr, value in default_node_attrs.get(node_type, default_node_attrs['default']).items():
+                    node.attr[attr] = value
+                
+                # Apply custom attributes if provided
+                if node_attrs and node_type in node_attrs:
+                    for attr, value in node_attrs[node_type].items():
+                        node.attr[attr] = value
+                
+                # Apply italic font to gene nodes if requested
+                if italic_genes and node_type == 'gene':
+                    node.attr['fontstyle'] = 'italic'
+            
+            # Set default styles for edges by type
+            default_edge_attrs = {
+                'mergeSE-enhancer': {'color': 'blue', 'penwidth': '1.5'},
+                'enhancer-gene': {'color': 'red', 'penwidth': '1.5'},
+                'default': {'color': 'gray', 'penwidth': '1.0'}
+            }
+            
+            # Apply edge attributes
+            for edge in agraph_DG.edges():
+                source, target = edge
+                source_type = self._DG_network.nodes[source].get('node_type', 'default')
+                target_type = self._DG_network.nodes[target].get('node_type', 'default')
+                
+                # Determine edge type
+                if source_type == 'mergeSE' and target_type == 'enhancer':
+                    edge_type = 'mergeSE-enhancer'
+                elif source_type == 'enhancer' and target_type == 'gene':
+                    edge_type = 'enhancer-gene'
+                else:
+                    edge_type = 'default'
+                
+                # Apply default attributes for this edge type
+                for attr, value in default_edge_attrs.get(edge_type, default_edge_attrs['default']).items():
+                    edge.attr[attr] = value
+                
+                # Apply custom attributes if provided
+                if edge_attrs and edge_type in edge_attrs:
+                    for attr, value in edge_attrs[edge_type].items():
+                        edge.attr[attr] = value
+            
+            # Group nodes by subgraph if requested
+            if include_subgraph_borders:
+                # Get all subgraph IDs
+                subgraph_ids = set()
+                for _, attrs in self._DG_network.nodes(data=True):
+                    subgraph_id = attrs.get('subgraph_id')
+                    if subgraph_id is not None:
+                        subgraph_ids.add(subgraph_id)
+                
+                # Define colors for subgraphs (cyclic)
+                colors = [
+                    "#E6194B", "#3CB44B", "#FFE119", "#4363D8", "#F58231", 
+                    "#911EB4", "#46F0F0", "#F032E6", "#BCF60C", "#FABEBE", 
+                    "#008080", "#E6BEFF", "#9A6324", "#FFFAC8", "#800000", 
+                    "#AAFFC3", "#808000", "#FFD8B1", "#000075", "#808080"
+                ]
+                
+                # Create separate Graphviz subgraphs for each subgraph ID
+                for i, subgraph_id in enumerate(sorted(subgraph_ids)):
+                    nodes_in_subgraph = [
+                        n for n, d in self._DG_network.nodes(data=True) 
+                        if d.get('subgraph_id') == subgraph_id
+                    ]
+                    
+                    # Create a Graphviz subgraph
+                    color_idx = i % len(colors)
+                    subgraph_name = f"cluster_subgraph_{subgraph_id}"
+                    agraph_subgraph = agraph_DG.add_subgraph(
+                        nodes_in_subgraph,
+                        name=subgraph_name,
+                        label=f"Subgraph {subgraph_id}",
+                        style="rounded,dashed",
+                        color=colors[color_idx],
+                        fontcolor=colors[color_idx]
+                    )
+            
+            # Determine output path
+            if output_path is None:
+                try:
+                    default_filename = f"network_detailed_FDR{self._network_FDR}_r{self._network_r}_threshold{self._threshold_network}.{format}"
+                except AttributeError as e:
+                    self.logger.error(f"Failed to generate default filename: {e}")
+                    raise ValueError("Network parameters are not properly set.")
+                
+                output_dir = './output'
+                os.makedirs(output_dir, exist_ok=True)
+                output_path = os.path.join(output_dir, default_filename)
+            else:
+                # Check if output_path has an extension
+                _, ext = os.path.splitext(output_path)
+                if not ext:
+                    # If no extension, append the format as extension
+                    output_path = f"{output_path}.{format}"
+                else:
+                    # If extension exists but doesn't match format, issue a warning
+                    ext_format = ext.lstrip('.')
+                    if ext_format != format:
+                        self.logger.warning(f"Output path has extension '{ext_format}' but format is set to '{format}'. Using '{format}' as the output format.")
+                        # Replace the extension with the specified format
+                        output_path = f"{os.path.splitext(output_path)[0]}.{format}"
+                
+                # Create output directory if it doesn't exist
+                output_dir = os.path.dirname(output_path)
+                if output_dir and not os.path.exists(output_dir):
+                    os.makedirs(output_dir, exist_ok=True)
+            
+            # Set DPI for raster formats
+            if format.lower() in ['png', 'jpg', 'jpeg']:
+                agraph_DG.graph_attr['dpi'] = str(dpi)
+            
+            # Set graph title
+            if title is None:
+                # default title
+                agraph_DG.graph_attr['label'] = f"Network Graph (FDR={self._network_FDR}, r={self._network_r}, threshold={self._threshold_network})"
+            else:
+                # custom title
+                agraph_DG.graph_attr['label'] = title
+            agraph_DG.graph_attr['fontsize'] = '20'
+            
+            # Add additional graph styling
+            agraph_DG.graph_attr['overlap'] = 'false'
+            agraph_DG.graph_attr['splines'] = 'true'
+            
+            # Save the graph visualization
+            self.logger.info(f"Saving detailed network to {output_path} with prog={prog} and format={format}.")
+            agraph_DG.draw(output_path, prog=prog, format=format)
+            
+            # Save log file if requested
+            if save_log:
+                log_path = f"{os.path.splitext(output_path)[0]}_log.txt"
+                
+                # Format timestamp
+                timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                
+                with open(log_path, 'w') as log_file:
+                    # Write header
+                    log_file.write(f"Network Graph - Detailed Visualization Log\n")
+                    log_file.write(f"Generated on: {timestamp}\n")
+                    log_file.write("="*80 + "\n\n")
+                    
+                    # Write graph information
+                    log_file.write(f"Graph Information:\n")
+                    log_file.write(f"  Number of Nodes: {self._DG_network.number_of_nodes()}\n")
+                    log_file.write(f"  Number of Edges: {self._DG_network.number_of_edges()}\n\n")
+                    
+                    # Count node types
+                    node_types = {}
+                    for _, attrs in self._DG_network.nodes(data=True):
+                        node_type = attrs.get('node_type', 'default')
+                        node_types[node_type] = node_types.get(node_type, 0) + 1
+                    
+                    log_file.write("Node Types:\n")
+                    for node_type, count in node_types.items():
+                        log_file.write(f"  {node_type}: {count}\n")
+                    log_file.write("\n")
+                    
+                    # Count edge types
+                    edge_types = {}
+                    for u, v, attrs in self._DG_network.edges(data=True):
+                        edge_type = attrs.get('edge_type', 'default')
+                        edge_types[edge_type] = edge_types.get(edge_type, 0) + 1
+                    
+                    log_file.write("Edge Types:\n")
+                    for edge_type, count in edge_types.items():
+                        log_file.write(f"  {edge_type}: {count}\n")
+                    log_file.write("\n")
+                    
+                    # Count subgraphs
+                    subgraph_counts = {}
+                    for _, attrs in self._DG_network.nodes(data=True):
+                        sg_id = attrs.get('subgraph_id')
+                        if sg_id is not None:
+                            subgraph_counts[sg_id] = subgraph_counts.get(sg_id, 0) + 1
+                    
+                    log_file.write(f"Subgraphs: {len(subgraph_counts)}\n")
+                    log_file.write("\n")
+                    
+                    # Write network parameters
+                    log_file.write("Network Parameters:\n")
+                    log_file.write(f"  FDR: {self._network_FDR}\n")
+                    log_file.write(f"  r: {self._network_r}\n")
+                    log_file.write(f"  Threshold: {self._threshold_network}\n\n")
+                    
+                    # Write rendering settings
+                    log_file.write("Rendering Settings:\n")
+                    log_file.write(f"  Layout Engine: {prog}\n")
+                    log_file.write(f"  Output Format: {format}\n")
+                    log_file.write(f"  DPI: {dpi}\n")
+                    log_file.write(f"  Italic Genes: {italic_genes}\n")
+                    log_file.write(f"  Include Subgraph Borders: {include_subgraph_borders}\n")
+                    if title is not None:
+                        log_file.write(f"  Title: {title}\n")
+                    log_file.write("\n")
+                    
+                    # Write example code for reproduction
+                    log_file.write("Example Code for Reproduction:\n")
+                    log_file.write("```python\n")
+                    log_file.write("from SEgene_package.jupyter_wrapper import SEgeneJupyter\n\n")
+                    log_file.write("# Initialize with your data files\n")
+                    log_file.write("segene = SEgeneJupyter(\n")
+                    log_file.write("    rose_file='your_rose_file.txt',\n")
+                    log_file.write("    p2g_file='your_p2g_file.txt',\n")
+                    log_file.write("    rna_info_file='your_rna_info_file.csv'\n")
+                    log_file.write(")\n\n")
+                    log_file.write("# Create network with the same parameters\n")
+                    log_file.write(f"segene.create_network(threshold={self._threshold_network})\n\n")
+                    log_file.write("# Draw the detailed network with the same settings\n")
+                    log_file.write(f"segene.draw_network_detailed(\n")
+                    log_file.write(f"    prog='{prog}',\n")
+                    log_file.write(f"    format='{format}',\n")
+                    log_file.write(f"    italic_genes={italic_genes},\n")
+                    log_file.write(f"    include_subgraph_borders={include_subgraph_borders},\n")
+                    if title is not None:
+                        log_file.write(f"    title='{title}',\n")
+                    log_file.write(f"    output_path='output/reproduced_network.{format}'\n")
+                    log_file.write(f")\n")
+                    log_file.write("```\n")
+                    
+                self.logger.info(f"Saved log file to {log_path}")
+                    
+            self.logger.info(f"Detailed network saved successfully to {output_path} in {format} format.")
+        except Exception as e:
+            self.logger.exception(f"Error in draw_network_detailed: {e}")
+            raise
+
+
+    def draw_subnetwork_detailed(
+        self,
+        subgraph_id: Optional[int] = None,
+        output_path: Optional[str] = None,
+        prog: str = 'fdp',
+        format: str = 'svg',
+        italic_genes: bool = False,
+        dpi: int = 600,
+        include_enhancers: bool = True,
+        node_attrs: Optional[Dict[str, Dict[str, str]]] = None,
+        edge_attrs: Optional[Dict[str, Dict[str, str]]] = None,
+        save_log: bool = True,
+        title: Optional[str] = None 
+    ) -> None:
+        """
+        Draw a subgraph using Graphviz (same engine as draw_network) and save it to a file.
+        
+        Parameters:
+        -----------
+        subgraph_id : Optional[int]
+            ID of the subgraph to draw. If None, uses the currently selected subgraph.
+        output_path : Optional[str]
+            Path to save the output file. If None, a default path will be used.
+        prog : str
+            The graphviz layout program to use (e.g., 'dot', 'neato', 'fdp', 'twopi', 'circo')
+        format : str
+            Output format for the saved graph. Supported formats include 'svg', 'png', 'eps', 'pdf', etc.
+        italic_genes : bool
+            Whether to display gene names in italic font.
+        dpi : int
+            Resolution in dots per inch for raster formats (png, jpg)
+        include_enhancers : bool
+            Whether to include enhancer nodes. If False, only mergeSE and gene nodes are included.
+        node_attrs : Optional[Dict[str, Dict[str, str]]]
+            Additional node attributes by node type. Example: {'gene': {'color': 'red'}}
+        edge_attrs : Optional[Dict[str, Dict[str, str]]]
+            Additional edge attributes by edge type. Example: {'mergeSE-enhancer': {'style': 'dashed'}}
+        save_log : bool
+            Whether to save a detailed log file with reproduction information
+        title : Optional[str]
+            Custom title for the graph. If None, uses default title format.
+        """
+        self.logger.info(f"Drawing subgraph {subgraph_id} with graphviz ({prog}, {format}).")  
+
+        try:
+            # Get the appropriate subgraph
+            subgraph = None
+            if subgraph_id is not None:
+                # Get nodes in the specified subgraph
+                nodes_in_subgraph = [
+                    n for n, d in self._DG_network.nodes(data=True) 
+                    if d.get('subgraph_id') == subgraph_id
+                ]
+                
+                if not nodes_in_subgraph:
+                    raise ValueError(f"No nodes found for Subgraph ID {subgraph_id}.")
+                    
+                # Create subgraph
+                subgraph = self._DG_network.subgraph(nodes_in_subgraph).copy()
+            else:
+                # Use currently selected subgraph
+                if self._selected_subgraph is None:
+                    raise ValueError("No subgraph selected. Please specify a subgraph_id or use search_subnetwork first.")
+                subgraph = self._selected_subgraph
+                subgraph_id = self._selected_subgraph_id
+
+            # Filter out enhancer nodes if requested
+            if not include_enhancers:
+                nodes_to_keep = [
+                    n for n, d in subgraph.nodes(data=True) 
+                    if d.get('node_type') != 'enhancer'
+                ]
+                subgraph = subgraph.subgraph(nodes_to_keep).copy()
+            
+            # Convert to AGraph for Graphviz rendering
+            agraph_DG = nx.nx_agraph.to_agraph(subgraph)
+            
+            # Set default styles for nodes by type
+            default_node_attrs = {
+                'gene': {'color': 'red', 'shape': 'ellipse', 'style': 'filled', 'fillcolor': '#ffdddd'},
+                'mergeSE': {'color': 'blue', 'shape': 'box', 'style': 'filled', 'fillcolor': '#ddddff'},
+                'enhancer': {'color': 'green', 'shape': 'diamond', 'style': 'filled', 'fillcolor': '#ddffdd'},
+                'default': {'color': 'gray', 'shape': 'circle'}
+            }
+            
+            # Apply node attributes
+            for node in agraph_DG.nodes():
+                node_type = subgraph.nodes[node].get('node_type', 'default')
+                
+                # Apply default attributes for this node type
+                for attr, value in default_node_attrs.get(node_type, default_node_attrs['default']).items():
+                    node.attr[attr] = value
+                
+                # Apply custom attributes if provided
+                if node_attrs and node_type in node_attrs:
+                    for attr, value in node_attrs[node_type].items():
+                        node.attr[attr] = value
+                
+                # Apply italic font to gene nodes if requested
+                if italic_genes and node_type == 'gene':
+                    node.attr['fontstyle'] = 'italic'
+            
+            # Set default styles for edges by type
+            default_edge_attrs = {
+                'mergeSE-enhancer': {'color': 'blue', 'penwidth': '1.5'},
+                'enhancer-gene': {'color': 'red', 'penwidth': '1.5'},
+                'default': {'color': 'gray', 'penwidth': '1.0'}
+            }
+            
+            # Apply edge attributes
+            for edge in agraph_DG.edges():
+                source, target = edge
+                source_type = subgraph.nodes[source].get('node_type', 'default')
+                target_type = subgraph.nodes[target].get('node_type', 'default')
+                
+                # Determine edge type
+                if source_type == 'mergeSE' and target_type == 'enhancer':
+                    edge_type = 'mergeSE-enhancer'
+                elif source_type == 'enhancer' and target_type == 'gene':
+                    edge_type = 'enhancer-gene'
+                else:
+                    edge_type = 'default'
+                
+                # Apply default attributes for this edge type
+                for attr, value in default_edge_attrs.get(edge_type, default_edge_attrs['default']).items():
+                    edge.attr[attr] = value
+                
+                # Apply custom attributes if provided
+                if edge_attrs and edge_type in edge_attrs:
+                    for attr, value in edge_attrs[edge_type].items():
+                        edge.attr[attr] = value
+            
+            # Determine output path
+            if output_path is None:
+                timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+                output_dir = './output'
+                os.makedirs(output_dir, exist_ok=True)
+                default_filename = f"subgraph_{subgraph_id}_graphviz_{timestamp}.{format}"
+                output_path = os.path.join(output_dir, default_filename)
+            else:
+                # Check if output_path has an extension
+                _, ext = os.path.splitext(output_path)
+                if not ext:
+                    # If no extension, append the format as extension
+                    output_path = f"{output_path}.{format}"
+                else:
+                    # If extension exists but doesn't match format, issue a warning
+                    ext_format = ext.lstrip('.')
+                    if ext_format != format:
+                        self.logger.warning(f"Output path has extension '{ext_format}' but format is set to '{format}'. Using '{format}' as the output format.")
+                        # Replace the extension with the specified format
+                        output_path = f"{os.path.splitext(output_path)[0]}.{format}"
+                
+                # Create output directory if it doesn't exist
+                output_dir = os.path.dirname(output_path)
+                if output_dir and not os.path.exists(output_dir):
+                    os.makedirs(output_dir, exist_ok=True)
+            
+            # Set DPI for raster formats
+            if format.lower() in ['png', 'jpg', 'jpeg']:
+                agraph_DG.graph_attr['dpi'] = str(dpi)
+            
+            # Set graph title 
+            if title is None:
+                # default title
+                agraph_DG.graph_attr['label'] = f"Subgraph {subgraph_id}"
+            else:
+                # custom title
+                agraph_DG.graph_attr['label'] = title
+            agraph_DG.graph_attr['fontsize'] = '20'
+            
+            # Add additional graph styling
+            agraph_DG.graph_attr['overlap'] = 'false'
+            agraph_DG.graph_attr['splines'] = 'true'
+            
+            # Save the graph visualization
+            self.logger.info(f"Saving subgraph to {output_path} with prog={prog} and format={format}.")
+            agraph_DG.draw(output_path, prog=prog, format=format)
+            
+            # Save log file if requested
+            if save_log:
+                # Prepare settings for log file
+                all_settings = {
+                    'prog': prog,
+                    'format': format,
+                    'dpi': dpi,
+                    'italic_genes': italic_genes,
+                    'include_enhancers': include_enhancers,
+                    'date_generated': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    'subgraph_id': subgraph_id,
+                    'network_params': {
+                        'FDR': getattr(self, '_network_FDR', None),
+                        'r': getattr(self, '_network_r', None),
+                        'threshold': getattr(self, '_threshold_network', None)
+                    },
+                    'title': title 
+                }
+                
+                # Generate log file path
+                log_path = f"{os.path.splitext(output_path)[0]}_log.txt"
+                
+                # Open log file for writing
+                with open(log_path, 'w') as log_file:
+                    # Write header
+                    log_file.write(f"Subgraph {subgraph_id} - Graphviz Visualization Log\n")
+                    log_file.write(f"Generated on: {all_settings['date_generated']}\n")
+                    log_file.write("="*80 + "\n\n")
+                    
+                    # Write graph information
+                    log_file.write(f"Graph Information:\n")
+                    log_file.write(f"  Subgraph ID: {subgraph_id}\n")
+                    log_file.write(f"  Number of Nodes: {subgraph.number_of_nodes()}\n")
+                    log_file.write(f"  Number of Edges: {subgraph.number_of_edges()}\n\n")
+                    
+                    # Count node types
+                    node_types = {}
+                    for _, attrs in subgraph.nodes(data=True):
+                        node_type = attrs.get('node_type', 'default')
+                        node_types[node_type] = node_types.get(node_type, 0) + 1
+                    
+                    log_file.write("Node Types:\n")
+                    for node_type, count in node_types.items():
+                        log_file.write(f"  {node_type}: {count}\n")
+                    log_file.write("\n")
+                    
+                    # Count edge types
+                    edge_types = {}
+                    for u, v, attrs in subgraph.edges(data=True):
+                        edge_type = attrs.get('edge_type', 'default')
+                        edge_types[edge_type] = edge_types.get(edge_type, 0) + 1
+                    
+                    log_file.write("Edge Types:\n")
+                    for edge_type, count in edge_types.items():
+                        log_file.write(f"  {edge_type}: {count}\n")
+                    log_file.write("\n")
+                    
+                    # Write rendering settings
+                    log_file.write("Rendering Settings:\n")
+                    log_file.write(f"  Layout Engine: {prog}\n")
+                    log_file.write(f"  Output Format: {format}\n")
+                    log_file.write(f"  DPI: {dpi}\n")
+                    log_file.write(f"  Italic Genes: {italic_genes}\n")
+                    log_file.write(f"  Include Enhancers: {include_enhancers}\n")
+                    if title is not None:
+                        log_file.write(f"  Title: {title}\n")
+                    log_file.write("\n")
+                    
+                    # Write network parameters
+                    log_file.write("Network Parameters:\n")
+                    log_file.write(f"  FDR: {all_settings['network_params']['FDR']}\n")
+                    log_file.write(f"  r: {all_settings['network_params']['r']}\n")
+                    log_file.write(f"  Threshold: {all_settings['network_params']['threshold']}\n\n")
+                    
+                    # Write example code for reproduction
+                    log_file.write("Example Code for Reproduction:\n")
+                    log_file.write("```python\n")
+                    log_file.write("from SEgene_package.jupyter_wrapper import SEgeneJupyter\n\n")
+                    log_file.write("# Initialize with your data files\n")
+                    log_file.write("segene = SEgeneJupyter(\n")
+                    log_file.write("    rose_file='your_rose_file.txt',\n")
+                    log_file.write("    p2g_file='your_p2g_file.txt',\n")
+                    log_file.write("    rna_info_file='your_rna_info_file.csv'\n")
+                    log_file.write(")\n\n")
+                    log_file.write("# Create network with the same parameters\n")
+                    log_file.write(f"segene.create_network(threshold={all_settings['network_params']['threshold']})\n\n")
+                    log_file.write("# Draw the subgraph with the same settings\n")
+                    log_file.write(f"segene.draw_subgraph_network(\n")
+                    log_file.write(f"    subgraph_id={subgraph_id},\n")
+                    log_file.write(f"    prog='{prog}',\n")
+                    log_file.write(f"    format='{format}',\n")
+                    log_file.write(f"    italic_genes={italic_genes},\n")
+                    log_file.write(f"    include_enhancers={include_enhancers},\n")
+                    if title is not None:
+                        log_file.write(f"    title='{title}',\n")
+                    log_file.write(f"    output_path='output/reproduced_subgraph_{subgraph_id}.{format}'\n")
+                    log_file.write(f")\n")
+                    log_file.write("```\n")
+                
+                self.logger.info(f"Saved log file to {log_path}")
+            
+            self.logger.info(f"Subgraph saved successfully to {output_path}.")
+        except Exception as e:
+            self.logger.exception(f"Error in draw_subgraph_network: {e}")
+            raise
+
+
+
+    def draw_two_layer_subnetwork_detailed(
+        self,
+        subgraph_id: Optional[int] = None,
+        output_path: Optional[str] = None,
+        prog: str = 'fdp',
+        format: str = 'svg',
+        italic_genes: bool = False,
+        dpi: int = 600,
+        edge_scale: float = 2.0,
+        node_attrs: Optional[Dict[str, Dict[str, str]]] = None,
+        edge_color: str = 'purple',
+        save_log: bool = True,
+        title: Optional[str] = None  
+    ) -> None:
+        """
+        Draw a two-layer network (mergeSE and gene nodes only) using Graphviz.
+        
+        This function creates a simplified view where enhancer nodes are removed and 
+        direct edges connect mergeSE nodes to gene nodes, with edge thickness proportional 
+        to the number of enhancers that connect them.
+        
+        Parameters:
+        -----------
+        subgraph_id : Optional[int]
+            ID of the subgraph to draw. If None, uses the currently selected subgraph.
+        output_path : Optional[str]
+            Path to save the output file. If None, a default path will be used.
+        prog : str
+            The graphviz layout program to use (e.g., 'dot', 'neato', 'fdp', 'twopi', 'circo')
+        format : str
+            Output format for the saved graph. Supported formats include 'svg', 'png', 'eps', 'pdf', etc.
+        italic_genes : bool
+            Whether to display gene names in italic font.
+        dpi : int
+            Resolution in dots per inch for raster formats (png, jpg)
+        edge_scale : float
+            Scaling factor for edge widths based on the number of connecting enhancers
+        node_attrs : Optional[Dict[str, Dict[str, str]]]
+            Additional node attributes by node type. Example: {'gene': {'color': 'red'}}
+        edge_color : str
+            Color for the edges connecting mergeSE and gene nodes
+        save_log : bool
+            Whether to save a detailed log file with reproduction information
+        title : Optional[str]
+            Custom title for the graph. If None, uses default title format.
+        """
+        self.logger.info(f"Drawing two-layer network for subgraph {subgraph_id} with graphviz ({prog}, {format}).")
+        
+        try:
+            # Get the appropriate subgraph
+            full_subgraph = None
+            if subgraph_id is not None:
+                # Get nodes in the specified subgraph
+                nodes_in_subgraph = [
+                    n for n, d in self._DG_network.nodes(data=True) 
+                    if d.get('subgraph_id') == subgraph_id
+                ]
+                
+                if not nodes_in_subgraph:
+                    raise ValueError(f"No nodes found for Subgraph ID {subgraph_id}.")
+                    
+                # Create full subgraph (with all nodes)
+                full_subgraph = self._DG_network.subgraph(nodes_in_subgraph).copy()
+            else:
+                # Use currently selected subgraph
+                if self._selected_subgraph is None:
+                    raise ValueError("No subgraph selected. Please specify a subgraph_id or use search_subnetwork first.")
+                full_subgraph = self._selected_subgraph
+                subgraph_id = self._selected_subgraph_id
+            
+            # Create a new DiGraph for the two-layer network
+            two_layer_graph = nx.DiGraph()
+            
+            # Add only mergeSE and gene nodes
+            for node, attrs in full_subgraph.nodes(data=True):
+                node_type = attrs.get('node_type', 'default')
+                if node_type in ['mergeSE', 'gene']:
+                    two_layer_graph.add_node(node, **attrs)
+            
+            # Create direct edges between mergeSE and gene nodes
+            # Keep track of edge weights (number of enhancers connecting the nodes)
+            edge_weights = {}
+            
+            for mergeSE_node, attrs in full_subgraph.nodes(data=True):
+                if attrs.get('node_type') != 'mergeSE':
+                    continue
+                    
+                # Get all enhancers connected to this mergeSE
+                for _, enhancer_node in full_subgraph.out_edges(mergeSE_node):
+                    enhancer_attrs = full_subgraph.nodes[enhancer_node]
+                    if enhancer_attrs.get('node_type') != 'enhancer':
+                        continue
+                    
+                    # Get all genes connected to this enhancer
+                    for _, gene_node in full_subgraph.out_edges(enhancer_node):
+                        gene_attrs = full_subgraph.nodes[gene_node]
+                        if gene_attrs.get('node_type') != 'gene':
+                            continue
+                        
+                        # Add or increment edge weight
+                        edge_key = (mergeSE_node, gene_node)
+                        if edge_key in edge_weights:
+                            edge_weights[edge_key] += 1
+                        else:
+                            edge_weights[edge_key] = 1
+            
+            # Add the weighted edges to the two-layer graph
+            for (source, target), weight in edge_weights.items():
+                two_layer_graph.add_edge(source, target, weight=weight, edge_type='mergeSE-gene')
+            
+            # Convert to AGraph for Graphviz rendering
+            agraph_DG = nx.nx_agraph.to_agraph(two_layer_graph)
+            
+            # Set default styles for nodes by type
+            default_node_attrs = {
+                'gene': {'color': 'red', 'shape': 'ellipse', 'style': 'filled', 'fillcolor': '#ffdddd'},
+                'mergeSE': {'color': 'blue', 'shape': 'box', 'style': 'filled', 'fillcolor': '#ddddff'},
+                'default': {'color': 'gray', 'shape': 'circle'}
+            }
+            
+            # Apply node attributes
+            for node in agraph_DG.nodes():
+                node_type = two_layer_graph.nodes[node].get('node_type', 'default')
+                
+                # Apply default attributes for this node type
+                for attr, value in default_node_attrs.get(node_type, default_node_attrs['default']).items():
+                    node.attr[attr] = value
+                
+                # Apply custom attributes if provided
+                if node_attrs and node_type in node_attrs:
+                    for attr, value in node_attrs[node_type].items():
+                        node.attr[attr] = value
+                
+                # Apply italic font to gene nodes if requested
+                if italic_genes and node_type == 'gene':
+                    node.attr['fontstyle'] = 'italic'
+                    
+                # Add SE count and sample count to mergeSE node labels if available
+                if node_type == 'mergeSE':
+                    se_count = two_layer_graph.nodes[node].get('SE_count', '')
+                    sample_count = two_layer_graph.nodes[node].get('sample_count', '')
+                    if se_count or sample_count:
+                        node.attr['label'] = f"{node}\nSE: {se_count}, Samples: {sample_count}"
+            
+            # Apply edge attributes based on weight
+            for edge in agraph_DG.edges():
+                source, target = edge
+                weight = two_layer_graph[source][target].get('weight', 1)
+                
+                # Scale the penwidth based on weight
+                penwidth = max(1, weight * edge_scale / 5)  # Scale and ensure minimum width
+                
+                # Set edge attributes
+                edge.attr['penwidth'] = str(penwidth)
+                edge.attr['color'] = edge_color
+                edge.attr['label'] = str(weight)
+                edge.attr['fontsize'] = '10'
+                edge.attr['fontcolor'] = 'black'
+            
+            # Determine output path
+            if output_path is None:
+                timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+                output_dir = './output'
+                os.makedirs(output_dir, exist_ok=True)
+                default_filename = f"subgraph_{subgraph_id}_two_layer_{timestamp}.{format}"
+                output_path = os.path.join(output_dir, default_filename)
+            else:
+                # Check if output_path has an extension
+                _, ext = os.path.splitext(output_path)
+                if not ext:
+                    # If no extension, append the format as extension
+                    output_path = f"{output_path}.{format}"
+                else:
+                    # If extension exists but doesn't match format, issue a warning
+                    ext_format = ext.lstrip('.')
+                    if ext_format != format:
+                        self.logger.warning(f"Output path has extension '{ext_format}' but format is set to '{format}'. Using '{format}' as the output format.")
+                        # Replace the extension with the specified format
+                        output_path = f"{os.path.splitext(output_path)[0]}.{format}"
+                
+                # Create output directory if it doesn't exist
+                output_dir = os.path.dirname(output_path)
+                if output_dir and not os.path.exists(output_dir):
+                    os.makedirs(output_dir, exist_ok=True)
+            
+            # Set DPI for raster formats
+            if format.lower() in ['png', 'jpg', 'jpeg']:
+                agraph_DG.graph_attr['dpi'] = str(dpi)
+            
+            # Set graph title
+            if title is None:
+                agraph_DG.graph_attr['label'] = f"Two-Layer Network - Subgraph {subgraph_id}"
+            else:
+                agraph_DG.graph_attr['label'] = title
+            agraph_DG.graph_attr['fontsize'] = '20'
+            
+            # Add additional graph styling
+            agraph_DG.graph_attr['overlap'] = 'false'
+            agraph_DG.graph_attr['splines'] = 'true'
+            
+            # Save the graph visualization
+            self.logger.info(f"Saving two-layer network to {output_path} with prog={prog} and format={format}.")
+            agraph_DG.draw(output_path, prog=prog, format=format)
+            
+            # Save log file if requested
+            if save_log:
+                # Prepare settings for log file
+                all_settings = {
+                    'prog': prog,
+                    'format': format,
+                    'dpi': dpi,
+                    'italic_genes': italic_genes,
+                    'edge_scale': edge_scale,
+                    'edge_color': edge_color,
+                    'date_generated': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    'subgraph_id': subgraph_id,
+                    'network_params': {
+                        'FDR': getattr(self, '_network_FDR', None),
+                        'r': getattr(self, '_network_r', None),
+                        'threshold': getattr(self, '_threshold_network', None)
+                    },
+                    'title': title 
+                }
+                
+                # Generate log file path
+                log_path = f"{os.path.splitext(output_path)[0]}_log.txt"
+                
+                # Open log file for writing
+                with open(log_path, 'w') as log_file:
+                    # Write header
+                    log_file.write(f"Two-Layer Network - Subgraph {subgraph_id} - Graphviz Visualization Log\n")
+                    log_file.write(f"Generated on: {all_settings['date_generated']}\n")
+                    log_file.write("="*80 + "\n\n")
+                    
+                    # Write graph information
+                    log_file.write(f"Graph Information:\n")
+                    log_file.write(f"  Subgraph ID: {subgraph_id}\n")
+                    log_file.write(f"  Number of Nodes: {two_layer_graph.number_of_nodes()}\n")
+                    log_file.write(f"  Number of Edges: {two_layer_graph.number_of_edges()}\n\n")
+                    
+                    # Count node types
+                    node_types = {}
+                    for _, attrs in two_layer_graph.nodes(data=True):
+                        node_type = attrs.get('node_type', 'default')
+                        node_types[node_type] = node_types.get(node_type, 0) + 1
+                    
+                    log_file.write("Node Types:\n")
+                    for node_type, count in node_types.items():
+                        log_file.write(f"  {node_type}: {count}\n")
+                    log_file.write("\n")
+                    
+                    # Write edge weight statistics
+                    weights = [data.get('weight', 1) for _, _, data in two_layer_graph.edges(data=True)]
+                    log_file.write("Edge Weight Statistics:\n")
+                    log_file.write(f"  Min Weight: {min(weights) if weights else 'N/A'}\n")
+                    log_file.write(f"  Max Weight: {max(weights) if weights else 'N/A'}\n")
+                    log_file.write(f"  Average Weight: {sum(weights)/len(weights) if weights else 'N/A':.2f}\n\n")
+                    
+                    # Write rendering settings
+                    log_file.write("Rendering Settings:\n")
+                    log_file.write(f"  Layout Engine: {prog}\n")
+                    log_file.write(f"  Output Format: {format}\n")
+                    log_file.write(f"  DPI: {dpi}\n")
+                    log_file.write(f"  Italic Genes: {italic_genes}\n")
+                    log_file.write(f"  Edge Scale: {edge_scale}\n")
+                    log_file.write(f"  Edge Color: {edge_color}\n")
+                    if title is not None:
+                        log_file.write(f"  Title: {title}\n")
+                    log_file.write("\n")
+                    
+                    # Write network parameters
+                    log_file.write("Network Parameters:\n")
+                    log_file.write(f"  FDR: {all_settings['network_params']['FDR']}\n")
+                    log_file.write(f"  r: {all_settings['network_params']['r']}\n")
+                    log_file.write(f"  Threshold: {all_settings['network_params']['threshold']}\n\n")
+                    
+                    # Write example code for reproduction
+                    log_file.write("Example Code for Reproduction:\n")
+                    log_file.write("```python\n")
+                    log_file.write("from SEgene_package.jupyter_wrapper import SEgeneJupyter\n\n")
+                    log_file.write("# Initialize with your data files\n")
+                    log_file.write("segene = SEgeneJupyter(\n")
+                    log_file.write("    rose_file='your_rose_file.txt',\n")
+                    log_file.write("    p2g_file='your_p2g_file.txt',\n")
+                    log_file.write("    rna_info_file='your_rna_info_file.csv'\n")
+                    log_file.write(")\n\n")
+                    log_file.write("# Create network with the same parameters\n")
+                    log_file.write(f"segene.create_network(threshold={all_settings['network_params']['threshold']})\n\n")
+                    log_file.write("# Draw the two-layer network with the same settings\n")
+                    log_file.write(f"segene.draw_two_layer_network(\n")
+                    log_file.write(f"    subgraph_id={subgraph_id},\n")
+                    log_file.write(f"    prog='{prog}',\n")
+                    log_file.write(f"    format='{format}',\n")
+                    log_file.write(f"    italic_genes={italic_genes},\n")
+                    log_file.write(f"    edge_scale={edge_scale},\n")
+                    log_file.write(f"    edge_color='{edge_color}',\n")
+                    if title is not None:
+                        log_file.write(f"    title='{title}',\n")
+                    log_file.write(f"    output_path='output/reproduced_two_layer_{subgraph_id}.{format}'\n")
+                    log_file.write(f")\n")
+                    log_file.write("```\n")
+                
+                self.logger.info(f"Saved log file to {log_path}")
+            
+            self.logger.info(f"Two-layer network saved successfully to {output_path}.")
+        except Exception as e:
+            self.logger.exception(f"Error in draw_two_layer_network: {e}")
+            raise
 
 
 
@@ -1959,20 +3457,45 @@ class SEgeneJupyter:
 
 
     def visualize_selected_se_region(
-        self, 
-        title: Optional[str] = None, 
-        save_svg: Optional[str] = None, 
-        save_region_bed: Optional[str] = None, 
-        save_full_bed: Optional[str] = None, 
-        show_plot: bool = True
+    self, 
+    title: Optional[str] = None, 
+    save_svg: Optional[str] = None,  # Kept for backward compatibility
+    save_path: Optional[str] = None,  
+    save_format: str = "svg",  
+    save_region_bed: Optional[str] = None, 
+    save_full_bed: Optional[str] = None, 
+    show_plot: bool = True
     ) -> None:
-
+        """
+        Visualize the selected SE region.
+        
+        Parameters:
+        -----------
+        title : Optional[str]
+            Plot title (if None, a default title will be used)
+        save_svg : Optional[str]
+            File path for saving as SVG (for backward compatibility)
+        save_path : Optional[str]
+            File path for saving the plot
+        save_format : str
+            File format for saving ('svg', 'eps', 'png', 'pdf', etc.)
+        save_region_bed : Optional[str]
+            File path for saving the selected region as BED file
+        save_full_bed : Optional[str]
+            File path for saving all BED data
+        show_plot : bool
+            Whether to display the plot
+        """
         self.logger.info("Visualizing selected SE region.")  
 
         if self._selected_se_region is None:
             self.logger.error("No SE region selected. Use select_se_region first.")
             raise ValueError("No SE region selected. Use select_se_region first.")
         
+        if save_svg is not None and save_path is None:
+            save_path = save_svg
+            save_format = "svg"
+
         
         self.logger.debug(f"Parsing selected SE region: {self._selected_se_region}.")  
         try:
@@ -2002,7 +3525,8 @@ class SEgeneJupyter:
                 start=start, 
                 end=end, 
                 title=title or f"SE Region: {self._selected_se_region}", 
-                save_path=save_svg,
+                save_path=save_path,
+                save_format=save_format, 
                 save_region_bed=save_region_bed,
                 save_full_bed=save_full_bed,
                 show_plot=show_plot
@@ -2275,10 +3799,18 @@ class SEgeneJupyter:
         graph_max_number: int = 30, 
         y_column: Optional[str] = None,  
         save_svg: Optional[str] = None, 
+        save_path: Optional[str] = None, 
+        save_format: str = "svg",   
         save_and_show: bool = True,
         ylabel: Optional[str] = None,  
-        title: Optional[str] = None    
+        title: Optional[str] = None ,
+        dpi: int = 600    
     ) -> None:
+        
+        if save_svg is not None:
+            save_path = save_svg
+            save_format = "svg"
+        
 
         self.logger.info("Generating SE count graph based on the current sorted_df.")
         try:
@@ -2308,18 +3840,23 @@ class SEgeneJupyter:
                 ylabel = y_column.replace("_", " ").capitalize()
             
             self.logger.info(f"Generating SE count graph sorted by '{sort_by}' with y_column='{y_column}'.")
-            
-            
+
             self._make_sort_se_merge_count_graph(
                 se_count_df=self._sorted_df, 
                 graph_max_number=graph_max_number, 
-                count_type=y_column,  
+                count_type=y_column,
                 title=title,
-                xlabel="SE Data",      
+                xlabel="SE Data",
                 ylabel=ylabel,
-                save_svg=save_svg,
-                save_and_show=save_and_show
+                save_path=save_path, 
+                save_format=save_format,  
+                save_and_show=save_and_show,
+                dpi=dpi  
             )
+
+
+
+
             self.logger.info("SE count graph generated successfully.")
             if save_svg:
                 self.logger.info(f"SE count graph saved to {save_svg}.")
@@ -2346,12 +3883,19 @@ class SEgeneJupyter:
         ylabel: Optional[str] = None,
         rotation: int = 90,
         save_svg: Optional[str] = None,
+        save_path: Optional[str] = None, 
         save_tsv: Optional[str] = None,
-        save_and_show: bool = False
+        save_and_show: bool = False,
+        save_format: str = "svg", 
+        dpi: int = 600
     ) -> None:
 
         self.logger.info("Starting _make_sort_se_merge_count_graph.")
         
+        if save_svg is not None:
+            save_path = save_svg
+            save_format = "svg"
+
         
         if count_type not in se_count_df.columns:
             self.logger.error(f"Invalid count_type: '{count_type}'. Available columns: {list(se_count_df.columns)}")
@@ -2385,15 +3929,30 @@ class SEgeneJupyter:
 
         
         plt.xlabel(xlabel)
-        plt.ylabel(ylabel if ylabel else count_type.replace("_", " ").capitalize())
+
+
+        if ylabel:
+            y_axis_label = ylabel
+        elif count_type == "se_count":
+            y_axis_label = "SE count"  
+        else:
+            y_axis_label = count_type.replace("_", " ").capitalize()  
+        
+        plt.ylabel(y_axis_label)
+
+        
+        
         plt.title(title if title else f"Merge SE {count_type.replace('_', ' ').capitalize()}")
 
-        
-        if save_svg:
-            plt.savefig(save_svg, format="svg")
-            self.logger.info(f"Graph saved as SVG at {save_svg}.")
+        if save_path:
+            if "." not in save_path:
+                save_path = f"{save_path}.{save_format}"
+                
+            plt.savefig(save_path, format=save_format, dpi=dpi, bbox_inches='tight')
+            self.logger.info(f"Graph saved as {save_format.upper()} at {save_path} with DPI={dpi}.")
 
-        
+
+
         if save_and_show or not save_svg:
             plt.show()
 
@@ -2604,36 +4163,6 @@ class SEgeneJupyter:
                 except Exception as e:
                     self.logger.warning(f"Could not load additional information from original P2GL file: {e}")
                     self.logger.debug(f"Exception details: {str(e)}")
-
-            # enriched_df = None
-            # if display_full_info and hasattr(self, 'p2g_file') and self.p2g_file:
-            #     try:
-            #         original_p2gl = pd.read_table(self.p2g_file)
-                    
-            #         original_gene_data = original_p2gl[original_p2gl["symbol"] == gene_symbol]
-                    
-            #         original_gene_data = original_gene_data[
-            #             (original_gene_data["FDR"] <= self._FDR) & 
-            #             (original_gene_data["r"] >= self._r)
-            #         ]
-                    
-            #         if "PeakID" in original_gene_data.columns:
-            #             peak_ids = gene_enhancers["PeakID"].tolist()
-            #             original_gene_data = original_gene_data[original_gene_data["PeakID"].isin(peak_ids)]
-                        
-            #             if not original_gene_data.empty:
-            #                 display_columns = ["chr", "Start", "End", "PeakID", "symbol", "FDR", "r"]
-                            
-            #                 # Always calculate and add signed distance
-            #                 self._add_signed_distance(original_gene_data, gene_info)
-                            
-            #                 # Add signed_distance column to display if it was successfully added
-            #                 if 'signed_distance' in original_gene_data.columns:
-            #                     display_columns.append("signed_distance")
-                                
-            #                 enriched_df = original_gene_data[display_columns].sort_values(by=["chr", "Start"])
-            #     except Exception as e:
-            #         self.logger.warning(f"Could not load additional information from original P2GL file: {e}")
 
             # Store search results
             self._gene_enhancer_results[gene_symbol] = {
@@ -3994,6 +5523,345 @@ class SEgeneJupyter:
             self.logger.exception(f"Error in plot_super_enhancers_overall_distribution: {e}")
             print(f"Error plotting super enhancers overall distribution: {e}")
             return None
+
+
+
+
+    def _save_subgraph_data(
+        self, 
+        graph: nx.DiGraph, 
+        subgraph_id: Optional[int] = None,
+        data_path: Optional[str] = None,
+        data_format: str = 'csv',
+        include_stats: bool = True,
+        include_attributes: bool = True,
+        save_log: bool = True,
+        settings: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, str]:
+        """
+        Save subgraph data to text files for further analysis or documentation.
+        
+        Parameters:
+        -----------
+        graph : nx.DiGraph
+            The subgraph to save data for
+        subgraph_id : Optional[int]
+            ID of the subgraph (for reference in filenames)
+        data_path : Optional[str]
+            Base path for saved data files. If None, a default path will be generated.
+        data_format : str
+            Format for saving data ('csv', 'tsv', or 'json')
+        include_stats : bool
+            Whether to include a statistics summary file
+        include_attributes : bool
+            Whether to include all node and edge attributes
+        save_log : bool
+            Whether to save a detailed log file with reproduction information
+        settings : Optional[Dict[str, Any]]
+            Dictionary of settings used to generate the subgraph
+            
+        Returns:
+        --------
+        Dict[str, str]
+            Dictionary with keys for each saved file type and values as the file paths
+        """
+        self.logger.info(f"Saving subgraph data in {data_format} format.")
+        
+        try:
+            # Validate data format
+            if data_format.lower() not in ['csv', 'tsv', 'json']:
+                self.logger.warning(f"Unsupported data format: {data_format}. Using 'csv' instead.")
+                data_format = 'csv'
+            
+            # Set delimiter based on format
+            delimiter = ',' if data_format.lower() == 'csv' else '\t'
+            ext = data_format.lower()
+            
+            # Determine base path for data files
+            if data_path is None:
+                timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+                subgraph_suffix = f"subgraph_{subgraph_id}" if subgraph_id is not None else "subgraph"
+                output_dir = './output'
+                os.makedirs(output_dir, exist_ok=True)
+                base_path = os.path.join(output_dir, f"{subgraph_suffix}_{timestamp}")
+            else:
+                # Remove file extension if present (we'll add our own)
+                base_path, _ = os.path.splitext(data_path)
+                
+                # Create directory if it doesn't exist
+                data_dir = os.path.dirname(base_path)
+                if data_dir and not os.path.exists(data_dir):
+                    os.makedirs(data_dir, exist_ok=True)
+            
+            # Dictionary to store paths to all saved files
+            saved_files = {}
+            
+            # 1. Save nodes data
+            nodes_path = f"{base_path}_nodes.{ext}"
+            
+            if data_format.lower() == 'json':
+                # For JSON, save all node data as a list of dictionaries
+                nodes_data = []
+                for node, attrs in graph.nodes(data=True):
+                    node_data = {'id': node}
+                    if include_attributes:
+                        node_data.update(attrs)
+                    else:
+                        # Always include node_type even when not including all attributes
+                        if 'node_type' in attrs:
+                            node_data['node_type'] = attrs['node_type']
+                    nodes_data.append(node_data)
+                
+                with open(nodes_path, 'w') as f:
+                    json.dump(nodes_data, f, indent=2)
+            else:
+                # For CSV/TSV, create a DataFrame
+                nodes_data = []
+                for node, attrs in graph.nodes(data=True):
+                    node_data = {'id': node}
+                    if include_attributes:
+                        # Add all attributes, handling complex types like lists or dicts
+                        for key, val in attrs.items():
+                            if isinstance(val, (list, dict)):
+                                node_data[key] = str(val)
+                            else:
+                                node_data[key] = val
+                    else:
+                        # Always include node_type
+                        if 'node_type' in attrs:
+                            node_data['node_type'] = attrs['node_type']
+                    nodes_data.append(node_data)
+                
+                # Convert to DataFrame and save
+                nodes_df = pd.DataFrame(nodes_data)
+                nodes_df.to_csv(nodes_path, sep=delimiter, index=False)
+            
+            saved_files['nodes'] = nodes_path
+            self.logger.info(f"Saved nodes data to {nodes_path}")
+            
+            # 2. Save edges data
+            edges_path = f"{base_path}_edges.{ext}"
+            
+            if data_format.lower() == 'json':
+                # For JSON, save all edge data
+                edges_data = []
+                for source, target, attrs in graph.edges(data=True):
+                    edge_data = {'source': source, 'target': target}
+                    if include_attributes:
+                        edge_data.update(attrs)
+                    else:
+                        # Always include edge_type even when not including all attributes
+                        if 'edge_type' in attrs:
+                            edge_data['edge_type'] = attrs['edge_type']
+                    edges_data.append(edge_data)
+                
+                with open(edges_path, 'w') as f:
+                    json.dump(edges_data, f, indent=2)
+            else:
+                # For CSV/TSV, create a DataFrame
+                edges_data = []
+                for source, target, attrs in graph.edges(data=True):
+                    edge_data = {'source': source, 'target': target}
+                    if include_attributes:
+                        # Add all attributes, handling complex types
+                        for key, val in attrs.items():
+                            if isinstance(val, (list, dict)):
+                                edge_data[key] = str(val)
+                            else:
+                                edge_data[key] = val
+                    else:
+                        # Always include edge_type
+                        if 'edge_type' in attrs:
+                            edge_data['edge_type'] = attrs['edge_type']
+                    edges_data.append(edge_data)
+                
+                # Convert to DataFrame and save
+                edges_df = pd.DataFrame(edges_data)
+                edges_df.to_csv(edges_path, sep=delimiter, index=False)
+            
+            saved_files['edges'] = edges_path
+            self.logger.info(f"Saved edges data to {edges_path}")
+            
+            # 3. Save statistics summary if requested
+            if include_stats:
+                stats_path = f"{base_path}_stats.{ext}"
+                
+                # Get statistics
+                stats = {}
+                
+                # Basic statistics
+                stats['subgraph_id'] = subgraph_id
+                stats['number_of_nodes'] = graph.number_of_nodes()
+                stats['number_of_edges'] = graph.number_of_edges()
+                
+                # Node type counts
+                node_types = {}
+                for _, attrs in graph.nodes(data=True):
+                    node_type = attrs.get('node_type', 'unknown')
+                    node_types[node_type] = node_types.get(node_type, 0) + 1
+                stats['node_type_counts'] = node_types
+                
+                # Edge type counts
+                edge_types = {}
+                for _, _, attrs in graph.edges(data=True):
+                    edge_type = attrs.get('edge_type', 'unknown')
+                    edge_types[edge_type] = edge_types.get(edge_type, 0) + 1
+                stats['edge_type_counts'] = edge_types
+                
+                # Save as JSON or CSV/TSV
+                if data_format.lower() == 'json':
+                    with open(stats_path, 'w') as f:
+                        json.dump(stats, f, indent=2)
+                else:
+                    # For CSV/TSV, flatten the dictionary structure
+                    flat_stats = {
+                        'subgraph_id': stats.get('subgraph_id', 'NA'),
+                        'number_of_nodes': stats['number_of_nodes'],
+                        'number_of_edges': stats['number_of_edges']
+                    }
+                    
+                    # Add node type counts as separate columns
+                    for node_type, count in stats['node_type_counts'].items():
+                        flat_stats[f'node_type_{node_type}'] = count
+                    
+                    # Add edge type counts as separate columns
+                    for edge_type, count in stats['edge_type_counts'].items():
+                        flat_stats[f'edge_type_{edge_type}'] = count
+                    
+                    # Convert to DataFrame and save
+                    stats_df = pd.DataFrame([flat_stats])
+                    stats_df.to_csv(stats_path, sep=delimiter, index=False)
+                
+                saved_files['stats'] = stats_path
+                self.logger.info(f"Saved statistics summary to {stats_path}")
+            
+            # 4. Save detailed log file with reproduction information
+            if save_log:
+                log_path = f"{base_path}_log.txt"
+                
+                # Format timestamp
+                timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                
+                # Start with basic information
+                log_lines = [
+                    f"Subgraph Log - Generated on: {timestamp}",
+                    f"=" * 80,
+                    f"Subgraph ID: {subgraph_id}",
+                    f"Number of Nodes: {graph.number_of_nodes()}",
+                    f"Number of Edges: {graph.number_of_edges()}",
+                    f"",
+                    f"Settings for Reproduction:",
+                    f"-" * 50
+                ]
+                
+                # Add all settings if provided
+                if settings:
+                    for key, value in settings.items():
+                        log_lines.append(f"{key}: {value}")
+                else:
+                    log_lines.append("No settings provided")
+                
+                # Add node type summary
+                node_types = {}
+                for _, attrs in graph.nodes(data=True):
+                    node_type = attrs.get('node_type', 'unknown')
+                    node_types[node_type] = node_types.get(node_type, 0) + 1
+                    
+                log_lines.append("")
+                log_lines.append("Node Types Summary:")
+                log_lines.append("-" * 50)
+                for node_type, count in node_types.items():
+                    log_lines.append(f"{node_type}: {count}")
+                
+                # Add edge type summary
+                edge_types = {}
+                for _, _, attrs in graph.edges(data=True):
+                    edge_type = attrs.get('edge_type', 'unknown')
+                    edge_types[edge_type] = edge_types.get(edge_type, 0) + 1
+                    
+                log_lines.append("")
+                log_lines.append("Edge Types Summary:")
+                log_lines.append("-" * 50)
+                for edge_type, count in edge_types.items():
+                    log_lines.append(f"{edge_type}: {count}")
+                
+                # Add network parameters
+                log_lines.append("")
+                log_lines.append("Network Parameters:")
+                log_lines.append("-" * 50)
+                
+                # Check for network parameters in the class attributes
+                try:
+                    log_lines.append(f"Network FDR: {self._network_FDR}")
+                    log_lines.append(f"Network r: {self._network_r}")
+                    log_lines.append(f"Network threshold: {self._threshold_network}")
+                except AttributeError:
+                    log_lines.append("Network parameters not available")
+                
+                # Add class and method information for complete reproducibility
+                log_lines.append("")
+                log_lines.append("Method Information:")
+                log_lines.append("-" * 50)
+                log_lines.append(f"Class: {self.__class__.__name__}")
+                log_lines.append(f"Python version: {sys.version}")
+                log_lines.append(f"Networkx version: {nx.__version__}")
+                log_lines.append(f"Pandas version: {pd.__version__}")
+                
+                # Add file information
+                log_lines.append("")
+                log_lines.append("Associated Files:")
+                log_lines.append("-" * 50)
+                for file_type, file_path in saved_files.items():
+                    log_lines.append(f"{file_type}: {file_path}")
+                
+                # Add reproduction code example
+                log_lines.append("")
+                log_lines.append("Example Code for Reproduction:")
+                log_lines.append("-" * 50)
+                
+                if settings:
+                    # Default values for important parameters
+                    layout = settings.get('layout', 'spring')
+                    seed = settings.get('seed', 'None')
+                    
+                    code_example = [
+                        "# Code to reproduce this subgraph visualization",
+                        "from SEgene_package.jupyter_wrapper import SEgeneJupyter",
+                        "",
+                        "# Initialize the SEgeneJupyter object with your data",
+                        "segene = SEgeneJupyter(",
+                        "    rose_file='your_rose_file.txt',",
+                        "    p2g_file='your_p2g_file.txt',",
+                        "    rna_info_file='your_rna_info_file.csv'",
+                        ")",
+                        "",
+                        "# Create network (with the same parameters)",
+                        f"segene.create_network(threshold={self._threshold_network})",
+                        "",
+                        "# Display the subgraph with the same settings",
+                        f"segene.display_subgraph(",
+                        f"    subgraph_id={subgraph_id},",
+                        f"    layout='{layout}',",
+                        f"    seed={seed},",
+                        f"    save_path='output/reproduced_subgraph'",
+                        f")",
+                    ]
+                    log_lines.extend(code_example)
+                
+                # Write the log file
+                with open(log_path, 'w') as f:
+                    f.write("\n".join(log_lines))
+                
+                saved_files['log'] = log_path
+                self.logger.info(f"Saved detailed log file to {log_path}")
+                
+            # Return paths to all saved files
+            return saved_files
+        
+        except Exception as e:
+            self.logger.exception(f"Error saving subgraph data: {e}")
+            return {}
+
 
 
 

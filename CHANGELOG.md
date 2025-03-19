@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2025-03-19
+
+### Added
+- **Enhanced network visualization capabilities**:
+  - Added detailed graph drawing methods (`draw_network_detailed`, `draw_subnetwork_detailed`, `draw_two_layer_subnetwork_detailed`)
+  - Added support for multiple output formats (SVG, PNG, EPS, PDF) across all visualization functions
+  - Added customization options for node styling, edge styling, and subgraph boundaries
+- **Improved data export functionality**:
+  - Added ability to save graph data alongside visualizations
+  - Added logging capabilities for reproducibility
+  - Added support for exporting data in various formats (CSV, TSV, JSON)
+- **Enhanced visualization parameters**:
+  - Added resolution (DPI) control for raster format outputs
+  - Added figure size and styling customization options
+  - Added custom title support for all network visualization methods (`draw_network`, `draw_subnetwork`, `draw_two_layer_subnetwork`)
+
+### Changed
+- Updated existing visualization methods to support expanded format options
+- Extended graph rendering interfaces with additional customization parameters
+- Improved file naming and organization for saved outputs
+
+### Notes
+- These visualization enhancements are designed to maintain compatibility with existing network analysis functions
+
 ## [1.3.0] - 2025-03-15
 
 ### Added
@@ -41,8 +65,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Scripts such as `generate_gtf.py`, `generate_file_list.sh`, `run_featurecounts_array.sh`, etc.
   - `correlation_analysis.py` computes Pearson correlation between SE (CPM) and genes (TPM)
 - **Documentation updates**:
-  - Added **English (`README.md`)** and **Japanese (`README_ja.md`)** documentation under `/cli_tools/`
-  - Updated the main repository documentation (`README.md`) and `/SE_to_gene_links/` docs to explain how to integrate the new CLI tools
+  - Added **English (`README.md`)** and **Japanese (`README_ja.md`)** documentation under `cli_tools/`
+  - Updated the main repository documentation (`README.md`) and `SE_to_gene_links/` docs to explain how to integrate the new CLI tools
 
 ### Changed
 - Refined repository structure by separating stand-alone CLI scripts into `cli_tools/`, independent of `SEgene_package`
@@ -64,6 +88,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Interactive analysis with Jupyter Notebook
 - Detailed installation instructions and documentation in the GitHub repository
 
+[1.4.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.4.0
 [1.3.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.3.0
 [1.2.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.2.0
 [1.1.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.1.0
