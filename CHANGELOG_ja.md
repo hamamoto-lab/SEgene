@@ -5,6 +5,23 @@
 形式は [Keep a Changelog](https://keepachangelog.com/ja/1.1.0/) をベースとし、
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html) に準拠しています。
 
+## [1.5.0] - 2025-04-05
+
+### Added
+- **新コンポーネント: SEgene_RegionAnalyzer**:
+  - 関心あるゲノム領域におけるスーパーエンハンサー活性を評価する新たな分析ツールを追加
+  - 公共データベース（現在はSEdb 2.0）との連携機能
+  - 組織特異的なスーパーエンハンサー関連性のエンリッチメント解析を実行
+  - SEgene出力のTSVファイルと標準BEDフォーマット入力の両方をサポート
+  - 包括的なTSVレポートと視覚的なHTML出力を生成
+- **ドキュメント**:
+  - SEgene_RegionAnalyzerの詳細なドキュメントを追加
+  - プロジェクト構成に新コンポーネントを含めるようメインREADMEを更新
+
+### Changed
+- SEgene_RegionAnalyzerをオプショナルコンポーネントとして含むようプロジェクト構造を再編成
+- 拡張された分析機能を反映するようワークフロー説明を更新
+
 ## [1.4.0] - 2025-03-19
 
 ### Added
@@ -88,6 +105,7 @@
     - Jupyter Notebook での対話的解析
 - GitHub リポジトリ内の詳細なインストール手順とドキュメント
 
+[1.5.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.5.0
 [1.4.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.4.0
 [1.3.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.3.0
 [1.2.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.2.0

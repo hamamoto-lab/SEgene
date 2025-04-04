@@ -13,9 +13,11 @@ This repository contains tools and scripts for **SEgene**.
 
 ## Program Structure
 
-SEgene currently consists of two software programs: [**peak_to_gene_links**](https://github.com/hamamoto-lab/SEgene/tree/main/peak_to_gene_links) and [**SE_to_gene_links**](https://github.com/hamamoto-lab/SEgene/tree/main/SE_to_gene_links).
+SEgene currently consists of three primary components: [**peak_to_gene_links**](https://github.com/hamamoto-lab/SEgene/tree/main/peak_to_gene_links), [**SE_to_gene_links**](https://github.com/hamamoto-lab/SEgene/tree/main/SE_to_gene_links), and [**SEgene_RegionAnalyzer**](https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_region_analyzer).
+
 First, the **peak_to_gene_links** program is used to obtain correlation information between gene expression and enhancer peaks.
 Then, **SE_to_gene_links** is used to evaluate and analyze super-enhancers using the correlation information obtained in the previous step.
+As an optional component, **SEgene_RegionAnalyzer** allows for detailed characterization of identified SE regions and their integration with public databases.
 
 Additionally, the [**cli_tools**](https://github.com/hamamoto-lab/SEgene/tree/main/cli_tools) directory contains command-line tools for analyzing correlations between SE regions identified by SE_to_gene_links and gene expression.
 
@@ -25,6 +27,7 @@ For installation and usage instructions, please refer to the respective `README`
 
 - [peak_to_gene_links](https://github.com/hamamoto-lab/SEgene/blob/main/peak_to_gene_links/README.md)
 - [SE_to_gene_links](https://github.com/hamamoto-lab/SEgene/blob/main/SE_to_gene_links/README.md)
+- [SEgene_RegionAnalyzer](https://github.com/hamamoto-lab/SEgene/blob/main/SEgene_region_analyzer/README.md)
 
 ## Changelog
 

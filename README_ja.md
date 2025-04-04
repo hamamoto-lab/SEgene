@@ -13,9 +13,11 @@
 
 ## プログラム構成
 
-SEgene は現在、二つのソフトウェアプログラム [**peak_to_gene_links**](https://github.com/hamamoto-lab/SEgene/tree/main/peak_to_gene_links) と [**SE_to_gene_links**](https://github.com/hamamoto-lab/SEgene/tree/main/SE_to_gene_links) から構成されています。
+SEgene は現在、三つの主要コンポーネント [**peak_to_gene_links**](https://github.com/hamamoto-lab/SEgene/tree/main/peak_to_gene_links)、[**SE_to_gene_links**](https://github.com/hamamoto-lab/SEgene/tree/main/SE_to_gene_links)、および [**SEgene_RegionAnalyzer**](https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_region_analyzer) から構成されています。
+
 まず、**peak_to_gene_links** プログラムを使用して遺伝子発現とエンハンサーピーク間の相関情報を取得します。
 次に、**SE_to_gene_links** を使用して、前のステップで取得した相関情報を用いてスーパーエンハンサーを評価・分析します。
+さらに、オプションとして **SEgene_RegionAnalyzer** を使用することで、同定されたSE領域の詳細な特性評価と公共データベースとの統合分析を行うことができます。
 
 また、[**cli_tools**](https://github.com/hamamoto-lab/SEgene/tree/main/cli_tools/README_ja.md)ディレクトリには、SE_to_gene_linksで同定されたSE領域と遺伝子発現の相関を解析するためのコマンドラインツール群が含まれています。
 
@@ -25,6 +27,7 @@ SEgene は現在、二つのソフトウェアプログラム [**peak_to_gene_li
 
 - [peak_to_gene_links](https://github.com/hamamoto-lab/SEgene/blob/main/peak_to_gene_links/README_ja.md)
 - [SE_to_gene_links](https://github.com/hamamoto-lab/SEgene/blob/main/SE_to_gene_links/README_ja.md)
+- [SEgene_RegionAnalyzer](https://github.com/hamamoto-lab/SEgene/blob/main/SEgene_region_analyzer/README_ja.md)
 
 ## 変更履歴
 

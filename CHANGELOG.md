@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2025-04-05
+
+### Added
+- **New component: SEgene_RegionAnalyzer**:
+  - Added a new analytical tool for evaluating super-enhancer activity in genomic regions of interest
+  - Integrated with public databases (currently SEdb 2.0)
+  - Performs enrichment analysis of tissue-specific super-enhancer associations
+  - Supports both SEgene output TSV files and standard BED format inputs
+  - Generates comprehensive TSV reports and visual HTML outputs
+- **Documentation**:
+  - Added detailed documentation for SEgene_RegionAnalyzer
+  - Updated main README to include the new component in the project structure
+
+### Changed
+- Reorganized the project structure to include SEgene_RegionAnalyzer as an optional component
+- Updated the workflow description to reflect the extended analytical capabilities
+
 ## [1.4.0] - 2025-03-19
 
 ### Added
@@ -88,6 +105,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Interactive analysis with Jupyter Notebook
 - Detailed installation instructions and documentation in the GitHub repository
 
+[1.5.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.5.0
 [1.4.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.4.0
 [1.3.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.3.0
 [1.2.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.2.0
