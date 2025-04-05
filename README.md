@@ -13,10 +13,11 @@ This repository contains tools and scripts for **SEgene**.
 
 ## Program Structure
 
-SEgene currently consists of three primary components: [**peak_to_gene_links**](https://github.com/hamamoto-lab/SEgene/tree/main/peak_to_gene_links), [**SE_to_gene_links**](https://github.com/hamamoto-lab/SEgene/tree/main/SE_to_gene_links), and [**SEgene_RegionAnalyzer**](https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_region_analyzer).
+SEgene currently consists of four primary components: [**SEgene_peakprep**](https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_peakprep), [**peak_to_gene_links**](https://github.com/hamamoto-lab/SEgene/tree/main/peak_to_gene_links), [**SE_to_gene_links**](https://github.com/hamamoto-lab/SEgene/tree/main/SE_to_gene_links), and [**SEgene_RegionAnalyzer**](https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_region_analyzer).
 
-First, the **peak_to_gene_links** program is used to obtain correlation information between gene expression and enhancer peaks.
-Then, **SE_to_gene_links** is used to evaluate and analyze super-enhancers using the correlation information obtained in the previous step.
+First, **SEgene_peakprep** is used to calculate CPM (Counts Per Million) values from ChIP-seq data (BAM files) for specified genomic regions.
+Then, the **peak_to_gene_links** program integrates these CPM values with gene expression data to obtain correlation information between enhancer peaks and gene expression.
+Next, **SE_to_gene_links** is used to evaluate and analyze super-enhancers using the correlation information obtained in the previous step.
 As an optional component, **SEgene_RegionAnalyzer** allows for detailed characterization of identified SE regions and their integration with public databases.
 
 Additionally, the [**cli_tools**](https://github.com/hamamoto-lab/SEgene/tree/main/cli_tools) directory contains command-line tools for analyzing correlations between SE regions identified by SE_to_gene_links and gene expression.
@@ -25,6 +26,7 @@ Additionally, the [**cli_tools**](https://github.com/hamamoto-lab/SEgene/tree/ma
 
 For installation and usage instructions, please refer to the respective `README` .
 
+- [SEgene_peakprep](https://github.com/hamamoto-lab/SEgene/blob/main/SEgene_peakprep/README.md)
 - [peak_to_gene_links](https://github.com/hamamoto-lab/SEgene/blob/main/peak_to_gene_links/README.md)
 - [SE_to_gene_links](https://github.com/hamamoto-lab/SEgene/blob/main/SE_to_gene_links/README.md)
 - [SEgene_RegionAnalyzer](https://github.com/hamamoto-lab/SEgene/blob/main/SEgene_region_analyzer/README.md)
@@ -111,6 +113,10 @@ This project imports and relies on a variety of open-source libraries. Below is 
 
 - [**Bedtools**](https://bedtools.readthedocs.io/) - MIT License  
   Bedtools is used for genome arithmetic operations and is accessed via the Python wrapper library PyBedTools.
+- [**samtools**](http://www.htslib.org/) - MIT License  
+  samtools is used for BAM file analysis and gathering statistics.
+- [**featureCounts**](http://subread.sourceforge.net/) - GPL License  
+  featureCounts is used for counting reads in defined genomic regions.
 
 For a full list of dependencies of SE_to_gene_links, refer to [SE_to_gene_links/environment.yml](https://github.com/hamamoto-lab/SEgene/blob/main/SE_to_gene_links/environment.yml).
 

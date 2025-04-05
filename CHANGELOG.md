@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0] - 2025-04-06
+
+### Added
+- **New component: SEgene_peakprep**:
+  - New data preprocessing pipeline for ChIP-seq data normalization
+  - Integrated processing of peak region information from multiple BAM files into normalized data tables
+  - Calculation of total mapped reads using `samtools flagstat`
+  - Read counting in genomic regions using `featureCounts`
+  - CPM calculation and log transformation functionality
+  - Integration with existing workflow components
+- **Documentation**:
+  - Documentation for SEgene_peakprep
+  - Revised workflow description positioning SEgene_peakprep as the initial data preparation step
+
+### Changed
+- Reorganized project structure to include SEgene_peakprep as the first step in the workflow
+- Updated SEgene workflow description:
+  - SEgene_peakprep → peak_to_gene_links → SE_to_gene_links → SEgene_RegionAnalyzer
+
 ## [1.5.0] - 2025-04-05
 
 ### Added

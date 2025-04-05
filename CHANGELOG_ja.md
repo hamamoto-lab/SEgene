@@ -5,6 +5,25 @@
 形式は [Keep a Changelog](https://keepachangelog.com/ja/1.1.0/) をベースとし、
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html) に準拠しています。
 
+## [1.6.0] - 2025-04-06
+
+### Added
+- **新コンポーネント: SEgene_peakprep**:
+  - ChIP-seqデータの正規化のための新しいデータ前処理パイプライン
+  - 複数サンプルのBAMファイルからのピーク領域情報の自動抽出と正規化テーブルの構築
+  - `samtools flagstat`を使用した総マップ済みリード数の計算
+  - `featureCounts`を使用したゲノム領域内のリードカウント
+  - CPM値の計算とログ変換機能
+  - 既存のワークフローコンポーネントとの統合
+- **ドキュメント**:
+  - SEgene_peakprepのドキュメント
+  - ワークフロー説明の修正（SEgene_peakprepを初期データ準備ステップとして位置づけ）
+
+### Changed
+- プロジェクト構造の再編成（SEgene_peakprepをワークフローの最初のステップとして含める）
+- SEgeneワークフローの説明の更新:
+  - SEgene_peakprep → peak_to_gene_links → SE_to_gene_links → SEgene_RegionAnalyzer
+
 ## [1.5.0] - 2025-04-05
 
 ### Added

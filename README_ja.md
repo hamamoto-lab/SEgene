@@ -13,18 +13,20 @@
 
 ## プログラム構成
 
-SEgene は現在、三つの主要コンポーネント [**peak_to_gene_links**](https://github.com/hamamoto-lab/SEgene/tree/main/peak_to_gene_links)、[**SE_to_gene_links**](https://github.com/hamamoto-lab/SEgene/tree/main/SE_to_gene_links)、および [**SEgene_RegionAnalyzer**](https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_region_analyzer) から構成されています。
+SEgene は現在、四つの主要コンポーネント [**SEgene_peakprep**](https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_peakprep)、[**peak_to_gene_links**](https://github.com/hamamoto-lab/SEgene/tree/main/peak_to_gene_links)、[**SE_to_gene_links**](https://github.com/hamamoto-lab/SEgene/tree/main/SE_to_gene_links)、および [**SEgene_RegionAnalyzer**](https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_region_analyzer) から構成されています。
 
-まず、**peak_to_gene_links** プログラムを使用して遺伝子発現とエンハンサーピーク間の相関情報を取得します。
-次に、**SE_to_gene_links** を使用して、前のステップで取得した相関情報を用いてスーパーエンハンサーを評価・分析します。
+まず、**SEgene_peakprep** を使用してChIP-seqデータ（BAMファイル）から指定したゲノム領域におけるCPM（Counts Per Million）値を計算します。
+次に、**peak_to_gene_links** プログラムを使用して、計算されたCPM値と遺伝子発現データを統合し、エンハンサーピークと遺伝子発現間の相関情報を取得します。
+その後、**SE_to_gene_links** を使用して、前のステップで取得した相関情報を用いてスーパーエンハンサーを評価・分析します。
 さらに、オプションとして **SEgene_RegionAnalyzer** を使用することで、同定されたSE領域の詳細な特性評価と公共データベースとの統合分析を行うことができます。
 
 また、[**cli_tools**](https://github.com/hamamoto-lab/SEgene/tree/main/cli_tools/README_ja.md)ディレクトリには、SE_to_gene_linksで同定されたSE領域と遺伝子発現の相関を解析するためのコマンドラインツール群が含まれています。
 
-## 使い方
+## 使用方法
 
 インストールおよび使用方法については、それぞれの `README` を参照してください。
 
+- [SEgene_peakprep](https://github.com/hamamoto-lab/SEgene/blob/main/SEgene_peakprep/README_ja.md)
 - [peak_to_gene_links](https://github.com/hamamoto-lab/SEgene/blob/main/peak_to_gene_links/README_ja.md)
 - [SE_to_gene_links](https://github.com/hamamoto-lab/SEgene/blob/main/SE_to_gene_links/README_ja.md)
 - [SEgene_RegionAnalyzer](https://github.com/hamamoto-lab/SEgene/blob/main/SEgene_region_analyzer/README_ja.md)
@@ -113,6 +115,10 @@ SEgene は現在、三つの主要コンポーネント [**peak_to_gene_links**]
 
 - [**Bedtools**](https://bedtools.readthedocs.io/) - MIT License  
   Bedtools はgenome領域に関する解析に使用され、Python ラッパーライブラリ PyBedTools を通じてアクセスされます。
+- [**samtools**](http://www.htslib.org/) - MIT License  
+  samtools はBAMファイルの解析と統計情報の取得に使用されます。
+- [**featureCounts**](http://subread.sourceforge.net/) - GPL License  
+  featureCounts は定義されたゲノム領域におけるリードのカウントに使用されます。
 
 SE_to_gene_links の依存関係の全リストについては、[SE_to_gene_links/environment.yml](https://github.com/hamamoto-lab/SEgene_test/blob/main/SE_to_gene_links/environment.yml) を参照してください。
 
