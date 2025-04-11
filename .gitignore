@@ -26,3 +26,6 @@ venv.bak/
 
 # notebook
 .ipynb_checkpoints/
+
+# logfile
+*.log

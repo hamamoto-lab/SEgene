@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.1] - 2025-04-11
+
+### Added
+- **SEgene_peakprep improvements**:
+  - Added direct support for BED and merge_SV.tsv input formats in annotation files
+  - Automatic conversion of BED and merge_SV formats to SAF format internally
+  - Added `--is_mergesv_format` flag for specifying merge_SV.tsv format annotations
+
+### Changed
+- **SEgene_peakprep workflow optimization**:
+  - Streamlined command-line interface with more intuitive parameter names
+  - Adjusted log level output for better readability during execution
+  - Improved temporary file handling
+- **Documentation updates**:
+  - Comprehensive revision of README files (both English and Japanese)
+  - Added clearer examples for different annotation file formats
+  - Updated command examples to reflect the new parameter structure
+  - Improved troubleshooting section
+
 ## [1.6.0] - 2025-04-06
 
 ### Added
@@ -124,6 +143,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Interactive analysis with Jupyter Notebook
 - Detailed installation instructions and documentation in the GitHub repository
 
+[1.6.1]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.6.1
+[1.6.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.6.0
 [1.5.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.5.0
 [1.4.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.4.0
 [1.3.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.3.0

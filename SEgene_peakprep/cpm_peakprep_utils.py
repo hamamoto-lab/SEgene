@@ -9,13 +9,18 @@ This module provides functions to:
 """
 import os
 import logging
-import fnmatch # get_sample_dataで使用
-import natsort # get_sample_dataで使用 
-import subprocess # run_samtools_flagstat, run_featurecountsで使用
-import re         # run_samtools_flagstatで使用
-import pandas as pd # calculate_logcpmで使用 
-import numpy as np  # calculate_logcpmで使用 
-from typing import Dict, Optional, List, Tuple 
+import fnmatch
+import natsort
+import subprocess
+import re
+import pandas as pd
+import numpy as np
+from typing import Dict, Optional, List, Tuple, TypeVar
+import tempfile
+
+K = TypeVar('K')
+V = TypeVar('V')
+
 
 def get_sample_data(
     bam_folder: str,
@@ -33,8 +38,6 @@ def get_sample_data(
     and found in the filename, the part before the delimiter is used as the sample name.
     Otherwise, the filename without the '.bam' extension is used.
 
-    Ensure 'natsort' is installed (`pip install natsort`).
-
     Args:
         bam_folder (str): Directory containing BAM files.
         logger (logging.Logger): Logger instance for logging messages.
@@ -51,10 +54,6 @@ def get_sample_data(
             - dict: A dictionary mapping sample names to BAM file paths, sorted naturally by sample name.
             - list: A list of the full paths of the processed BAM files, sorted naturally by filename.
             Returns ({}, []) if no matching BAM files are found.
-
-    Raises:
-        FileNotFoundError: If the bam_folder does not exist.
-        Exception: For other OS-level errors during directory listing.
     """
     # 処理開始のログ
     logger.info(f"Scanning BAM folder: {bam_folder}, filename pattern: '{filename_pattern}'")
@@ -146,8 +145,6 @@ def get_sample_data(
     return sorted_sample_dict, sorted_processed_files_list
 
 
-
-
 # === featureCounts 実行用ヘルパー関数 ===
 def _save_featurecounts_log(log_path: str, stdout_content: Optional[str], stderr_content: Optional[str], logger: logging.Logger):
     """Saves stdout and stderr content from featureCounts to the specified log file."""
@@ -177,15 +174,14 @@ def _save_featurecounts_log(log_path: str, stdout_content: Optional[str], stderr
         logger.error(f"Failed to save featureCounts log to {log_path}: {e}")
 
 
-
 def run_featurecounts(
     bam_files: List[str],
-    saf_file: str, # 引数名を annotation_file から saf_file に変更
+    saf_file: str,
     logger: logging.Logger,
     output_file: Optional[str] = None,
     log_file: Optional[str] = None,
     threads: int = 1,
-    is_paired_end: bool = True, # デフォルトは True (ペアエンド)
+    is_paired_end: bool = True,
     featurecounts_path: Optional[str] = 'featureCounts',
     additional_options: Optional[List[str]] = None
 ) -> Optional[str]:
@@ -274,8 +270,8 @@ def run_featurecounts(
     # --- サブプロセスとして featureCounts を実行 ---
     # 実行開始ログ
     logger.info(f"Running featureCounts for {len(bam_files)} BAM files...")
-    # 実行するコマンド文字列をログに出力
-    logger.info(f"Command: {' '.join(cmd)}")
+    # 実行するコマンド文字列をログに出力 - INFOからDEBUGに変更
+    logger.debug(f"Command: {' '.join(cmd)}")
 
     stdout_log: Optional[str] = None
     stderr_log: Optional[str] = None
@@ -288,9 +284,9 @@ def run_featurecounts(
         stderr_log = result.stderr
         # 正常終了ログ
         logger.info("featureCounts finished successfully.")
-        # stderrのサマリー情報をログ出力
+        # stderrのサマリー情報をログ出力 - INFOからDEBUGに変更
         if stderr_log:
-            logger.info(f"featureCounts Summary (from stderr):\n{stderr_log}")
+            logger.debug(f"featureCounts Summary (from stderr):\n{stderr_log}")
         # stdoutがあればデバッグログ出力
         if stdout_log:
              logger.debug(f"featureCounts stdout:\n{stdout_log}")
@@ -334,7 +330,6 @@ def run_featurecounts(
     # --- エラーハンドリングここまで ---
 
 
-
 def run_samtools_flagstat(
     bam_files: List[str],
     output_dir: str,
@@ -372,7 +367,6 @@ def run_samtools_flagstat(
     mapped_reads_dict: Dict[str, int] = {}
     # mapped reads数を抽出するための正規表現パターンをコンパイル
     # 例: "39502262 + 0 mapped (100.00% : N/A)" の先頭の数値を取得
-    #    QC-passed reads の mapped 数を見るのが一般的
     mapped_pattern = re.compile(r'^(\d+) \+ \d+ mapped \(') # QC-passed reads の行にマッチ
 
     # 入力されたBAMファイルリストをループ処理
@@ -467,92 +461,83 @@ def run_samtools_flagstat(
     return mapped_reads_dict
 
 
-
-
 def calculate_logcpm(
-    counts_file: str,
+    counts_df: pd.DataFrame,
     total_reads_dict: Dict[str, int],
     logger: logging.Logger,
-    bam_path_to_sample_name: Optional[Dict[str, str]] = None, # BAMパス -> サンプル名 マップ追加
+    bam_path_to_sample_name: Optional[Dict[str, str]] = None,
     add_peakid_column: bool = False,
-    id_column_name: str = 'Geneid', # featureCounts出力のIDカラム名
-    output_id_column_name: str = 'PeakID', # 出力時のIDカラム名 (常にこれになる)
-    log_transform_base: Optional[int] = 2, # 対数変換の底 (2 or 10 or None)
-    pseudocount: float = 1.0 # 対数変換時の擬似カウント
+    id_column_name: str = 'Geneid',
+    output_id_column_name: str = 'PeakID',
+    log_transform_base: Optional[int] = 2,
+    pseudocount: float = 1.0
 ) -> Optional[pd.DataFrame]:
     """
-    Calculates log-transformed CPM (Counts Per Million) from a featureCounts output file
-    and a dictionary of total mapped reads per BAM file. Formats the output table with
-    a specified ID column name ('PeakID' by default) and sample names.
+    Calculates log-transformed CPM from a counts DataFrame and total mapped reads.
+    Formats the output table with a specified ID column name and sample names.
+    The 'Start' coordinate in the output DataFrame is converted to 0-based (BED-like).
 
     Args:
-        counts_file (str): Path to the featureCounts output file. Assumes standard format.
-        total_reads_dict (Dict[str, int]): Dictionary mapping BAM file full paths to total mapped reads.
+        counts_df (pd.DataFrame): DataFrame containing counts data, typically from
+                                  featureCounts output read into pandas. Expected columns include
+                                  'id_column_name', 'Chr', 'Start' (1-based from featureCounts), 'End', etc.,
+                                  and count columns named with full BAM paths (usually starting
+                                  from the 7th column).
+        total_reads_dict (Dict[str, int]): Dictionary mapping BAM file full paths
+                                           to total mapped reads. Keys must correspond to
+                                           count column names in counts_df.
         logger (logging.Logger): Logger object.
         bam_path_to_sample_name (Optional[Dict[str, str]]): Dictionary mapping BAM file full
                                            paths to desired final sample names (e.g., 'T1').
-                                           If provided, count columns will be renamed accordingly.
-                                           If None, derived names (like BAM filename without extension) are used.
-                                           Defaults to None.
-        add_peakid_column (bool): If True, replaces original IDs in 'id_column_name' with
-                                  sequential IDs (e.g., PeakID_000001). The ID column name
-                                  will be 'output_id_column_name'. Defaults to False.
-        id_column_name (str): The name of the feature identifier column in the input file
-                              (usually 'Geneid'). Defaults to 'Geneid'.
-        output_id_column_name (str): Desired name for the identifier column in the output DataFrame
-                                     (e.g., 'PeakID'). The output will always have this column name
-                                     for the identifier. Defaults to 'PeakID'.
-        log_transform_base (Optional[int]): Base for log transformation (e.g., 2 or 10).
-                                            If None, returns CPM values without log transformation. Defaults to 2.
-        pseudocount (float): Pseudocount added before log transformation (e.g., log2(CPM + pseudocount)).
-                             Defaults to 1.0.
+                                           If provided, count columns will be renamed.
+        add_peakid_column (bool): If True, replace original IDs with sequential PeakIDs.
+                                  The ID column name will be 'output_id_column_name'.
+        id_column_name (str): Name of the feature identifier column in the input DataFrame.
+        output_id_column_name (str): Desired name for the ID column in the output DataFrame.
+        log_transform_base (Optional[int]): Base for log transformation (2, 10, or None).
+                                            If None, returns CPM values without log transformation.
+        pseudocount (float): Pseudocount added before log transformation.
 
     Returns:
-        Optional[pd.DataFrame]: A DataFrame containing the identifier (as 'output_id_column_name'),
-                                Chr, Start, End, and log-transformed CPM values for each sample
-                                (renamed using 'bam_path_to_sample_name' if provided).
-                                Returns None if an error occurs.
+        Optional[pd.DataFrame]: A DataFrame with ID (as 'output_id_column_name'), Chr, Start (0-based), End,
+                                and log-transformed CPM values. Returns None on error.
     """
     # 処理の種類を決定（ログ用）
     transform_type = f"log{log_transform_base}-CPM" if log_transform_base else "CPM"
-    logger.info(f"Calculating {transform_type} for counts file: {os.path.basename(counts_file)}")
+    logger.info(f"Calculating {transform_type} from provided DataFrame.")
 
     try:
-        # --- featureCounts ファイルの読み込み ---
-        logger.info(f"Reading featureCounts output file: {counts_file}")
-        # ヘッダーが1行目のコメント行の後にあると仮定して読み込み
-        counts_df = pd.read_csv(counts_file, sep='\t', comment='#', header=0)
-        # 念のため、最初のカラムが'#'で始まっていたらヘッダーを読み直す
-        if counts_df.columns[0].startswith('#'):
-             counts_df = pd.read_csv(counts_file, sep='\t', comment='#', header=1)
-             logger.info("Re-read file assuming header is on the second line.")
-        logger.info(f"Read {len(counts_df)} features and {len(counts_df.columns)} total columns.")
-        # --- ファイル読み込みここまで ---
+        # --- 入力DataFrameの検証 ---
+        # DataFrameが有効か、空でないかチェック
+        if not isinstance(counts_df, pd.DataFrame) or counts_df.empty:
+            logger.error("Input counts_df is not a valid or non-empty DataFrame.")
+            return None
 
-        # --- カラム名の検証と特定 ---
-        # 必要なカラムが存在するか等の基本的なチェック
-        if len(counts_df.columns) < 7:
-            logger.error("Input file does not seem to have the expected featureCounts format (at least 7 columns required).")
-            return None
-        # 最初の6列をアノテーション、残りをカウントと仮定
-        annotation_cols = counts_df.columns[:6].tolist()
-        count_columns = counts_df.columns[6:].tolist() # これがBAMパス名のリストになるはず
-        # 元のIDカラムが存在するか確認
+        logger.info(f"Processing DataFrame with {len(counts_df)} features and {len(counts_df.columns)} total columns.")
+
+        # 必要なカラム名の検証
         if id_column_name not in counts_df.columns:
-             logger.error(f"Specified ID column '{id_column_name}' not found in counts file columns: {counts_df.columns.tolist()}")
+             logger.error(f"Specified ID column '{id_column_name}' not found in input DataFrame columns: {counts_df.columns.tolist()}")
              return None
-        # 出力に必要なアノテーションカラムが存在するか確認
-        required_output_annot_cols = [id_column_name, 'Chr', 'Start', 'End']
-        missing_cols = [col for col in required_output_annot_cols if col not in counts_df.columns]
+        # 出力に必要なアノテーション列
+        required_annot_cols = [id_column_name, 'Chr', 'Start', 'End']
+        missing_cols = [col for col in required_annot_cols if col not in counts_df.columns]
         if missing_cols:
-            logger.error(f"Required annotation columns are missing from the counts file: {missing_cols}")
+            logger.error(f"Required annotation columns are missing from the input DataFrame: {missing_cols}")
             return None
-        logger.info(f"Identified {len(count_columns)} count columns (presumed samples).")
-        # --- カラム名検証ここまで ---
+
+        # カウントカラムを特定 (featureCounts標準出力の7列目以降と仮定)
+        if len(counts_df.columns) < 7:
+            logger.error("Input DataFrame does not seem to have the expected featureCounts format (needs at least 7 columns: ID, Chr, Start, End, Strand, Length, Counts...).")
+            return None
+        count_columns = counts_df.columns[6:].tolist() # BAMパス名のカラムリスト
+
+        logger.info(f"Identified {len(count_columns)} potential count columns.")
+        # --- 検証ここまで ---
 
         # --- 結果用DataFrameの準備 ---
         # 出力に必要なアノテーション列のみをコピー
-        result_df = counts_df[required_output_annot_cols].copy()
+        result_df = counts_df[required_annot_cols].copy()
         # --- 準備ここまで ---
 
         # --- IDカラム処理 ---
@@ -574,24 +559,29 @@ def calculate_logcpm(
                  logger.warning("DataFrame is empty, cannot add sequential PeakID column.")
                  # 空でもカラムは作成しておく
                  if id_column_name != output_id_column_name and id_column_name in result_df.columns:
-                      result_df = result_df.drop(columns=[id_column_name])
+                     result_df = result_df.drop(columns=[id_column_name])
                  if output_id_column_name not in result_df.columns:
-                      result_df[output_id_column_name] = pd.NA # または空リスト []
+                      result_df[output_id_column_name] = pd.NA
         elif id_column_name != output_id_column_name:
             # add_peakid_column=False でも、カラム名を指定の出力名に変更する
             logger.info(f"Renaming ID column '{id_column_name}' to '{output_id_column_name}'.")
             result_df = result_df.rename(columns={id_column_name: output_id_column_name})
+        final_id_col = output_id_column_name # 最終的なID列名
         # --- IDカラム処理ここまで ---
 
         # --- CPM および LogCPM 計算 ---
         processed_samples_count = 0
         skipped_samples = []
-        # 計算後のカラム名を一時的に保持する辞書 (BAMパス -> 一時的なカラム名)
-        calculated_columns_map: Dict[str, str] = {}
+        calculated_columns_map: Dict[str, str] = {} # {BAMパス: 一時カラム名}
 
         logger.info(f"Calculating {transform_type} values...")
         # カウントカラム（BAMファイルパス）をループ
         for bam_path_col in count_columns:
+            # DataFrameに実際にそのカラムが存在するか念のため確認
+            if bam_path_col not in counts_df.columns:
+                 logger.warning(f"Count column '{bam_path_col}' (expected from header) not found in DataFrame. Skipping.")
+                 skipped_samples.append(bam_path_col)
+                 continue
             # このBAMパスに対応する総リード数が辞書にあるか確認
             if bam_path_col in total_reads_dict:
                 total_reads = total_reads_dict[bam_path_col]
@@ -633,7 +623,7 @@ def calculate_logcpm(
         final_sample_columns = [] # 最終的なサンプルカラム名のリスト
         if bam_path_to_sample_name:
             # 提供されたマッピングを使ってカラム名を変更する
-            logger.info("Renaming sample columns using provided bam_path_to_sample_name mapping.")
+            logger.info("Renaming sample columns using provided mapping.")
             rename_dict = {} # リネーム用辞書 {一時的な名前: 最終的な名前}
             processed_bam_paths = set() # 処理済みBAMパスを追跡
 
@@ -657,53 +647,308 @@ def calculate_logcpm(
             # マッピング辞書に含まれていたのに、対応する計算済みカラムがなかった場合（警告）
             unmapped_samples = set(bam_path_to_sample_name.keys()) - processed_bam_paths - set(skipped_samples)
             if unmapped_samples:
-                logger.warning(f"Provided mapping contained entries for BAM paths that were not found or skipped in counts data: {unmapped_samples}")
-
+                logger.warning(f"Provided mapping contained entries for BAM paths that were not found or skipped: {unmapped_samples}")
         else:
             # マッピングが提供されない場合は、一時的な名前が最終的な名前になる
             final_sample_columns = list(calculated_columns_map.values())
-            logger.info("No sample name mapping provided. Using derived column names for samples.")
+            logger.info("No sample name mapping provided. Using derived column names.")
         # --- カラム名置換ここまで ---
 
         logger.info(f"Finished calculation for {processed_samples_count} samples.")
         if skipped_samples:
-            logger.warning(f"Skipped {len(skipped_samples)} samples due to missing or zero total reads: {skipped_samples}")
+            logger.warning(f"Skipped {len(skipped_samples)} samples due to missing or zero total reads.")
 
         # --- 最終的なカラム順序の決定と選択 ---
         # IDカラム名を取得 (rename後、または元のまま)
-        final_id_col = output_id_column_name
-        # 出力するアノテーションカラム (ID含む)
         final_annot_cols = [final_id_col, 'Chr', 'Start', 'End']
         # 存在しないアノテーションカラムを除外 (例: ID列を削除した場合など)
         final_annot_cols = [col for col in final_annot_cols if col in result_df.columns]
-
         # 最終的なカラムリスト = アノテーション + サンプル (ソートされたサンプル名の順になるはず)
-        # final_sample_columns リストには、リネーム後の名前が正しい順序で入っている
         final_columns_ordered = final_annot_cols + final_sample_columns
         # 存在しないカラムが final_sample_columns に含まれる可能性は低いが、念のためチェック
         final_columns_ordered = [col for col in final_columns_ordered if col in result_df.columns]
-
         # DataFrameを最終的なカラム順序で選択
         result_df = result_df[final_columns_ordered]
         # --- カラム順序調整ここまで ---
+
+        # ★★★ Start座標を 0-based (BED形式) に戻す ★★★
+        if 'Start' in result_df.columns:
+            # Start列が数値型であることを確認 (エラーを防ぐため)
+            if pd.api.types.is_numeric_dtype(result_df['Start']):
+                logger.debug("Converting 'Start' column to 0-based (BED format) by subtracting 1.")
+                # .loc を使う (SettingWithCopyWarningを避ける)
+                result_df.loc[:, 'Start'] = result_df.loc[:, 'Start'] - 1
+            else:
+                logger.warning("Could not convert 'Start' column to 0-based because it is not numeric.")
+        else:
+            logger.warning("Could not find 'Start' column in the result DataFrame to convert to 0-based.")
+        # ★★★ 座標変換ここまで ★★★
 
         # 整形済みのDataFrameを返す
         return result_df
 
     # --- エラーハンドリング ---
-    except ImportError:
+    except ImportError: # pandas, numpy がない場合
         logger.error("Pandas or NumPy library not found. Please install them (`pip install pandas numpy`).")
         return None
-    except FileNotFoundError:
-        logger.error(f"Counts file not found: {counts_file}")
-        return None
-    except KeyError as e:
-        logger.error(f"KeyError during processing: {e}. Check column names and dictionary keys.")
+    except KeyError as e: # DataFrameカラムや辞書キーが存在しない場合
+        logger.error(f"KeyError during processing: {e}. Check column names in DataFrame and keys in total_reads_dict.")
         # エラー発生時にDataFrameや辞書の情報をログに出力するとデバッグに役立つ
-        if 'counts_df' in locals(): logger.error(f"Input counts_df columns: {counts_df.columns.tolist()}")
+        if 'counts_df' in locals() and isinstance(counts_df, pd.DataFrame): logger.error(f"Input DataFrame columns: {counts_df.columns.tolist()}")
         if isinstance(total_reads_dict, dict): logger.error(f"Sample of total_reads_dict keys: {list(total_reads_dict.keys())[:5]}")
         return None
-    except Exception as e:
-        logger.error(f"An unexpected error occurred during CPM calculation: {e}", exc_info=True)
+    except Exception as e: # その他の予期せぬエラー
+        logger.error(f"An unexpected error occurred during logCPM calculation: {e}", exc_info=True)
         return None
     # --- エラーハンドリングここまで ---
+
+
+# === invert_dictionary ヘルパー関数の定義 ===
+def invert_dictionary(d: Dict[K, V]) -> Dict[V, K]:
+    """
+    Inverts a dictionary, swapping keys and values.
+    Assumes values are unique and hashable to be used as keys.
+
+    Args:
+        d (Dict[K, V]): The dictionary to invert.
+
+    Returns:
+        Dict[V, K]: A new dictionary with keys and values swapped.
+    """
+    # 辞書内包表記を使った簡潔版 (重複は後勝ちで上書き)
+    return {v: k for k, v in d.items()}
+
+
+# === BED to SAF 変換関数 ===
+def convert_bed_to_saf(bed_path: str, logger: logging.Logger) -> Optional[str]:
+    """
+    Converts a BED file to a temporary SAF file required by featureCounts.
+    Handles standard 3-column BED and attempts to use columns 4 (name) and 6 (strand) if present.
+    Generates sequential IDs if name column is missing or unusable. Sets strand to '.' if missing.
+    Adjusts start coordinate from 0-based (BED) to 1-based (SAF).
+
+    Args:
+        bed_path (str): Path to the input BED file.
+        logger (logging.Logger): Logger object.
+
+    Returns:
+        Optional[str]: The path to the created temporary SAF file, or None if conversion fails.
+                       The caller is responsible for deleting this temporary file later using os.remove().
+    """
+    # 処理開始ログ
+    logger.info(f"Converting BED file to temporary SAF: {os.path.basename(bed_path)}")
+    try:
+        # --- BEDファイルの読み込み ---
+        try:
+            # ヘッダーなし、タブ区切りで読み込み
+            bed_df = pd.read_csv(bed_path, sep='\t', header=None, dtype=str) # dtype=str で安全に読み込む
+        except pd.errors.EmptyDataError:
+            logger.error(f"Input BED file is empty or could not be parsed: {bed_path}")
+            return None
+        except FileNotFoundError:
+             logger.error(f"Input BED file not found: {bed_path}")
+             return None
+        except Exception as e:
+             logger.error(f"Failed to read BED file {bed_path}: {e}")
+             return None
+
+        # 列数の確認
+        num_cols = bed_df.shape[1]
+        logger.debug(f"Read BED file with {len(bed_df)} rows and {num_cols} columns.")
+        if num_cols < 3:
+            logger.error(f"BED file has fewer than 3 required columns (Chr, Start, End): {bed_path}")
+            return None
+        # --- BED読み込み完了 ---
+
+        # --- SAFデータフレームの準備 ---
+        saf_data = {} # SAF列データを格納
+
+        # 必須列: Chr, Start (1-based), End
+        try:
+            saf_data['Chr'] = bed_df.iloc[:, 0] # 1列目
+            # Start: BEDの2列目(0-based) + 1
+            saf_data['Start'] = pd.to_numeric(bed_df.iloc[:, 1], errors='coerce') + 1
+            # End: BEDの3列目
+            saf_data['End'] = pd.to_numeric(bed_df.iloc[:, 2], errors='coerce')
+            # 数値変換失敗チェック
+            if saf_data['Start'].isnull().any() or saf_data['End'].isnull().any():
+                 logger.error("Could not convert Start/End columns to numeric. Check BED file format.")
+                 return None
+            saf_data['Start'] = saf_data['Start'].astype(int)
+            saf_data['End'] = saf_data['End'].astype(int)
+        except Exception as e:
+            logger.error(f"Error processing required BED columns (Chr, Start, End): {e}. Check format.")
+            return None
+
+        # オプション列: GeneID (4列目があれば使用)
+        if num_cols >= 4 and not bed_df.iloc[:, 3].isnull().all():
+             logger.debug("Using column 4 from BED as GeneID.")
+             saf_data['GeneID'] = bed_df.iloc[:, 3]
+             if saf_data['GeneID'].duplicated().any():
+                 logger.warning(f"Duplicate IDs found in column 4 of BED file {bed_path}. This may affect featureCounts results if IDs are used for merging.")
+        else:
+             # 連番生成
+             logger.debug("Generating sequential GeneIDs (peak_1, peak_2...).")
+             num_rows = len(bed_df)
+             num_digits = len(str(num_rows)) if num_rows > 0 else 1
+             saf_data['GeneID'] = [f"peak_{i:0{num_digits}d}" for i in range(1, num_rows + 1)]
+
+        # オプション列: Strand (6列目があれば使用)
+        if num_cols >= 6 and not bed_df.iloc[:, 5].isnull().all():
+             logger.debug("Using column 6 from BED as Strand.")
+             saf_data['Strand'] = bed_df.iloc[:, 5].copy() # SettingWithCopyWarning回避のためコピー
+             # '+' または '-' 以外を '.' に置換
+             valid_strands = ['+', '-']
+             invalid_strand_mask = ~saf_data['Strand'].isin(valid_strands)
+             if invalid_strand_mask.any():
+                 logger.warning(f"Found invalid strand values (not '+' or '-') in column 6 of {bed_path}. Replacing with '.'.")
+                 saf_data['Strand'].loc[invalid_strand_mask] = '.'
+        else:
+             # デフォルト '.'
+             logger.debug("Setting Strand to '.' (default).")
+             saf_data['Strand'] = '.'
+
+        # SAF DataFrameを作成 (列順序指定)
+        try:
+            saf_df = pd.DataFrame(saf_data)[['GeneID', 'Chr', 'Start', 'End', 'Strand']]
+        except KeyError as e:
+             logger.error(f"Failed to create SAF DataFrame. Missing column data: {e}")
+             return None
+        # --- SAFデータフレーム準備完了 ---
+
+        # --- 一時SAFファイルの作成と書き込み ---
+        temp_saf_file = None
+        try:
+            # delete=False でパスを保持、suffixで拡張子指定
+            temp_saf_file = tempfile.NamedTemporaryFile(mode='w+', suffix='.saf', delete=False, encoding='utf-8')
+            # ヘッダー付き、タブ区切りで書き込み
+            saf_df.to_csv(temp_saf_file.name, sep='\t', index=False, header=True)
+            temp_saf_path = temp_saf_file.name
+            temp_saf_file.close() # ファイルは閉じてもパスは有効
+            logger.info(f"Successfully converted BED to temporary SAF file: {temp_saf_path}")
+            # 一時ファイルのパスを返す
+            return temp_saf_path
+        except Exception as e:
+            logger.error(f"Failed to create or write temporary SAF file: {e}")
+            # 作成途中だったファイルをクリーンアップ
+            if temp_saf_file and os.path.exists(temp_saf_file.name):
+                try:
+                    temp_saf_file.close()
+                    os.remove(temp_saf_file.name)
+                    logger.debug(f"Cleaned up temporary file on error: {temp_saf_file.name}")
+                except Exception as cleanup_e:
+                     logger.error(f"Error during temporary file cleanup: {cleanup_e}")
+            return None
+        # --- 一時ファイル作成完了 ---
+
+    except Exception as e:
+        # 予期せぬエラー
+        logger.error(f"An unexpected error occurred during BED to SAF conversion for {bed_path}: {e}", exc_info=True)
+        return None
+
+
+def convert_mergesv_to_saf(merge_sv_path: str, logger: logging.Logger) -> Optional[str]:
+    """
+    Converts a merge_SV.tsv file (expecting 'se_data' column like chr_start_end,
+    0-based start) to a temporary SAF file (1-based start).
+
+    Args:
+        merge_sv_path (str): Path to the input merge_SV.tsv file.
+        logger (logging.Logger): Logger object.
+
+    Returns:
+        Optional[str]: Path to the temporary SAF file, or None on error.
+                       Caller must delete the temporary file.
+    """
+    # 処理開始ログ (英語)
+    logger.info(f"Converting merge_SV format file to temporary SAF: {os.path.basename(merge_sv_path)}")
+    try:
+        # --- ファイル読み込みとヘッダー確認 ---
+        try:
+            # ヘッダーあり、タブ区切りで読み込み
+            df = pd.read_csv(merge_sv_path, sep='\t', header=0)
+        except pd.errors.EmptyDataError:
+            logger.error(f"Input merge_SV file is empty: {merge_sv_path}")
+            return None
+        except FileNotFoundError:
+             logger.error(f"Input merge_SV file not found: {merge_sv_path}")
+             return None
+        except Exception as e:
+             logger.error(f"Failed to read merge_SV file {merge_sv_path}: {e}")
+             return None
+
+        # DataFrameが空でないか再確認
+        if df.empty:
+             logger.error(f"Input merge_SV file is empty after reading: {merge_sv_path}")
+             return None
+
+        # 最初の列名が 'se_data' であることを確認 (大文字小文字区別しない)
+        se_data_col_name = df.columns[0] # 実際のカラム名を取得
+        if se_data_col_name.lower() != 'se_data':
+            logger.error(f"Expected first column to be 'se_data' (case-insensitive) in {merge_sv_path}, but found '{se_data_col_name}'.")
+            return None
+        logger.debug(f"Read merge_SV file with {len(df)} rows.")
+        # --- 読み込み完了 ---
+
+        # --- 座標の抽出とSAFデータ作成 ---
+        saf_data = {}
+        try:
+            # 'se_data' 列から chr, start, end を抽出 ( '_' 区切り想定)
+            # n=2 で指定し、startとendが数値であることを保証しやすくする
+            coords = df[se_data_col_name].str.split('_', expand=True, n=2)
+            if coords.shape[1] < 3: # 分割結果が3列未満ならエラー
+                 logger.error(f"Could not split '{se_data_col_name}' column into at least 3 parts (chr, start, end) using '_'. Check format.")
+                 return None
+
+            saf_data['GeneID'] = df[se_data_col_name] # 元の se_data を ID として使用
+            saf_data['Chr'] = coords[0]
+            # start は BED基準(0-based)なので +1 して SAF(1-based) にする
+            saf_data['Start'] = pd.to_numeric(coords[1], errors='coerce') + 1
+            saf_data['End'] = pd.to_numeric(coords[2], errors='coerce')
+            saf_data['Strand'] = '.' # Strand 情報はないので '.'
+
+            # 数値変換チェック
+            if saf_data['Start'].isnull().any() or saf_data['End'].isnull().any():
+                 num_failed = saf_data['Start'].isnull().sum() + saf_data['End'].isnull().sum()
+                 failed_indices = df.index[saf_data['Start'].isnull() | saf_data['End'].isnull()].tolist()
+                 logger.error(f"Could not convert extracted Start/End to numeric for {num_failed} rows. Check '{se_data_col_name}' column format (expecting chr_start_end). Problematic row indices (0-based): {failed_indices[:10]}...") # 最初の10件表示
+                 return None
+            saf_data['Start'] = saf_data['Start'].astype(int)
+            saf_data['End'] = saf_data['End'].astype(int)
+
+        except Exception as e:
+            # 座標抽出や変換中のエラー
+            logger.error(f"Error extracting or converting coordinates from '{se_data_col_name}' column: {e}", exc_info=True)
+            return None
+
+        # SAF DataFrame 作成 (列順序指定)
+        saf_df = pd.DataFrame(saf_data)[['GeneID', 'Chr', 'Start', 'End', 'Strand']]
+        # --- SAFデータ作成完了 ---
+
+        # --- 一時ファイル書き込み ---
+        temp_saf_file = None
+        try:
+            # 一時ファイルを作成 (delete=Falseでパスを保持)
+            temp_saf_file = tempfile.NamedTemporaryFile(mode='w+', suffix='.saf', delete=False, encoding='utf-8')
+            # ヘッダー付き、タブ区切りで書き込み
+            saf_df.to_csv(temp_saf_file.name, sep='\t', index=False, header=True)
+            temp_saf_path = temp_saf_file.name
+            temp_saf_file.close() # ファイルを閉じる
+            logger.info(f"Successfully converted merge_SV to temporary SAF file: {temp_saf_path}")
+            # 一時ファイルのパスを返す
+            return temp_saf_path
+        except Exception as e:
+            logger.error(f"Failed to write temporary SAF file: {e}")
+            # エラー発生時、もしファイルが作られていたら削除試行
+            if temp_saf_file and os.path.exists(temp_saf_file.name):
+                 try:
+                     temp_saf_file.close()
+                     os.remove(temp_saf_file.name)
+                 except Exception as cleanup_e: logger.error(f"Cleanup error: {cleanup_e}")
+            return None
+        # --- 一時ファイル書き込み完了 ---
+
+    except Exception as e:
+        # その他の予期せぬエラー
+        logger.error(f"An unexpected error occurred during merge_SV to SAF conversion: {e}", exc_info=True)
+        return None
