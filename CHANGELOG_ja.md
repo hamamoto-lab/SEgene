@@ -5,13 +5,42 @@
 形式は [Keep a Changelog](https://keepachangelog.com/ja/1.1.0/) をベースとし、
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html) に準拠しています。
 
+## [1.7.0] - 2025-04-14
+
+### Added
+- **SEgene_peakprepにBigWig方式を追加**:
+  - BigWigファイルを使用したピーク定量化の新たな代替アプローチを実装
+  - BAMからBigWigへの変換とシグナル定量化のための`deeptools`連携機能
+  - 複数の正規化オプション（RPGC、CPM、BPM、RPKM）を持つ`bamCoverage`機能を追加
+  - 指定領域からシグナル値を抽出するための`multiBigwigSummary`処理を追加
+  - シグナル値の自動log2変換機能を実装
+  - BigWigファイルとゲノム座標の処理を行う包括的なユーティリティを作成
+- **処理ワークフローの強化**:
+  - 異なる処理ステップのための3段階ワークフローと個別スクリプトを追加
+  - パイプライン全体をシームレスに実行するためのラッパースクリプトを追加
+  - 個別の処理ステップを別々に実行するオプションを追加
+
+### Changed
+- **SEgene_peakprepの機能拡張**:
+  - CPM方式とBigWig方式の両方を反映するようドキュメントを更新
+  - 両方の処理アプローチをサポートするようコマンドラインインターフェースを拡張
+  - ダウンストリーム互換性のために両方の方式間で出力形式を標準化
+
+### Fixed
+- **SEgene_peakprepの用語を修正**:
+  - v1.6.1での"merge_SV.tsv"形式への言及を"merge_SE.tsv"（スーパーエンハンサー）形式に修正
+  - 一貫した用語を使用するよう関連するすべてのドキュメントとコードコメントを更新
+  - merge_SE.tsv形式アノテーションを指定するためのフラグ名を`--is_mergesv_format`から`--is_mergese_format`に修正
+
 ## [1.6.1] - 2025-04-11
 
 ### Added
 - **SEgene_peakprepの機能強化**:
-  - アノテーションファイルとしてBEDおよびmerge_SV.tsv形式を直接サポート
-  - BEDおよびmerge_SV形式からSAF形式への内部自動変換機能
-  - merge_SV.tsv形式のアノテーションを指定するための`--is_mergesv_format`フラグを追加
+  - アノテーションファイルとしてBEDおよびmerge_SE.tsv形式を直接サポート
+  - BEDおよびmerge_SE形式からSAF形式への内部自動変換機能
+  - merge_SE.tsv形式のアノテーションを指定するための`--is_mergese_format`フラグを追加
+  
+  [注: このバージョンでは一部で誤って"merge_SV.tsv"と記載されていましたが、正しくは"merge_SE.tsv"です。これはバージョン1.7.0で修正されました。]
 
 ### Changed
 - **SEgene_peakprepワークフローの最適化**:
@@ -143,6 +172,7 @@
     - Jupyter Notebook での対話的解析
 - GitHub リポジトリ内の詳細なインストール手順とドキュメント
 
+[1.6.1]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.7.0
 [1.6.1]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.6.1
 [1.6.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.6.0
 [1.5.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.5.0

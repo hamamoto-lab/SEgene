@@ -15,8 +15,8 @@
 
 SEgene は現在、四つの主要コンポーネント [**SEgene_peakprep**](https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_peakprep)、[**peak_to_gene_links**](https://github.com/hamamoto-lab/SEgene/tree/main/peak_to_gene_links)、[**SE_to_gene_links**](https://github.com/hamamoto-lab/SEgene/tree/main/SE_to_gene_links)、および [**SEgene_RegionAnalyzer**](https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_region_analyzer) から構成されています。
 
-まず、**SEgene_peakprep** を使用してChIP-seqデータ（BAMファイル）から指定したゲノム領域におけるCPM（Counts Per Million）値を計算します。
-次に、**peak_to_gene_links** プログラムを使用して、計算されたCPM値と遺伝子発現データを統合し、エンハンサーピークと遺伝子発現間の相関情報を取得します。
+まず、**SEgene_peakprep** を使用してChIP-seqデータ（BAMファイル）から指定したゲノム領域におけるシグナル値を定量化・正規化します。これには二つの実装方法があります：featureCountsを使用するCPM（Counts Per Million）方式と、シグナル正規化と定量化にdeeptoolsを使用するBigWig方式です。
+次に、**peak_to_gene_links** プログラムを使用して、これらの正規化された値と遺伝子発現データを統合し、エンハンサーピークと遺伝子発現間の相関情報を取得します。
 その後、**SE_to_gene_links** を使用して、前のステップで取得した相関情報を用いてスーパーエンハンサーを評価・分析します。
 さらに、オプションとして **SEgene_RegionAnalyzer** を使用することで、同定されたSE領域の詳細な特性評価と公共データベースとの統合分析を行うことができます。
 
@@ -44,7 +44,7 @@ SEgene は現在、四つの主要コンポーネント [**SEgene_peakprep**](ht
 
 このツールを研究に使用する場合は、以下のCITATIONファイルを参照してください：
 [CITATION](https://github.com/hamamoto-lab/SEgene/blob/main/CITATION)
-**(論文は現在投稿準備中です。)**
+**(論文は現在準備中です。)**
 
 ## ライブラリとライセンス
 
@@ -61,6 +61,7 @@ SEgene は現在、四つの主要コンポーネント [**SEgene_peakprep**](ht
     - [**Scipy**](https://scipy.org/) - BSD License
     - [**Statsmodels**](https://www.statsmodels.org/) - BSD License
     - [**PyBedTools**](https://daler.github.io/pybedtools/) - MIT License
+    - [**PyRanges**](https://github.com/biocore-ntnu/pyranges) - MIT License
     - [**PyGenomeViz**](https://github.com/moshi4/pygenomeviz) - MIT License
     - [**Jupyter**](https://jupyter.org/) - BSD License
     - [**IPython**](https://ipython.org/) - BSD License
@@ -113,12 +114,14 @@ SEgene は現在、四つの主要コンポーネント [**SEgene_peakprep**](ht
 
 ### Genomics Tools
 
-- [**Bedtools**](https://bedtools.readthedocs.io/) - MIT License  
+- [**Bedtools**](https://bedtools.readthedocs.io/) - MIT License
   Bedtools はgenome領域に関する解析に使用され、Python ラッパーライブラリ PyBedTools を通じてアクセスされます。
-- [**samtools**](http://www.htslib.org/) - MIT License  
+- [**samtools**](http://www.htslib.org/) - MIT License
   samtools はBAMファイルの解析と統計情報の取得に使用されます。
-- [**featureCounts**](http://subread.sourceforge.net/) - GPL License  
+- [**featureCounts**](http://subread.sourceforge.net/) - GPL License
   featureCounts は定義されたゲノム領域におけるリードのカウントに使用されます。
+- [**deeptools**](https://deeptools.readthedocs.io/) - BSD License
+  deeptools はBigWig方式におけるBAMからbigWigへの変換およびシグナル抽出に使用されます。
 
 SE_to_gene_links の依存関係の全リストについては、[SE_to_gene_links/environment.yml](https://github.com/hamamoto-lab/SEgene_test/blob/main/SE_to_gene_links/environment.yml) を参照してください。
 
@@ -129,9 +132,9 @@ SE_to_gene_links の依存関係の全リストについては、[SE_to_gene_lin
 ### 使用環境(SE_to_gene_links)
 
 - **Docker**: このプロジェクトではベースとして `condaforge/miniforge3` Docker イメージを使用しています。
-  - **ベースイメージ**: [condaforge/miniforge3](https://hub.docker.com/r/condaforge/miniforge3)  
+  - **ベースイメージ**: [condaforge/miniforge3](https://hub.docker.com/r/condaforge/miniforge3)
     - BSD 3-Clause License の下でライセンスされています。
-- **スタンドアロンインストール**: Miniforge3 はローカルシステムに直接インストールすることもできます。  
+- **スタンドアロンインストール**: Miniforge3 はローカルシステムに直接インストールすることもできます。
   - インストール手順は [Miniforge GitHub ページ](https://github.com/conda-forge/miniforge) を参照してください。
 
 ### パッケージソース

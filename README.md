@@ -15,8 +15,8 @@ This repository contains tools and scripts for **SEgene**.
 
 SEgene currently consists of four primary components: [**SEgene_peakprep**](https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_peakprep), [**peak_to_gene_links**](https://github.com/hamamoto-lab/SEgene/tree/main/peak_to_gene_links), [**SE_to_gene_links**](https://github.com/hamamoto-lab/SEgene/tree/main/SE_to_gene_links), and [**SEgene_RegionAnalyzer**](https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_region_analyzer).
 
-First, **SEgene_peakprep** is used to calculate CPM (Counts Per Million) values from ChIP-seq data (BAM files) for specified genomic regions.
-Then, the **peak_to_gene_links** program integrates these CPM values with gene expression data to obtain correlation information between enhancer peaks and gene expression.
+First, **SEgene_peakprep** is used to quantify and normalize signal values from ChIP-seq data (BAM files) for specified genomic regions. It offers two implementation methods: a CPM (Counts Per Million) method using featureCounts, and a BigWig method using deeptools for signal normalization and quantification.
+Then, the **peak_to_gene_links** program integrates these normalized values with gene expression data to obtain correlation information between enhancer peaks and gene expression.
 Next, **SE_to_gene_links** is used to evaluate and analyze super-enhancers using the correlation information obtained in the previous step.
 As an optional component, **SEgene_RegionAnalyzer** allows for detailed characterization of identified SE regions and their integration with public databases.
 
@@ -42,7 +42,9 @@ Refer to these files for information on added features, fixes, and other notable
 
 ## Citation
 
-If you use this tool for your research, please refer to the [CITATION](https://github.com/hamamoto-lab/SEgene/blob/main/CITATION).
+If you use this tool in your research, please refer to the following CITATION file:
+[CITATION](https://github.com/hamamoto-lab/SEgene/blob/main/CITATION)
+**(Manuscript in preparation.)**
 
 ## Libraries and Licenses
 
@@ -59,6 +61,7 @@ This project imports and relies on a variety of open-source libraries. Below is 
     - [**Scipy**](https://scipy.org/) - BSD License
     - [**Statsmodels**](https://www.statsmodels.org/) - BSD License
     - [**PyBedTools**](https://daler.github.io/pybedtools/) - MIT License
+    - [**PyRanges**](https://github.com/biocore-ntnu/pyranges) - MIT License
     - [**PyGenomeViz**](https://github.com/moshi4/pygenomeviz) - MIT License
     - [**Jupyter**](https://jupyter.org/) - BSD License
     - [**IPython**](https://ipython.org/) - BSD License
@@ -117,6 +120,8 @@ This project imports and relies on a variety of open-source libraries. Below is 
   samtools is used for BAM file analysis and gathering statistics.
 - [**featureCounts**](http://subread.sourceforge.net/) - GPL License  
   featureCounts is used for counting reads in defined genomic regions.
+- [**deeptools**](https://deeptools.readthedocs.io/) - BSD License  
+  deeptools is used for BAM to bigWig conversion and signal extraction in the BigWig method.
 
 For a full list of dependencies of SE_to_gene_links, refer to [SE_to_gene_links/environment.yml](https://github.com/hamamoto-lab/SEgene/blob/main/SE_to_gene_links/environment.yml).
 

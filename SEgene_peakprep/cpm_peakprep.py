@@ -8,14 +8,13 @@ import time
 
 # --- cpm_peakprep_utils.py から関数をインポート ---
 try:
-    # Import only what we need (差分関連削除)
     from cpm_peakprep_utils import (
         get_sample_data,
         run_samtools_flagstat,
         run_featurecounts,
         calculate_logcpm,
         convert_bed_to_saf,
-        convert_mergesv_to_saf,
+        convert_mergese_to_saf,
         invert_dictionary
     )
 except ImportError as e:
@@ -35,13 +34,13 @@ def parse_arguments():
     parser.add_argument("-b", "--bam_dir", required=True,
                         help="Directory containing BAM files.")
     parser.add_argument("-a", "--annotation_file", required=True,
-                        help="Path to the annotation file (SAF, BED, or merge_SV format). Specify format with --is_mergesv_format if needed.")
+                        help="Path to the annotation file (SAF, BED, or merge_SE format). Specify format with --is_mergese_format if needed.")
     parser.add_argument("-o", "--output_dir", required=True,
                         help="Directory to save all output files.")
 
     # --- オプション引数: ファイルフォーマット ---
-    parser.add_argument("--is_mergesv_format", action='store_true',
-                        help="Specify if the annotation file is in 'merge_SV.tsv' format (chr_start_end in the first column).")
+    parser.add_argument("--is_mergese_format", action='store_true',
+                        help="Specify if the annotation file is in 'merge_SE.tsv' format (chr_start_end in the first column).")
 
     # --- オプション引数: ファイル/サンプル選択 ---
     parser.add_argument("--filename_pattern", default="*.bam",
@@ -149,9 +148,9 @@ def main():
              sys.exit(1)
 
         # ファイル形式を判定し、必要ならSAFに変換
-        if args.is_mergesv_format:
-            logger.info("Input annotation specified as merge_SV format. Converting to temporary SAF...")
-            temp_saf_path = convert_mergesv_to_saf(annotation_file, logger)
+        if args.is_mergese_format:
+            logger.info("Input annotation specified as merge_SE format. Converting to temporary SAF...")
+            temp_saf_path = convert_mergese_to_saf(annotation_file, logger)
             if temp_saf_path is None: sys.exit(1)
             saf_file_to_use = temp_saf_path
         else:

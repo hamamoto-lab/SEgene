@@ -847,13 +847,13 @@ def convert_bed_to_saf(bed_path: str, logger: logging.Logger) -> Optional[str]:
         return None
 
 
-def convert_mergesv_to_saf(merge_sv_path: str, logger: logging.Logger) -> Optional[str]:
+def convert_mergese_to_saf(merge_se_path: str, logger: logging.Logger) -> Optional[str]:
     """
-    Converts a merge_SV.tsv file (expecting 'se_data' column like chr_start_end,
+    Converts a merge_SE.tsv file (expecting 'se_data' column like chr_start_end,
     0-based start) to a temporary SAF file (1-based start).
 
     Args:
-        merge_sv_path (str): Path to the input merge_SV.tsv file.
+        merge_se_path (str): Path to the input merge_SE.tsv file.
         logger (logging.Logger): Logger object.
 
     Returns:
@@ -861,33 +861,33 @@ def convert_mergesv_to_saf(merge_sv_path: str, logger: logging.Logger) -> Option
                        Caller must delete the temporary file.
     """
     # 処理開始ログ (英語)
-    logger.info(f"Converting merge_SV format file to temporary SAF: {os.path.basename(merge_sv_path)}")
+    logger.info(f"Converting merge_SE format file to temporary SAF: {os.path.basename(merge_se_path)}")
     try:
         # --- ファイル読み込みとヘッダー確認 ---
         try:
             # ヘッダーあり、タブ区切りで読み込み
-            df = pd.read_csv(merge_sv_path, sep='\t', header=0)
+            df = pd.read_csv(merge_se_path, sep='\t', header=0)
         except pd.errors.EmptyDataError:
-            logger.error(f"Input merge_SV file is empty: {merge_sv_path}")
+            logger.error(f"Input merge_SE file is empty: {merge_se_path}")
             return None
         except FileNotFoundError:
-             logger.error(f"Input merge_SV file not found: {merge_sv_path}")
+             logger.error(f"Input merge_SE file not found: {merge_se_path}")
              return None
         except Exception as e:
-             logger.error(f"Failed to read merge_SV file {merge_sv_path}: {e}")
+             logger.error(f"Failed to read merge_SE file {merge_se_path}: {e}")
              return None
 
         # DataFrameが空でないか再確認
         if df.empty:
-             logger.error(f"Input merge_SV file is empty after reading: {merge_sv_path}")
+             logger.error(f"Input merge_SE file is empty after reading: {merge_se_path}")
              return None
 
         # 最初の列名が 'se_data' であることを確認 (大文字小文字区別しない)
         se_data_col_name = df.columns[0] # 実際のカラム名を取得
         if se_data_col_name.lower() != 'se_data':
-            logger.error(f"Expected first column to be 'se_data' (case-insensitive) in {merge_sv_path}, but found '{se_data_col_name}'.")
+            logger.error(f"Expected first column to be 'se_data' (case-insensitive) in {merge_se_path}, but found '{se_data_col_name}'.")
             return None
-        logger.debug(f"Read merge_SV file with {len(df)} rows.")
+        logger.debug(f"Read merge_SE file with {len(df)} rows.")
         # --- 読み込み完了 ---
 
         # --- 座標の抽出とSAFデータ作成 ---
@@ -934,7 +934,7 @@ def convert_mergesv_to_saf(merge_sv_path: str, logger: logging.Logger) -> Option
             saf_df.to_csv(temp_saf_file.name, sep='\t', index=False, header=True)
             temp_saf_path = temp_saf_file.name
             temp_saf_file.close() # ファイルを閉じる
-            logger.info(f"Successfully converted merge_SV to temporary SAF file: {temp_saf_path}")
+            logger.info(f"Successfully converted merge_SE to temporary SAF file: {temp_saf_path}")
             # 一時ファイルのパスを返す
             return temp_saf_path
         except Exception as e:
@@ -950,5 +950,5 @@ def convert_mergesv_to_saf(merge_sv_path: str, logger: logging.Logger) -> Option
 
     except Exception as e:
         # その他の予期せぬエラー
-        logger.error(f"An unexpected error occurred during merge_SV to SAF conversion: {e}", exc_info=True)
+        logger.error(f"An unexpected error occurred during merge_SE to SAF conversion: {e}", exc_info=True)
         return None

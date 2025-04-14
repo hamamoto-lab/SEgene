@@ -5,13 +5,42 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.0] - 2025-04-14
+
+### Added
+- **New BigWig method in SEgene_peakprep**:
+  - Implemented a new alternative approach for peak quantification using BigWig files
+  - Added `deeptools` integration for BAM to BigWig conversion and signal quantification
+  - Added `bamCoverage` functionality with multiple normalization options (RPGC, CPM, BPM, RPKM)
+  - Added `multiBigwigSummary` processing for extracting signal values from specified regions
+  - Implemented automatic log2 transformation of signal values
+  - Created comprehensive utilities for processing and handling BigWig files and genomic coordinates
+- **Enhanced processing workflow**:
+  - Added three-stage workflow with separate scripts for different processing steps
+  - Added wrapper script for seamless execution of the entire pipeline
+  - Added option to run individual processing steps separately
+
+### Changed
+- **Expanded SEgene_peakprep capabilities**:
+  - Updated documentation to reflect both CPM and BigWig implementation methods
+  - Expanded command-line interface to support both processing approaches
+  - Standardized output formats across both methods for downstream compatibility
+
+### Fixed
+- **Corrected terminology in SEgene_peakprep**:
+  - Fixed references to "merge_SV.tsv" format from v1.6.1, which should correctly be "merge_SE.tsv" (Super-Enhancer) format
+  - Updated all related documentation and code comments to use consistent terminology
+  - Fixed `--is_mergesv_format` flag name to `--is_mergese_format` for specifying merge_SE.tsv format annotations
+
 ## [1.6.1] - 2025-04-11
 
 ### Added
 - **SEgene_peakprep improvements**:
-  - Added direct support for BED and merge_SV.tsv input formats in annotation files
-  - Automatic conversion of BED and merge_SV formats to SAF format internally
-  - Added `--is_mergesv_format` flag for specifying merge_SV.tsv format annotations
+  - Added direct support for BED and merge_SE.tsv input formats in annotation files
+  - Automatic conversion of BED and merge_SE formats to SAF format internally
+  - Added `--is_mergese_format` flag for specifying merge_SE.tsv format annotations
+  
+  [Note: This version incorrectly referred to "merge_SV.tsv" instead of "merge_SE.tsv" in some places. This has been corrected in version 1.7.0.]
 
 ### Changed
 - **SEgene_peakprep workflow optimization**:
@@ -143,6 +172,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Interactive analysis with Jupyter Notebook
 - Detailed installation instructions and documentation in the GitHub repository
 
+[1.6.1]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.7.0
 [1.6.1]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.6.1
 [1.6.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.6.0
 [1.5.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.5.0
