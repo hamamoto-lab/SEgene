@@ -21,7 +21,7 @@ This pipeline offers two implementation methods:
 1. **CPM Method**: Uses `featureCounts` to directly calculate Counts Per Million (CPM) values
 2. **BigWig Method**: Uses `deeptools` to convert BAM to bigWig files, then quantifies peaks using `multiBigwigSummary`
 
-Both methods support BED, SAF, and merge_SE format annotation files. You can choose the appropriate method based on your needs.
+Both methods support BED, SAF, and merge_SE format annotation files. You can choose the appropriate method based on your needs.  
 **Note:** The merge_SE format is specific to the SEgene project and is used as output and intermediate files in the pipeline.
 
 ## Common Requirements and Dependencies

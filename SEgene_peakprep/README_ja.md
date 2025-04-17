@@ -18,11 +18,11 @@ SEgene_peakprepは、[SEgeneプロジェクト](https://github.com/hamamoto-lab/
 
 このパイプラインは以下の2つの実装方法を提供します：
 
-1. **CPM方式**: `featureCounts`を使用して直接Counts Per Million（CPM）値を計算します
-2. **BigWig方式**: `deeptools`を使用してBAMからbigWigファイルに変換し、multiBigwigSummaryでピークを定量化します
+1. **CPM方式**: `featureCounts`を使用して直接Counts Per Million（CPM）値を計算
+2. **BigWig方式**: `deeptools`を使用してBAMからbigWigファイルに変換し、multiBigwigSummaryでピークを定量化
 
-どちらの方法も、BED、SAF、merge_SE形式のアノテーションファイルに対応しています。用途に応じて適切な方法を選択できます。
-**注意**: merge_SE形式はSEgeneプロジェクト特有の形式で、パイプライン内の出力および中間ファイルとして使用されます。
+どちらの方法も、BED、SAF、merge_SE形式のアノテーションファイルに対応しています。用途に応じて適切な方法を選択できます  
+**注意**: merge_SE形式はSEgeneプロジェクト特有の形式で、パイプライン内の出力および中間ファイルとして使用されます
 
 ## 共通要件・依存関係
 
