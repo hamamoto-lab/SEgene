@@ -14,7 +14,6 @@ import subprocess
 import re
 import tempfile
 
-
 def _save_bamcoverage_log(log_path: str, stdout_content: Optional[str], stderr_content: Optional[str], logger: logging.Logger):
     """Saves stdout and stderr content from bamCoverage to the specified log file."""
     # ログ保存試行のログ
@@ -985,12 +984,6 @@ def verify_regions_with_bed_df(
     except Exception as e:
         logger.error(f"An unexpected error occurred during region verification: {e}", exc_info=True)
         return False
-    
-
-
-
-
-
 
 def add_peak_ids_from_bed(
     multibigwig_counts_df: pd.DataFrame,

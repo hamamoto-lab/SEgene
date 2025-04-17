@@ -22,22 +22,50 @@ SEgene_peakprepは、[SEgeneプロジェクト](https://github.com/hamamoto-lab/
 2. **BigWig方式**: `deeptools`を使用してBAMからbigWigファイルに変換し、multiBigwigSummaryでピークを定量化します
 
 どちらの方法も、BED、SAF、merge_SE形式のアノテーションファイルに対応しています。用途に応じて適切な方法を選択できます。
+**注意**: merge_SE形式はSEgeneプロジェクト特有の形式で、パイプライン内の出力および中間ファイルとして使用されます。
 
-## 共通要件
+## 共通要件・依存関係
 
-- **Python**: Python 3.10以上
-- **基本ライブラリ**:
-  - pandas
-  - numpy
-  - natsort
-  
-  ```bash
-  # condaの場合
-  conda install pandas numpy natsort
-  
-  # pipの場合
-  pip install pandas numpy natsort
-  ```
+以下の共通要件を満たしていることを前提とします。
+
+### Python 環境
+- Python 3.10 以上
+
+### Python ライブラリ（pip または conda でインストール）
+| ライブラリ   | 用途                                     | 推奨バージョン     | 必要な機能                  |
+|--------------|------------------------------------------|-------------------|----------------------------|
+| pandas       | テーブル操作                             | ≥1.5              | すべての機能                |
+| numpy        | 数値計算                                 | ≥1.23             | すべての機能                |
+| natsort      | 自然順ソート                             | ≥8.3              | すべての機能                |
+| pyranges     | ゲノム領域の操作                         | ≥0.14             | BigWig方式のみ              |
+
+```bash
+# pipでのインストール例
+pip install pandas numpy natsort
+pip install pyranges  # BigWig方式で必要
+```
+
+```bash
+# condaでのインストール例
+conda install pandas numpy natsort
+conda install -c bioconda pyranges  # BigWig方式で必要
+```
+
+### 外部ツール（conda やバイナリでインストール）
+| ツール名             | 用途                              | 推奨バージョン     | 必要な機能                 |
+|----------------------|-----------------------------------|-------------------|---------------------------|
+| samtools             | BAM操作                           | ≥1.13             | CPM方式                    |
+| featureCounts        | CPMカウント                       | ≥2.0.0            | CPM方式                    |
+| deeptools            | BigWig生成・差分解析              | ≥3.5.0            | BigWig方式                 |
+| - bamCoverage        | BAMからbigWig変換                 | (deeptoolsに含む)  | BigWig単一サンプル解析      |
+| - multiBigwigSummary | bigWigからのシグナル集計          | (deeptoolsに含む)  | BigWig単一サンプル解析      |
+| - bamCompare         | サンプル/コントロール比較         | (deeptoolsに含む)  | BigWig差分解析(bamdiff)     |
+
+```bash
+# conda でのインストール例
+conda install -c bioconda samtools subread  # CPM方式
+conda install -c bioconda deeptools         # BigWig方式
+```
 
 ### 共通の入力ファイル
 
@@ -48,49 +76,38 @@ SEgene_peakprepは、[SEgeneプロジェクト](https://github.com/hamamoto-lab/
    - **BED形式**: 標準的なBEDフォーマット（0-based開始座標）
      ```
      # 例: peaks.bed（タブ区切り）
-     chr1    999     2000    peak1    0    +
-     chr1    2999    4000    peak2    0    +
-     chr2    4999    6000    peak3    0    -
+     chr1    1000    2000    peak1    0    +
+     chr1    3000    4000    peak2    0    +
+     chr2    5000    6000    peak3    0    -
      ```
    
    - **SAF形式** (Simplified Annotation Format): タブ区切りのテキストファイル（**1-based開始座標**）
      ```
      # 例: peaks.saf（タブ区切り）
      GeneID  Chr     Start   End     Strand
-     peak1   chr1    1000    2000    +
-     peak2   chr1    3000    4000    +
-     peak3   chr2    5000    6000    -
+     peak1   chr1    1001    2000    +
+     peak2   chr1    3001    4000    +
+     peak3   chr2    5001    6000    -
      ```
-     **注意:** SAF形式の座標は1-based（Start=1000は0-basedでは999）ですが、出力は全て0-basedに統一されます
+     **注意:** SAF形式の座標は1-based（Start=1001は0-basedでは1000）ですが、出力は全て0-basedに統一されます
    
    - **merge_SE.tsv形式**: 1列目が `chr_start_end` 形式の領域ID（例：`chr1_1000_2000`）
      ```
      # 例: merged_se.tsv（タブ区切り）
      se_data            feature
-     chr1_999_2000      feature1
-     chr1_2999_4000     feature2
-     chr2_4999_6000     feature3
+     chr1_1000_2000     feature1
+     chr1_3000_4000     feature2
+     chr2_5000_6000     feature3
      ```
-     **注意:** merge_SE形式では座標は0-based（chr1_999_2000のStartは0-basedで999）と解釈されます
+     **注意:** 
+      - merge_SE形式では座標は0-basedと解釈されます
+      - merge_SE形式はSEgeneプロジェクト特有の形式で、SEgeneパイプラインの出力および中間ファイルとして使用されます
+      - 座標は0-based（chr1_1000_2000のStartは0-basedで1000）と解釈されます
+      - このフォーマットを使うと、SEgeneの他のコンポーネントとシームレスに連携できます
 
 ## CPM方式（cpm_peakprep）
 
 CPM方式は、`featureCounts`を使用して指定ゲノム領域（BED/SAF/merge_SE.tsv形式）におけるリードを直接カウントし、CPM値とその対数変換値を計算します。
-
-### 追加要件
-
-- **外部ツール**:
-  - samtools (推奨: v1.13以上、v1.15.1で動作確認済み)
-  - featureCounts (Subreadパッケージの一部、推奨: v2.0.0以上、v2.0.6で動作確認済み)
-  
-  ```bash
-  # condaでのインストール例
-  conda install -c bioconda samtools subread
-  ```
-
-### 詳細ガイド
-
-CPM方式の詳細な設定オプションや使用方法については、以下を参照してください：
 
 ### 基本的な使用方法
 
@@ -132,42 +149,43 @@ python cpm_peakprep.py --help
 
 ## BigWig方式（bigwig_peakprep）
 
-BigWig方式は、`deeptools`の`bamCoverage`を使用してBAMファイルを正規化されたbigWigファイルに変換し、続いて`multiBigwigSummary`を使用して指定領域のカウント値を抽出します。
-
-### 追加要件
-
-- **追加ライブラリ**:
-  - pyranges
-  
-  ```bash
-  # condaの場合
-  conda install -c bioconda pyranges
-  
-  # pipの場合
-  pip install pyranges
-  ```
-
-- **外部ツール**:
-  - deeptools (推奨: v3.5.0以上、v3.5.5で動作確認済み)
-  
-  ```bash
-  # condaでのインストール例
-  conda install -c bioconda deeptools
-  ```
+BigWig方式は、`deeptools`を使用してBAMファイルを処理し、ゲノム領域内のシグナル値を定量化します。**単一サンプルの解析**と**サンプル-コントロールの差分解析**の2種類のパイプラインを提供します。
 
 ### パイプラインの構造
 
-BigWig方式は以下の3つのスクリプトから構成されています：
+BigWig方式は2つの主要な実行パスを提供しています：
 
-1. **bigwig_peakprep.py**: メインのラッパースクリプト（全体の処理を制御）
-2. **bigwig_peakprep_bamconvert.py**: BAMファイルからbigWigファイルへの変換を担当
-3. **bigwig_peakprep_summary.py**: bigWigファイルからマルチサンプルカウントテーブルを生成
+1. **単一サンプル解析パイプライン** (`bigwig_peakprep.py`)
+   - BAMファイルから正規化されたbigWigファイルを生成し、指定領域のシグナル値を定量化
+   - 内部的に以下のスクリプトを順次実行：
+     1. `bigwig_peakprep_bamconvert.py`: BAMファイルからbigWigファイルへの変換
+     2. `bigwig_peakprep_summary.py`: bigWigファイルからピーク領域のカウント値テーブルを生成
 
-この3段階の処理フローにより、BAMファイルから正規化されたbigWigファイルを生成し、指定されたゲノム領域のシグナル値を集計して定量化します。各ステップを個別に実行することも、ラッパースクリプトを通して一連の処理として実行することも可能です。
+2. **差分解析パイプライン** (`bigwig_peakprep_bamdiff.py`) - **新機能**
+   - ChIP-seqサンプルとInputコントロールのlog2比較解析を実行
+   - 内部的に以下のスクリプトを順次実行：
+     1. `bigwig_peakprep_bamdiff_generatediff.py`: サンプルとコントロールのlog2比bigWigファイルを生成
+     2. `bigwig_peakprep_summary.py`: 生成された差分bigWigファイルから領域カウント値テーブルを生成
+
+**ユーティリティモジュール**:
+- `bigwig_peakprep_utils.py`: 基本的な関数と共通ユーティリティを提供
+- `bigwig_peakprep_bamdiff_utils.py`: 差分解析に特化した関数を提供
+
+### どのパイプラインを選ぶべきか
+
+- **単一サンプル解析パイプライン**（`bigwig_peakprep.py`）を使用する場合：
+  - 各サンプルの独立した解析や比較を行いたい場合
+  - 個々のBAMファイルから正規化されたシグナル値を取得したい場合
+
+- **差分解析パイプライン**（`bigwig_peakprep_bamdiff.py`）を使用する場合：
+  - ChIP-seqとInputコントロールを比較し、バックグラウンドノイズを除去した解析を行いたい場合
+  - サンプルとコントロールのペアがある場合（例：T1-H3K27acとT1-Input）
 
 デフォルトでは、bamCoverageは**RPGC (Reads Per Genomic Content)** 正規化を使用しますが、`--normalize_using`オプションで他の正規化方法（CPM, BPM, RPKM, RPGC, None）に変更可能です。
 
 ### 基本的な使用方法
+
+#### 単一サンプル解析の場合（bigwig_peakprep.py）
 
 ```bash
 python bigwig_peakprep.py \
@@ -179,7 +197,22 @@ python bigwig_peakprep.py \
     --threads=10
 ```
 
+#### サンプル-コントロール差分解析の場合（bigwig_peakprep_bamdiff.py）
+
+```bash
+python bigwig_peakprep_bamdiff.py \
+    --sample_bam_dir="/path/to/chipseq_bams" \
+    --control_bam_dir="/path/to/input_bams" \
+    --annotation_file="/path/to/peaks.bed" \
+    --output_dir="/path/to/output" \
+    --tools_dir="/path/to/deeptools/bin" \
+    --sample_delimiter="-H3K27ac.sorted.bam" \
+    --threads=10
+```
+
 ### 主要な引数
+
+#### 単一サンプル解析（bigwig_peakprep.py）
 
 | 引数名 | 説明 | デフォルト値 |
 |--------|------|-------------|
@@ -198,9 +231,28 @@ python bigwig_peakprep.py \
 | `--normalize_using` | bamCoverageの正規化方法 (RPGC, CPM, BPM, RPKM, None) | "RPGC" |
 | `--effective_genome_size` | RPGC正規化用の有効ゲノムサイズ | 2913022398 |
 
+#### サンプル-コントロール差分解析（bigwig_peakprep_bamdiff.py）
+
+| 引数名 | 説明 | デフォルト値 |
+|--------|------|-------------|
+| **必須引数** |||
+| `--sample_bam_dir` | ChIP-seqサンプルBAMファイルが格納されているディレクトリ | - |
+| `--control_bam_dir` | Inputコントロール（Input/IgG）BAMファイルが格納されているディレクトリ | - |
+| `--annotation_file` | アノテーションファイル（BED, SAF, merge_SE形式） | - |
+| `--output_dir` | 結果を保存するディレクトリ | - |
+| **ファイル選択** |||
+| `--sample_pattern` | サンプルBAMファイルのグロブパターン | "*.bam" |
+| `--control_pattern` | コントロールBAMファイルのグロブパターン | "*Input*.bam" |
+| **処理関連** |||
+| `--operation` | bamCompareの操作方法（log2, ratio, subtract, add, meanなど） | "log2" |
+| `--bin_size` | bamCompareのbinサイズ（ベース単位） | 50 |
+| `--pseudocount` | ゼロ除算を避けるための擬似カウント値 | 1.0 |
+| `--run_diff_only` | 差分bigWig生成のみを実行（サマリー処理をスキップ） | False |
+
 全てのオプションを確認するには、以下のコマンドを実行してください：
 ```bash
 python bigwig_peakprep.py --help
+python bigwig_peakprep_bamdiff.py --help
 ```
 
 より詳細な設定オプションや出力の説明については、[BigWig方式の詳細ドキュメント](./bigwig_README_ja.md)を参照してください。
@@ -221,22 +273,85 @@ python bigwig_peakprep.py --help
 
 ### BigWig方式の出力
 
+#### 単一サンプル解析の場合（bigwig_peakprep.py）
+
 1. **bigWigファイル** (ステップ1の出力):
    - 各BAMファイルから生成された正規化されたbigWigファイル
    - ファイル名形式: `{サンプル名}.{正規化方法}.bigwig`
+   - 例: `sample1.RPGC.bigwig`
 
-2. **カウントテーブル** (ステップ2の出力):
+2. **bam_to_bigwig_details.tsv**:
+   - ステップ1の詳細出力ファイル（ステップ2への入力）
+   - コメント行にはパラメータ情報と実行時メタデータが含まれる
+   - 列: `Sample_name`, `BAM_filename`, `BigWig_filename`, `BAM_fullpath`, `BigWig_fullpath`
+
+3. **カウントテーブル** (ステップ2の出力):
    - `multibigwig_counts.tsv`: 生のカウントテーブル
    - `multibigwig_counts_log2.tsv`: log2変換済みカウントテーブル
 
-出力テーブルの例:
+#### サンプル-コントロール差分解析の場合（bigwig_peakprep_bamdiff.py）
+
+1. **差分bigWigファイル**:
+   - サンプルとコントロールのlog2比を表すbigWigファイル
+   - ファイル名形式: `{sample_name}_vs_{control_name}.log2ratio.bigwig`
+   - 例: `T1-H3K27ac_vs_T1-Input.log2ratio.bigwig`
+
+2. **bamdiff_to_bigwig_details.tsv**:
+   - 差分解析の詳細情報を含むTSVファイル
+   - カラム: `Sample_name`, `BigWig_filename`, `BigWig_fullpath`
+   - 重要: このファイルには `already_log2_transformed: true` メタデータが含まれる（サマリー処理での追加log2変換を防ぐため）
+
+3. **変換プラン**:
+   - `conversion_plan.yaml`: 差分解析の実行計画
+   - `conversion_plan.tsv`: 変換計画のTSV形式（表形式）
+
+4. **カウントテーブル**:
+   - `multibigwig_counts.tsv`: 各ピーク領域でのlog2比の値を含むテーブル
+   - 注意: すでにlog2変換済みのため、追加のlog2変換は行われない
+
+出力テーブルの形式例:
 ```
 PeakID  Chr     Start   End     Sample1  Sample2  Sample3
-peak1   chr1    999     2000    2.45     3.12     1.87
-peak2   chr1    2999    4000    4.21     3.98     4.56
+peak1   chr1    1000    2000    2.45     3.12     1.87
+peak2   chr1    3000    4000    4.21     3.98     4.56
 ...
 ```
 
+### 出力ファイル構造の例
+
+#### 単一サンプル解析の出力ディレクトリ構造:
+```
+output_dir/
+├── bigwig/
+│   ├── sample1.RPGC.bigwig
+│   ├── sample2.RPGC.bigwig
+│   └── ...
+├── summary/
+│   ├── bigwig_summary.npz
+│   └── bigwig_summary.tab
+├── bam_to_bigwig_details.tsv
+├── multibigwig_counts.tsv
+├── multibigwig_counts_log2.tsv
+└── pipeline_run.log
+```
+
+#### 差分解析の出力ディレクトリ構造:
+```
+output_dir/
+├── bigwig/
+│   ├── T1-H3K27ac_vs_T1-Input.log2ratio.bigwig
+│   ├── T2-H3K27ac_vs_T2-Input.log2ratio.bigwig
+│   └── ...
+├── summary/
+│   ├── bigwig_summary.npz
+│   └── bigwig_summary.tab
+├── bamdiff_to_bigwig_details.tsv
+├── bamdiff_to_bigwig_details.yaml
+├── conversion_plan.yaml
+├── conversion_plan.tsv
+├── multibigwig_counts.tsv
+└── pipeline_run.log
+```
 
 ## トラブルシューティング
 
@@ -245,9 +360,15 @@ peak2   chr1    2999    4000    4.21     3.98     4.56
 1. **ツールが見つからないエラー**:
    - samtoolsやfeatureCounts、deeptoolsがインストールされているか確認
    - 完全なパスを対応するオプションで指定
+   ```bash
+   --tools_dir="/path/to/deeptools/bin"
+   --samtools_path="/path/to/samtools"
+   --featurecounts_path="/path/to/featureCounts"
+   ```
 
 2. **BAMファイルが見つからない**:
-   - `--filename_pattern`引数を確認
+   - `--filename_pattern`引数、`--sample_pattern`、`--control_pattern`を確認
+   - ファイルの権限と読み取りアクセスを確認
 
 3. **サンプル名抽出の問題**:
    - `--sample_delimiter`の値を適切に設定し、イコール記号（`=`）を使用して指定
@@ -260,6 +381,13 @@ peak2   chr1    2999    4000    4.21     3.98     4.56
 5. **処理が遅い場合**:
    - `--threads`オプションでスレッド数を増やす
    - インデックス付きのBAMファイルを使用する
+   - `--bin_size`値を大きくすると処理が速くなりますが、解像度は低下します
+
+6. **サンプルとコントロールのマッチング失敗**:
+   - ログで警告メッセージ "Could not create sample-control pairs" が表示される場合、マッチングに失敗しています
+   - ファイル名パターンを `--sample_pattern` と `--control_pattern` で明示的に指定する
+   - ファイル名に共通の識別子（T1, T2など）があることを確認する
+   - 単一のコントロールを全サンプルに使用する場合は、コントロールディレクトリに1つのファイルだけが含まれるようにする
 
 ## 引用
 

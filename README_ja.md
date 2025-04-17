@@ -15,7 +15,7 @@
 
 SEgene は現在、四つの主要コンポーネント [**SEgene_peakprep**](https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_peakprep)、[**peak_to_gene_links**](https://github.com/hamamoto-lab/SEgene/tree/main/peak_to_gene_links)、[**SE_to_gene_links**](https://github.com/hamamoto-lab/SEgene/tree/main/SE_to_gene_links)、および [**SEgene_RegionAnalyzer**](https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_region_analyzer) から構成されています。
 
-まず、**SEgene_peakprep** を使用してChIP-seqデータ（BAMファイル）から指定したゲノム領域におけるシグナル値を定量化・正規化します。これには二つの実装方法があります：featureCountsを使用するCPM（Counts Per Million）方式と、シグナル正規化と定量化にdeeptoolsを使用するBigWig方式です。
+まず、**SEgene_peakprep** を使用してChIP-seqデータ（BAMファイル）から指定したゲノム領域におけるシグナル値を定量化・正規化します。これには二つの実装方法があります：featureCountsを使用するCPM（Counts Per Million）方式と、シグナル正規化と定量化にdeeptoolsを使用するBigWig方式です。特にBigWig方式では、単一サンプル解析と差分解析（ChIP-seqサンプルとInputコントロールの比較）の2つのパイプラインを提供しており、バックグラウンド補正されたシグナル値の取得が可能になっています。
 次に、**peak_to_gene_links** プログラムを使用して、これらの正規化された値と遺伝子発現データを統合し、エンハンサーピークと遺伝子発現間の相関情報を取得します。
 その後、**SE_to_gene_links** を使用して、前のステップで取得した相関情報を用いてスーパーエンハンサーを評価・分析します。
 さらに、オプションとして **SEgene_RegionAnalyzer** を使用することで、同定されたSE領域の詳細な特性評価と公共データベースとの統合分析を行うことができます。
@@ -123,7 +123,7 @@ SEgene は現在、四つの主要コンポーネント [**SEgene_peakprep**](ht
 - [**deeptools**](https://deeptools.readthedocs.io/) - BSD License
   deeptools はBigWig方式におけるBAMからbigWigへの変換およびシグナル抽出に使用されます。
 
-SE_to_gene_links の依存関係の全リストについては、[SE_to_gene_links/environment.yml](https://github.com/hamamoto-lab/SEgene_test/blob/main/SE_to_gene_links/environment.yml) を参照してください。
+SE_to_gene_links の依存関係の全リストについては、[SE_to_gene_links/environment.yml](https://github.com/hamamoto-lab/SEgene/blob/main/SE_to_gene_links/environment.yml) を参照してください。
 
 ## ベースイメージと依存関係管理
 

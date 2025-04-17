@@ -90,13 +90,76 @@ def parse_arguments():
     parser.add_argument("--script_log_file", default="pipeline_run.log",
                         help="Filename for script execution log. Set to '' to disable.")
 
+
+    # log変換済み対応
+    parser.add_argument("--skip_log2_transform", action='store_true',
+                        help="Skip log2 transformation (for pre-transformed data like bamCompare output)")
+
+    parser.add_argument("--skip_log2_file", action='store_true',
+                  help="Skip generation of log2-transformed counts file")
+
     return parser.parse_args()
 
 # --- bigwig_details_file から bigWig ファイルとサンプル情報を読み込む関数 ---
+# def load_bigwig_details(
+#     bigwig_details_file: str,
+#     logger: logging.Logger
+# ) -> Tuple[List[str], List[str]]:
+#     """
+#     Load bigWig file paths and sample names from the
+#     bam_to_bigwig_details.tsv file.
+    
+#     Args:
+#         bigwig_details_file (str): Path to the bigWig details file
+#         logger (logging.Logger): Logger object
+        
+#     Returns:
+#         Tuple[List[str], List[str]]: 
+#             - List of bigWig file paths
+#             - List of sample names (in the same order as bigWig files)
+#     """
+#     logger.info(f"Reading bigWig details file: {bigwig_details_file}")
+    
+#     bigwig_files = []
+#     sample_names = []
+    
+#     try:
+#         # ファイルの存在確認
+#         if not os.path.exists(bigwig_details_file):
+#             logger.error(f"BigWig details file not found: {bigwig_details_file}")
+#             return [], []
+        
+#         # TSVファイルを読み込み（#で始まる行はコメント扱い）
+#         df = pd.read_csv(bigwig_details_file, sep='\t', comment='#')
+        
+#         # 必要なカラムが存在するか確認
+#         required_columns = ['Sample_name', 'BigWig_fullpath']
+#         missing_columns = [col for col in required_columns if col not in df.columns]
+#         if missing_columns:
+#             logger.error(f"Required columns missing in BigWig details file: {missing_columns}")
+#             return [], []
+        
+#         # bigWigファイルパスとサンプル名を抽出
+#         bigwig_files = df['BigWig_fullpath'].tolist()
+#         sample_names = df['Sample_name'].tolist()
+        
+#         if not bigwig_files:
+#             logger.warning("No bigWig files found in details file.")
+#             return [], []
+        
+#         logger.info(f"Loaded {len(bigwig_files)} bigWig files and their sample names")
+#         logger.debug(f"Sample names: {', '.join(sample_names[:5])}{'...' if len(sample_names) > 5 else ''}")
+#         return bigwig_files, sample_names
+        
+#     except Exception as e:
+#         logger.error(f"Error reading BigWig details file: {e}", exc_info=True)
+#         return [], []
+
+#メタデータ対応の為に差し替え
 def load_bigwig_details(
     bigwig_details_file: str,
     logger: logging.Logger
-) -> Tuple[List[str], List[str]]:
+) -> Tuple[List[str], List[str], bool]:  # 戻り値にbool型を追加
     """
     Load bigWig file paths and sample names from the
     bam_to_bigwig_details.tsv file.
@@ -106,20 +169,35 @@ def load_bigwig_details(
         logger (logging.Logger): Logger object
         
     Returns:
-        Tuple[List[str], List[str]]: 
+        Tuple[List[str], List[str], bool]: 
             - List of bigWig file paths
             - List of sample names (in the same order as bigWig files)
+            - Boolean indicating if data is already log2 transformed
     """
     logger.info(f"Reading bigWig details file: {bigwig_details_file}")
     
     bigwig_files = []
     sample_names = []
+    already_log2_transformed = False  # デフォルトはfalse
     
     try:
         # ファイルの存在確認
         if not os.path.exists(bigwig_details_file):
             logger.error(f"BigWig details file not found: {bigwig_details_file}")
-            return [], []
+            return [], [], False
+        
+        # メタデータの確認（ファイルの先頭の#コメント行）
+        with open(bigwig_details_file, 'r', encoding='utf-8') as f:
+            for line in f:
+                if not line.startswith('#'):
+                    break
+                if 'already_log2_transformed: true' in line.lower():
+                    already_log2_transformed = True
+                    logger.info("Detected already log2 transformed data from file metadata")
+                elif 'bamcompare operation: log2' in line.lower():
+                    # bamCompareの操作がlog2の場合も変換済みと判断
+                    already_log2_transformed = True
+                    logger.info("Detected log2 operation from bamCompare metadata")
         
         # TSVファイルを読み込み（#で始まる行はコメント扱い）
         df = pd.read_csv(bigwig_details_file, sep='\t', comment='#')
@@ -129,7 +207,7 @@ def load_bigwig_details(
         missing_columns = [col for col in required_columns if col not in df.columns]
         if missing_columns:
             logger.error(f"Required columns missing in BigWig details file: {missing_columns}")
-            return [], []
+            return [], [], False
         
         # bigWigファイルパスとサンプル名を抽出
         bigwig_files = df['BigWig_fullpath'].tolist()
@@ -137,17 +215,19 @@ def load_bigwig_details(
         
         if not bigwig_files:
             logger.warning("No bigWig files found in details file.")
-            return [], []
+            return [], [], False
         
         logger.info(f"Loaded {len(bigwig_files)} bigWig files and their sample names")
         logger.debug(f"Sample names: {', '.join(sample_names[:5])}{'...' if len(sample_names) > 5 else ''}")
-        return bigwig_files, sample_names
+        if already_log2_transformed:
+            logger.info("BigWig files are already log2 transformed, will skip transformation during processing")
+        
+        return bigwig_files, sample_names, already_log2_transformed
         
     except Exception as e:
         logger.error(f"Error reading BigWig details file: {e}", exc_info=True)
-        return [], []
+        return [], [], False
 
-# --- メイン実行関数 ---
 def main():
     """
     Main function to generate bigWig summaries and create peak count tables.
@@ -292,7 +372,7 @@ def main():
     logger.info(f"Loaded BED file with {len(bed_df)} regions")
 
     # --- bigwig_details_file から情報を取得 ---
-    bigwig_files, sample_names = load_bigwig_details(args.bigwig_details_file, logger)
+    bigwig_files, sample_names, already_log2_transformed = load_bigwig_details(args.bigwig_details_file, logger)
     if not bigwig_files:
         logger.critical("No bigWig files found in details file. Cannot proceed.")
         sys.exit(1)
@@ -357,16 +437,23 @@ def main():
     
     logger.debug(f"Successfully sorted multiBigwigSummary data with {len(sorted_df)} regions")
     
-    # Log2変換の適用
-    logger.info("Applying log2 transformation to counts")
-    log2_df = apply_log2_transform_to_counts(
-        sorted_df, logger, pseudocount=args.pseudocount
-    )
-    if log2_df is None:
-        logger.critical("Failed to apply log2 transformation")
-        sys.exit(1)
+    # コマンドラインオプションでのスキップが優先
+    skip_log2 = args.skip_log2_transform or already_log2_transformed
     
-    logger.debug(f"Log2 transformation applied with pseudocount: {args.pseudocount}")
+    if skip_log2:
+        logger.info("Skipping log2 transformation as data is already transformed or skip flag is set")
+        log2_df = sorted_df.copy()  # 変換せずにコピーするだけ
+    else:
+        # Log2変換の適用
+        logger.info("Applying log2 transformation to counts")
+        log2_df = apply_log2_transform_to_counts(
+            sorted_df, logger, pseudocount=args.pseudocount
+        )
+        if log2_df is None:
+            logger.critical("Failed to apply log2 transformation")
+            sys.exit(1)
+    
+    logger.debug(f"Data preparation completed" + (" (log2 transformation skipped)" if skip_log2 else f" with pseudocount: {args.pseudocount}"))
     
     # --- PeakID情報の追加 ---
     logger.info("Adding PeakID information from BED file")
@@ -408,11 +495,29 @@ def main():
     counts_with_peaks.to_csv(raw_counts_path, sep='\t', index=False, float_format='%.6f')
     logger.info(f"Raw counts saved to: {raw_counts_path}")
     
-    # Log2変換したデータを保存
-    log2_counts_path = os.path.join(args.output_dir, args.log2_counts_name)
-    log2_counts_with_peaks.to_csv(log2_counts_path, sep='\t', index=False, float_format='%.6f')
-    logger.info(f"Log2 counts saved to: {log2_counts_path}")
-    
+    # # Log2変換したデータを保存
+    # log2_counts_path = os.path.join(args.output_dir, args.log2_counts_name)
+    # log2_counts_with_peaks.to_csv(log2_counts_path, sep='\t', index=False, float_format='%.6f')
+    # # Log2変換済みデータかどうかをログに表示
+    # if skip_log2:
+    #     logger.info(f"Pre-transformed data saved to: {log2_counts_path} (log2 transformation was skipped)")
+    # else:
+    #     logger.info(f"Log2 counts saved to: {log2_counts_path}")
+
+
+    # Log2変換したデータを保存（skip_log2_fileが設定されていない場合のみ）
+    if not args.skip_log2_file:
+        log2_counts_path = os.path.join(args.output_dir, args.log2_counts_name)
+        log2_counts_with_peaks.to_csv(log2_counts_path, sep='\t', index=False, float_format='%.6f')
+        # Log2変換済みデータかどうかをログに表示
+        if skip_log2:
+            logger.info(f"Pre-transformed data saved to: {log2_counts_path} (log2 transformation was skipped)")
+        else:
+            logger.info(f"Log2 counts saved to: {log2_counts_path}")
+    else:
+        logger.info("Skipping generation of log2-transformed counts file as requested")
+        log2_counts_path = None  # 生成していないのでNoneを設定
+
     # --- パイプラインの終了 ---
     end_time = time.time()
     logger.info(f"BigWig summary processing finished in {end_time - start_time:.2f} seconds")
@@ -425,6 +530,7 @@ def main():
     
     # 生成されたファイルパスをタプルで返す
     return raw_counts_path, log2_counts_path
+
 
 # --- スクリプト実行のエントリポイント ---
 if __name__ == "__main__":

@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.0] - 2025-04-17
+
+### Added
+- **Enhanced SEgene_peakprep with differential analysis**:
+  - Added differential analysis functionality for ChIP-seq versus Input control data within the bigWig processing workflow.
+  - This feature utilizes `bamCompare` from the `deeptools` suite to identify significantly enriched regions by comparing ChIP signals against Input signals.
+
+### Changed
+- **Updated SEgene_peakprep code and documentation**:
+  - Updated relevant scripts within the `SEgene_peakprep` directory (including `bigwig_peakprep_bamdiff.py`, `bigwig_peakprep_bamdiff_utils.py`, `bigwig_peakprep.py`, etc.) to integrate the new differential analysis capability.
+  - Correspondingly revised associated documentation (`README.md`, `README_ja.md`, `bigwig_README.md`, `bigwig_README_ja.md`) to accurately reflect the updated features and their usage instructions.
+
 ## [1.7.0] - 2025-04-14
 
 ### Added
@@ -172,6 +184,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Interactive analysis with Jupyter Notebook
 - Detailed installation instructions and documentation in the GitHub repository
 
+[1.8.0]: https://github.com/hamamoto-lab/SEgene/compare/v1.7.0...v1.8.0
+[1.7.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.7.0
 [1.6.1]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.7.0
 [1.6.1]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.6.1
 [1.6.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.6.0

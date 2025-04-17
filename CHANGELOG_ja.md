@@ -5,6 +5,18 @@
 形式は [Keep a Changelog](https://keepachangelog.com/ja/1.1.0/) をベースとし、
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html) に準拠しています。
 
+## [1.8.0] - 2025-04-17
+
+### Added
+- **SEgene_peakprepの機能拡張**: 
+  - bigWig形式のワークフローにおいて、ChIP-seqデータとInputコントロールデータの差分解析機能を追加
+  - `deeptools`の`bamCompare`を利用し、ChIPシグナルとInputシグナルを比較することで濃縮領域を同定
+
+### Changed
+- **SEgene_peakprepのコードとドキュメント修正**: 
+  - 新機能である差分解析の導入に伴い、`SEgene_peakprep`ディレクトリ内の関連スクリプト（`bigwig_peakprep_bamdiff.py`, `bigwig_peakprep_bamdiff_utils.py`, `bigwig_peakprep.py`等）を更新
+  - あわせてドキュメント（`README_ja.md`, `README.md`, `bigwig_README_ja.md`, `bigwig_README.md`）を更新し、現在の機能と使用法を反映
+
 ## [1.7.0] - 2025-04-14
 
 ### Added
@@ -172,6 +184,8 @@
     - Jupyter Notebook での対話的解析
 - GitHub リポジトリ内の詳細なインストール手順とドキュメント
 
+[1.8.0]: https://github.com/hamamoto-lab/SEgene/compare/v1.7.0...v1.8.0
+[1.7.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.7.0
 [1.6.1]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.7.0
 [1.6.1]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.6.1
 [1.6.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.6.0

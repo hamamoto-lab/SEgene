@@ -2,7 +2,7 @@
 
 *(For the Japanese version of this README, please see [README_ja.md](https://github.com/hamamoto-lab/SEgene/blob/main/README_ja.md).)*
 
-**SEgene**  (pronounced "S-E-gene") is a platform designed to identify Super-Enhancer-to-gene links (SE-to-gene links) by incorporating the peak-to-gene links approach, a statistical method that uncovers correlations between genes and peak regions.
+**SEgene**  (pronounced "S-E-gene") is a platform designed to identify and analyze Super-Enhancer-to-gene links (SE-to-gene links) by incorporating the peak-to-gene links approach, a statistical method that uncovers correlations between genes and peak regions.
 This repository contains tools and scripts for **SEgene**.
 
 ## Features
@@ -15,16 +15,16 @@ This repository contains tools and scripts for **SEgene**.
 
 SEgene currently consists of four primary components: [**SEgene_peakprep**](https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_peakprep), [**peak_to_gene_links**](https://github.com/hamamoto-lab/SEgene/tree/main/peak_to_gene_links), [**SE_to_gene_links**](https://github.com/hamamoto-lab/SEgene/tree/main/SE_to_gene_links), and [**SEgene_RegionAnalyzer**](https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_region_analyzer).
 
-First, **SEgene_peakprep** is used to quantify and normalize signal values from ChIP-seq data (BAM files) for specified genomic regions. It offers two implementation methods: a CPM (Counts Per Million) method using featureCounts, and a BigWig method using deeptools for signal normalization and quantification.
+First, **SEgene_peakprep** is used to quantify and normalize signal values from ChIP-seq data (BAM files) for specified genomic regions. It offers two implementation methods: a CPM (Counts Per Million) method using featureCounts, and a BigWig method using deeptools for signal normalization and quantification. Notably, the BigWig method provides two pipelines: single sample analysis and differential analysis (comparison between ChIP-seq samples and Input controls), enabling the acquisition of background-corrected signal values.
 Then, the **peak_to_gene_links** program integrates these normalized values with gene expression data to obtain correlation information between enhancer peaks and gene expression.
 Next, **SE_to_gene_links** is used to evaluate and analyze super-enhancers using the correlation information obtained in the previous step.
 As an optional component, **SEgene_RegionAnalyzer** allows for detailed characterization of identified SE regions and their integration with public databases.
 
-Additionally, the [**cli_tools**](https://github.com/hamamoto-lab/SEgene/tree/main/cli_tools) directory contains command-line tools for analyzing correlations between SE regions identified by SE_to_gene_links and gene expression.
+Additionally, the [**cli_tools**](https://github.com/hamamoto-lab/SEgene/tree/main/cli_tools/README.md) directory contains command-line tools for analyzing correlations between SE regions identified by SE_to_gene_links and gene expression.
 
 ## Usage
 
-For installation and usage instructions, please refer to the respective `README` .
+For installation and usage instructions, please refer to the respective `README` files:
 
 - [SEgene_peakprep](https://github.com/hamamoto-lab/SEgene/blob/main/SEgene_peakprep/README.md)
 - [peak_to_gene_links](https://github.com/hamamoto-lab/SEgene/blob/main/peak_to_gene_links/README.md)
@@ -127,23 +127,23 @@ For a full list of dependencies of SE_to_gene_links, refer to [SE_to_gene_links/
 
 ## Base Image and Dependency Management
 
-This project uses Miniforge3 for dependency management. Miniforge3 is a minimal installer for Conda Forge, which provides a community-driven collection of packages for Conda.
+This project uses Miniforge3 for dependency management in **SE_to_gene_links**. Miniforge3 is a minimal installer for Conda Forge, which provides a community-driven collection of packages for Conda.
 
-### Usage Scenarios(SE_to_gene_links)
+### Usage Environments (SE_to_gene_links)
 
-- **Docker**: This project of SE_to_gene_links part uses the `condaforge/miniforge3` Docker image as its base.
+- **Docker**: The **SE_to_gene_links** component uses the `condaforge/miniforge3` Docker image as its base.
   - **Base Image**: [condaforge/miniforge3](https://hub.docker.com/r/condaforge/miniforge3)  
     - Licensed under the BSD 3-Clause License.
 - **Standalone Installation**: Miniforge3 can also be installed directly on your local system.  
   - Installation instructions can be found on the [Miniforge GitHub page](https://github.com/conda-forge/miniforge).
 
-### Package Source
+### Package Sources
 
 - **[Conda Forge](https://conda-forge.org/)**  
   - Conda Forge provides a community-maintained collection of packages with wide platform support.
   - Licensed under the BSD 3-Clause License.
-
-- **Bioconda**
+- **Bioconda**  
+  - A channel for the Conda package manager specializing in bioinformatics software.
 
 ## License
 

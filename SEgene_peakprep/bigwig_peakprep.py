@@ -127,6 +127,12 @@ def parse_arguments():
     parser.add_argument("--script_dir", default=None,
                         help="Directory containing the step scripts. If not specified, uses the same directory as this script.")
 
+
+    # --- オプション引数: データテーブル関連 ---
+    parser.add_argument("--skip_log2_transform", action='store_true',
+                        help="Skip log2 transformation for pre-transformed data (e.g., bamCompare outputs)")
+    
+
     return parser.parse_args()
 
 # --- 引数を分離してステップスクリプト用のコマンドラインを構築する関数 ---
@@ -246,6 +252,13 @@ def build_summary_command(args, script_path: str, bigwig_details_file: str) -> L
     if args.script_log_file != "pipeline_run.log":
         cmd.append(f"--script_log_file={args.script_log_file}")
     
+    # # オプション引数: データテーブル関連 - イコール渡し形式に変更
+    # if args.skip_log2_transform:
+    #     cmd.append("--skip_log2_transform")
+    # if args.force_chr_start_end_ids:
+    #     cmd.append("--force_chr_start_end_ids")
+
+
     return cmd
 
 # --- サブプロセスを実行し、結果を処理する関数 ---
