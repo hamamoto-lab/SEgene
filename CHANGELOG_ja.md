@@ -5,6 +5,30 @@
 形式は [Keep a Changelog](https://keepachangelog.com/ja/1.1.0/) をベースとし、
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html) に準拠しています。
 
+## [1.9.0] - 2025-04-24
+
+### Added
+- **新コンポーネント: SEgene_geneprep**:
+  - RNA-seqデータ（TPM-TSVファイル）をP2GL input用に領域情報を追加する前処理ツール
+  - GTFファイルから遺伝子位置情報を抽出し、TPMファイルの発現量データと結合
+  - nf-core/rnaseqパイプラインのsalmon出力を、SEgene解析パイプラインのRNAinput用CSVファイルに変換
+  - 標準GTFファイルとsalmon TPMファイルを含む複数の入力形式をサポート
+  - Illumina iGenomesのゲノムアノテーション（例：GRCh38）に対応
+  - 英語と日本語の包括的なドキュメントを提供
+- **ワークフロー可視化**:
+  - SEgeneの完全なワークフローを視覚化するmermaid図を追加
+  - P2GLデータ準備、P2GL相関解析、スーパーエンハンサー解析、領域評価分析の4ステッププロセスを明確に図示
+
+### Changed
+- **プログラム構造の再編成**:
+  - より理解しやすいように、ワークフローを4つの主要コンポーネントに再編成
+  - SEgene_peakprepとSEgene_geneprepを初期のP2GLデータ準備ステップとして位置づけ
+  - 新しいワークフロー体系を反映するようドキュメント構造を更新
+- **ドキュメントの更新**:
+  - メインREADMEファイル（英語・日本語）の包括的な改訂
+  - プログラム構造セクションをより明確に再構築
+  - コンポーネント間の関係性とデータフローの説明を強化
+
 ## [1.8.0] - 2025-04-17
 
 ### Added

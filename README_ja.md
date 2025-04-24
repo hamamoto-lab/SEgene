@@ -13,20 +13,99 @@
 
 ## プログラム構成
 
-SEgene は現在、四つの主要コンポーネント [**SEgene_peakprep**](https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_peakprep)、[**peak_to_gene_links**](https://github.com/hamamoto-lab/SEgene/tree/main/peak_to_gene_links)、[**SE_to_gene_links**](https://github.com/hamamoto-lab/SEgene/tree/main/SE_to_gene_links)、および [**SEgene_RegionAnalyzer**](https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_region_analyzer) から構成されています。
+SEgene は現在、四つの主要コンポーネント（P2GLデータ準備、P2GL相関解析、スーパーエンハンサー解析、領域評価分析）から構成されています。
 
-まず、**SEgene_peakprep** を使用してChIP-seqデータ（BAMファイル）から指定したゲノム領域におけるシグナル値を定量化・正規化します。これには二つの実装方法があります：featureCountsを使用するCPM（Counts Per Million）方式と、シグナル正規化と定量化にdeeptoolsを使用するBigWig方式です。特にBigWig方式では、単一サンプル解析と差分解析（ChIP-seqサンプルとInputコントロールの比較）の2つのパイプラインを提供しており、バックグラウンド補正されたシグナル値の取得が可能になっています。
-次に、**peak_to_gene_links** プログラムを使用して、これらの正規化された値と遺伝子発現データを統合し、エンハンサーピークと遺伝子発現間の相関情報を取得します。
-その後、**SE_to_gene_links** を使用して、前のステップで取得した相関情報を用いてスーパーエンハンサーを評価・分析します。
-さらに、オプションとして **SEgene_RegionAnalyzer** を使用することで、同定されたSE領域の詳細な特性評価と公共データベースとの統合分析を行うことができます。
+### ワークフロー概要
 
-また、[**cli_tools**](https://github.com/hamamoto-lab/SEgene/tree/main/cli_tools/README_ja.md)ディレクトリには、SE_to_gene_linksで同定されたSE領域と遺伝子発現の相関を解析するためのコマンドラインツール群が含まれています。
+SEgeneの処理の流れを以下の図に示します：
+
+```mermaid
+graph TD
+  %% --- 定義 -------------------------
+  classDef tool fill:#d8eefe,stroke:#1c4b82,stroke-width:1px,rx:10,ry:10
+  classDef data fill:#ffffff,stroke:#1c4b82,stroke-dasharray:4 4
+  classDef annotation fill:#ffe0b2,stroke:#1c4b82,stroke-dasharray:4 4
+  classDef toolLabel font-size:12px,font-weight:bold
+
+  %% --- データソース -----------------
+  A1["ChIP-seq<br>BAMファイル"]:::data
+  A2["遺伝子発現量<br>(Salmon TPM)"]:::data
+  A3["領域ファイル<br>(BED/SAF/merge_SE)"]:::annotation
+  A4["遺伝子アノテーション<br>(GTF)"]:::annotation
+
+  %% --- STEP 1: 前処理 ---------------
+  subgraph Step1["ステップ1: P2GLデータ準備"]
+    direction TB
+    P1["SEgene_peakprep"]:::tool
+    P2["SEgene_geneprep"]:::tool
+    A1 --> P1
+    A3 --> P1
+    A2 --> P2
+    A4 --> P2
+  end
+
+  %% --- STEP 2: ピーク→遺伝子 --------
+  subgraph Step2["ステップ2: P2GL相関解析 "]
+    direction TB
+    Q1["ピークシグナルTSV"]:::data
+    Q2["処理済み遺伝子TPM"]:::data
+    P3["peak_to_gene_links"]:::tool
+    P1 --> Q1
+    P2 --> Q2
+    Q1 & Q2 --> P3
+  end
+
+  %% --- STEP 3: SE→遺伝子 -------------
+  subgraph Step3["ステップ3: SE解析"]
+    Q3["ピーク-遺伝子相関情報"]:::data
+    P4["SE_to_gene_links"]:::tool
+    Q4["SE領域<br>(mergeSE.tsv)"]:::data
+    P3 --> Q3
+    Q3 & Q2 --> P4
+    P4 --> Q4
+  end
+
+  %% --- STEP 4: 領域解析 ---------------
+  subgraph Step4["ステップ4: 領域評価分析"]
+    P5["SEgene_RegionAnalyzer"]:::tool
+    Q5["解析結果"]:::data
+    Q4 --> P5
+    P5 --> Q5
+  end
+
+  %% --- クリックイベント --------------
+  click P1 "https://github.com/hamamoto-lab/SEgene/blob/main/SEgene_peakprep/README_ja.md"
+  click P2 "https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_geneprep/README_ja.md"
+  click P3 "https://github.com/hamamoto-lab/SEgene/tree/main/peak_to_gene_links/README_ja.md"
+  click P4 "https://github.com/hamamoto-lab/SEgene/tree/main/SE_to_gene_links/README_ja.md"
+  click P5 "https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_region_analyzer/README_ja.md"
+
+```
+
+### P2GLデータ準備
+
+- [**SEgene_peakprep**](https://github.com/hamamoto-lab/SEgene/blob/main/SEgene_peakprep/README_ja.md) ChIP-seqデータ（BAMファイル）から指定したゲノム領域におけるシグナル値を定量化・正規化
+- [**SEgene_geneprep**](https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_geneprep/README_ja.md) RNA-seqデータ（TPM-TSVファイル）をP2GL input用に領域情報追加
+
+### P2GL相関解析
+
+- [**peak_to_gene_links**](https://github.com/hamamoto-lab/SEgene/tree/main/peak_to_gene_links/README_ja.md) ChIP-seqデータと遺伝子発現データを統合し、エンハンサーピークと遺伝子発現間の相関情報を取得
+
+### スーパーエンハンサー解析
+
+- [**SE_to_gene_links**](https://github.com/hamamoto-lab/SEgene/tree/main/SE_to_gene_links/README_ja.md) P2GLによって得られた相関情報を用いてスーパーエンハンサーを評価・分析
+- [**cli_tools**](https://github.com/hamamoto-lab/SEgene/blob/main/cli_tools/README_ja.md) （補助ツール）SE_to_gene_linksで同定されたSE領域と遺伝子発現の相関を解析
+
+### 領域評価分析(オプション)
+
+-  [**SEgene_RegionAnalyzer**](https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_region_analyzer/README_ja.md) 同定されたSE領域の公共データベース情報による分析評価
 
 ## 使用方法
 
 インストールおよび使用方法については、それぞれの `README` を参照してください。
 
 - [SEgene_peakprep](https://github.com/hamamoto-lab/SEgene/blob/main/SEgene_peakprep/README_ja.md)
+- [SEgene_geneprep](https://github.com/hamamoto-lab/SEgene/blob/main/SEgene_geneprep/README_ja.md)
 - [peak_to_gene_links](https://github.com/hamamoto-lab/SEgene/blob/main/peak_to_gene_links/README_ja.md)
 - [SE_to_gene_links](https://github.com/hamamoto-lab/SEgene/blob/main/SE_to_gene_links/README_ja.md)
 - [SEgene_RegionAnalyzer](https://github.com/hamamoto-lab/SEgene/blob/main/SEgene_region_analyzer/README_ja.md)

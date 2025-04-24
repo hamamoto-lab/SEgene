@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
+## [1.9.0] - 2025-04-24
+
+### Added
+- **New component: SEgene_geneprep**:
+  - Preparation tool for RNA-seq input data to add region information for P2GL input formats
+  - Extracts gene position information from GTF files and merges with expression data from TPM files
+  - Converts salmon output from nf-core/rnaseq pipeline to CSV format suitable for RNAinput in SEgene analysis
+  - Supports multiple input formats including standard GTF and salmon TPM files
+  - Compatible with genome annotations from Illumina iGenomes (e.g., GRCh38)
+  - Comprehensive documentation in both English and Japanese
+- **Workflow visualization**:
+  - Added mermaid diagrams to visualize the complete SEgene workflow
+  - Clear illustration of the four-step process: P2GL Preparation, P2GL Analysis, SE Analysis, and Region Evaluation
+
+### Changed
+- **Program structure reorganization**:
+  - Reorganized workflow into four primary components for clearer understanding
+  - Positioned SEgene_peakprep and SEgene_geneprep as the initial P2GL data preparation steps
+  - Updated documentation structure to reflect the new workflow organization
+- **Documentation updates**:
+  - Comprehensive revision of main README files (both English and Japanese)
+  - Restructured program structure sections for better clarity
+  - Enhanced descriptions of component relationships and data flow
+
 ## [1.8.0] - 2025-04-17
 
 ### Added

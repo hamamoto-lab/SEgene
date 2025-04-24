@@ -13,20 +13,99 @@ This repository contains tools and scripts for **SEgene**.
 
 ## Program Structure
 
-SEgene currently consists of four primary components: [**SEgene_peakprep**](https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_peakprep), [**peak_to_gene_links**](https://github.com/hamamoto-lab/SEgene/tree/main/peak_to_gene_links), [**SE_to_gene_links**](https://github.com/hamamoto-lab/SEgene/tree/main/SE_to_gene_links), and [**SEgene_RegionAnalyzer**](https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_region_analyzer).
+SEgene currently consists of four primary components (P2GL data preparation, P2GL correlation analysis, Super-enhancer analysis, and Region evaluation analysis).
 
-First, **SEgene_peakprep** is used to quantify and normalize signal values from ChIP-seq data (BAM files) for specified genomic regions. It offers two implementation methods: a CPM (Counts Per Million) method using featureCounts, and a BigWig method using deeptools for signal normalization and quantification. Notably, the BigWig method provides two pipelines: single sample analysis and differential analysis (comparison between ChIP-seq samples and Input controls), enabling the acquisition of background-corrected signal values.
-Then, the **peak_to_gene_links** program integrates these normalized values with gene expression data to obtain correlation information between enhancer peaks and gene expression.
-Next, **SE_to_gene_links** is used to evaluate and analyze super-enhancers using the correlation information obtained in the previous step.
-As an optional component, **SEgene_RegionAnalyzer** allows for detailed characterization of identified SE regions and their integration with public databases.
+### Workflow Overview
 
-Additionally, the [**cli_tools**](https://github.com/hamamoto-lab/SEgene/tree/main/cli_tools/README.md) directory contains command-line tools for analyzing correlations between SE regions identified by SE_to_gene_links and gene expression.
+The following diagram illustrates the complete workflow of SEgene:
+
+```mermaid
+graph TD
+  %% --- Definitions -------------------------
+  classDef tool fill:#d8eefe,stroke:#1c4b82,stroke-width:1px,rx:10,ry:10
+  classDef data fill:#ffffff,stroke:#1c4b82,stroke-dasharray:4 4
+  classDef annotation fill:#ffe0b2,stroke:#1c4b82,stroke-dasharray:4 4
+  classDef toolLabel font-size:12px,font-weight:bold
+
+  %% --- Data Sources -----------------
+  A1["ChIP-seq<br>BAM files"]:::data
+  A2["Gene expression<br>(Salmon TPM)"]:::data
+  A3["Region files<br>(BED/SAF/merge_SE)"]:::annotation
+  A4["Gene annotation<br>(GTF)"]:::annotation
+
+  %% --- STEP 1: Data Preparation ---------------
+  subgraph Step1["Step 1: P2GL Preparation"]
+    direction TB
+    P1["SEgene_peakprep"]:::tool
+    P2["SEgene_geneprep"]:::tool
+    A1 --> P1
+    A3 --> P1
+    A2 --> P2
+    A4 --> P2
+  end
+
+  %% --- STEP 2: Peak-to-Gene Analysis --------
+  subgraph Step2["Step 2: P2GL Analysis"]
+    direction TB
+    Q1["Peak signal TSV"]:::data
+    Q2["Processed gene TPM"]:::data
+    P3["peak_to_gene_links"]:::tool
+    P1 --> Q1
+    P2 --> Q2
+    Q1 & Q2 --> P3
+  end
+
+  %% --- STEP 3: SE-to-Gene Analysis -------------
+  subgraph Step3["Step 3: SE Analysis"]
+    Q3["Peak-gene correlation"]:::data
+    P4["SE_to_gene_links"]:::tool
+    Q4["SE regions<br>(mergeSE.tsv)"]:::data
+    P3 --> Q3
+    Q3 & Q2 --> P4
+    P4 --> Q4
+  end
+
+  %% --- STEP 4: Region Analysis ---------------
+  subgraph Step4["Step 4: Region Evaluation"]
+    P5["SEgene_RegionAnalyzer"]:::tool
+    Q5["Analysis results"]:::data
+    Q4 --> P5
+    P5 --> Q5
+  end
+
+  %% --- Click Events --------------
+  click P1 "https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_peakprep"
+  click P2 "https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_geneprep"
+  click P3 "https://github.com/hamamoto-lab/SEgene/tree/main/peak_to_gene_links"
+  click P4 "https://github.com/hamamoto-lab/SEgene/tree/main/SE_to_gene_links"
+  click P5 "https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_region_analyzer"
+
+```
+
+### P2GL Data Preparation
+
+- [**SEgene_peakprep**](https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_peakprep): Quantifies and normalizes signal values from ChIP-seq data (BAM files) for specified genomic regions.
+- [**SEgene_geneprep**](https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_geneprep): Adds genomic region information to RNA-seq data (TPM-TSV files) for P2GL input preparation.
+
+### P2GL Correlation Analysis
+
+- [**peak_to_gene_links**](https://github.com/hamamoto-lab/SEgene/tree/main/peak_to_gene_links): Integrates ChIP-seq data with gene expression data to obtain correlation information between enhancer peaks and gene expression.
+
+### Super-enhancer Analysis
+
+- [**SE_to_gene_links**](https://github.com/hamamoto-lab/SEgene/tree/main/SE_to_gene_links): Evaluates and analyzes super-enhancers using the correlation information obtained through P2GL.
+- [**cli_tools**](https://github.com/hamamoto-lab/SEgene/tree/main/cli_tools/README.md) (auxiliary tools): Analyzes correlations between SE regions identified by SE_to_gene_links and gene expression.
+
+### Region Evaluation Analysis (Optional)
+
+- [**SEgene_RegionAnalyzer**](https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_region_analyzer): Allows for detailed characterization of identified SE regions and their integration with public databases.
 
 ## Usage
 
 For installation and usage instructions, please refer to the respective `README` files:
 
 - [SEgene_peakprep](https://github.com/hamamoto-lab/SEgene/blob/main/SEgene_peakprep/README.md)
+- [SEgene_geneprep](https://github.com/hamamoto-lab/SEgene/blob/main/SEgene_geneprep/README.md)
 - [peak_to_gene_links](https://github.com/hamamoto-lab/SEgene/blob/main/peak_to_gene_links/README.md)
 - [SE_to_gene_links](https://github.com/hamamoto-lab/SEgene/blob/main/SE_to_gene_links/README.md)
 - [SEgene_RegionAnalyzer](https://github.com/hamamoto-lab/SEgene/blob/main/SEgene_region_analyzer/README.md)
