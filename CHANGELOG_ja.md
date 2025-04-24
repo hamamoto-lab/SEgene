@@ -208,7 +208,8 @@
     - Jupyter Notebook での対話的解析
 - GitHub リポジトリ内の詳細なインストール手順とドキュメント
 
-[1.8.0]: https://github.com/hamamoto-lab/SEgene/compare/v1.7.0...v1.8.0
+[1.9.0]: https://github.com/hamamoto-lab/SEgene/compare/v1.8.0...v1.9.0
+[1.8.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.8.0
 [1.7.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.7.0
 [1.6.1]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.7.0
 [1.6.1]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.6.1

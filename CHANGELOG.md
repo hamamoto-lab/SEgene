@@ -209,9 +209,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Interactive analysis with Jupyter Notebook
 - Detailed installation instructions and documentation in the GitHub repository
 
-[1.8.0]: https://github.com/hamamoto-lab/SEgene/compare/v1.7.0...v1.8.0
+[1.9.0]: https://github.com/hamamoto-lab/SEgene/compare/v1.8.0...v1.9.0
+[1.8.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.8.0
 [1.7.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.7.0
-[1.6.1]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.7.0
 [1.6.1]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.6.1
 [1.6.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.6.0
 [1.5.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.5.0
@@ -220,4 +220,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.2.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.2.0
 [1.1.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.1.0
 [1.0.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.0.0
-
