@@ -84,8 +84,14 @@ graph TD
 
 ### P2GLデータ準備
 
-- [**SEgene_peakprep**](https://github.com/hamamoto-lab/SEgene/blob/main/SEgene_peakprep/README_ja.md) ChIP-seqデータ（BAMファイル）から指定したゲノム領域におけるシグナル値を定量化・正規化
-- [**SEgene_geneprep**](https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_geneprep/README_ja.md) RNA-seqデータ（TPM-TSVファイル）をP2GL input用に領域情報追加
+- [**SEgene_peakprep**](https://github.com/hamamoto-lab/SEgene/blob/main/SEgene_peakprep/README_ja.md)  
+  ChIP‑seq データ（BAM ファイル）から指定ゲノム領域のシグナルを定量化・正規化  
+  （Standard log2‑CPM、edgeR 正規化 CPM、BigWig の 3 手法に対応）。  
+  *edgeR 正規化 CPM の詳細は*  
+  [`SEgene_peakprep/cpm_calcnorm_README_ja.md`](./SEgene_peakprep/cpm_calcnorm_README_ja.md) *を参照*  
+- [**SEgene_geneprep**](https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_geneprep/README_ja.md)  
+  RNA‑seq データ（TPM‑TSV ファイル）を P2GL input 用に領域情報を付加
+
 
 ### P2GL相関解析
 
@@ -181,6 +187,12 @@ graph TD
     - [**stringr**](https://cran.r-project.org/web/packages/stringr/index.html) - MIT License
     - [**GenomicRanges**](https://bioconductor.org/packages/release/bioc/html/GenomicRanges.html) - GPL License
     - [**rhdf5**](https://bioconductor.org/packages/release/bioc/html/rhdf5.html) - Artistic License 2.0
+    - [**edgeR**](https://bioconductor.org/packages/release/bioc/html/edgeR.html) - GPL License
+
+### Python-R連携
+
+- [**rpy2**](https://rpy2.github.io/) - GNU GPL v2+ License
+  Python内からRを呼び出すためのインターフェース。edgeR正規化CPM機能で使用。
 
 ### Julia
 

@@ -532,4 +532,4 @@ python bigwig_peakprep_bamdiff.py \
 
 ## ライセンス
 
-このプログラムはMITライセンスで公開されています。詳細については[LICENSE](./LICENSE)をご覧ください。
+このプログラムはMITライセンスで公開されています。詳細については、[LICENSE](https://github.com/hamamoto-lab/SEgene/blob/main/LICENSE)をご覧ください。

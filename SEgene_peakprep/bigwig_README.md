@@ -532,4 +532,4 @@ If you use this tool in your research, please cite:
 
 ## License
 
-This program is released under the MIT license. For details, see [LICENSE](./LICENSE)
+This program is released under the MIT license. For details, see [LICENSE](https://github.com/hamamoto-lab/SEgene/blob/main/LICENSE)

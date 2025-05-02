@@ -5,6 +5,27 @@
 形式は [Keep a Changelog](https://keepachangelog.com/ja/1.1.0/) をベースとし、
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html) に準拠しています。
 
+## [1.10.0] - 2025-05-02
+
+### Added
+- **SEgene_peakprepにedgeR正規化CPM機能を追加**:
+  - Standard log2-CPMとBigWig方式に加え、第3の定量化方法としてedgeR正規化CPM（calcnorm CPM）を追加
+  - rpy2を介してRのedgeRパッケージと連携し、ChIP-seqカウントデータの高度な正規化を実装
+  - edgeRの複数の正規化手法をサポート：upperquartile（デフォルト）、TMM、RLE
+  - サンプル間のCPM値に基づくオプショナルなフィルタリング機能を実装
+  - 英語と日本語の包括的なドキュメントを追加
+  - edgeR正規化CPM専用ガイド（cpm_calcnorm_README.md、cpm_calcnorm_README_ja.md）を作成
+
+### Changed
+- **SEgene_peakprepのコードとドキュメントを更新**:
+  - CPM方式を再編成し、標準log2-CPMとedgeR正規化CPMの両方の計算をサポート
+  - 正規化制御のための新しい`--calcnorm`パラメータと関連オプションを持つコマンドラインインターフェースを更新
+  - 複雑なファイル命名規則との互換性を向上させるサンプル名処理を改善
+  - 新機能を説明するために関連するすべてのドキュメント（README.md、README_ja.md、cpm_README.md、cpm_README_ja.md）を更新
+- **依存関係**:
+  - edgeR正規化CPM機能のための新しい依存関係としてR (≥4.2.0)、edgeR (≥3.40.0)、rpy2 (≥3.5.0) を追加
+  - RとBioconductor環境のセットアップを説明するインストール手順を更新
+
 ## [1.9.0] - 2025-04-24
 
 ### Added
@@ -208,10 +229,10 @@
     - Jupyter Notebook での対話的解析
 - GitHub リポジトリ内の詳細なインストール手順とドキュメント
 
+[1.10.0]: https://github.com/hamamoto-lab/SEgene/compare/v1.9.0...v1.10.0
 [1.9.0]: https://github.com/hamamoto-lab/SEgene/compare/v1.8.0...v1.9.0
 [1.8.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.8.0
 [1.7.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.7.0
-[1.6.1]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.7.0
 [1.6.1]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.6.1
 [1.6.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.6.0
 [1.5.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.5.0

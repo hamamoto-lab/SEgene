@@ -2,7 +2,7 @@
 
 *(For the English version of this README, please see [README.md](./README.md).)*
 
-**SEgene_peakprep** は、シーケンスデータ（BAMファイル）から指定されたゲノム領域におけるシグナル値を定量化・正規化し、下流のSEgene解析で使用する形式に整形するためのPythonパイプラインです。このツールは、特定の参照ゲノムには依存せず、例えばhg38などにマッピングされたデータで利用することができます。
+**SEgene_peakprep** は、シーケンスデータ（BAMファイル）から指定されたゲノム領域におけるシグナル値を定量化・正規化し、下流のSEgene解析で使用する形式に整形するためのPythonパイプラインです。このツールを使用して、**(i) BigWig**、**(ii) Standard log2-CPM**、**(iii) edgeR正規化CPM（calcnorm CPM）** の3種類の定量テーブルを生成できます。`--calcnorm`オプションを使用するとedgeR正規化CPMを追加出力します。
 
 ## 開発状況
 
@@ -18,60 +18,83 @@ SEgene_peakprepは、[SEgeneプロジェクト](https://github.com/hamamoto-lab/
 
 このパイプラインは以下の2つの実装方法を提供します：
 
-1. **CPM方式**: `featureCounts`を使用して直接Counts Per Million（CPM）値を計算
-2. **BigWig方式**: `deeptools`を使用してBAMからbigWigファイルに変換し、multiBigwigSummaryでピークを定量化
+1. **CPM方式** (`cpm_peakprep.py`): `featureCounts`を使用して直接Counts Per Million（CPM）値を計算
+2. **BigWig方式** (`bigwig_peakprep.py`): `deeptools`を使用してBAMからbigWigファイルに変換し、multiBigwigSummaryでピークを定量化
 
 どちらの方法も、BED、SAF、merge_SE形式のアノテーションファイルに対応しています。用途に応じて適切な方法を選択できます  
 **注意**: merge_SE形式はSEgeneプロジェクト特有の形式で、パイプライン内の出力および中間ファイルとして使用されます
+
+## CPM方式における2モード
+
+| モード | 切替オプション | 正規化方法 | 既定ファイル |
+|--------|---------------|------------|-------------|
+| Standard log2-CPM | （指定なし） | ライブラリ総リード数でCPM → log₂変換 | `logCPM.tsv` |
+| edgeR正規化CPM<br>(calcnorm CPM) | `--calcnorm` | edgeR `calcNormFactors()`(UQ/TMM/RLE) → CPM | `calcnorm.tsv` |
+
+`--calcnorm`を付けると**両方のテーブルが同時に出力**されます。  
+ファイル名は`--logcpm_output_name`、`--calcnorm_output_name`で変更可能です。
 
 ## 共通要件・依存関係
 
 以下の共通要件を満たしていることを前提とします。
 
-### Python 環境
+### Python環境
 - Python 3.10 以上
 
-### Python ライブラリ（pip または conda でインストール）
-| ライブラリ   | 用途                                     | 推奨バージョン     | 必要な機能                  |
-|--------------|------------------------------------------|-------------------|----------------------------|
-| pandas       | テーブル操作                             | ≥1.5              | すべての機能                |
-| numpy        | 数値計算                                 | ≥1.23             | すべての機能                |
-| natsort      | 自然順ソート                             | ≥8.3              | すべての機能                |
-| pyranges     | ゲノム領域の操作                         | ≥0.14             | BigWig方式のみ              |
+### Pythonライブラリ（pipまたはcondaでインストール）
+| ライブラリ | 用途 | 推奨バージョン | 必要な機能 |
+|------------|------|---------------|------------|
+| pandas | テーブル操作 | ≥1.5 | すべての機能 |
+| numpy | 数値計算 | ≥1.23 | すべての機能 |
+| natsort | 自然順ソート | ≥8.3 | すべての機能 |
+| rpy2 | R言語との連携 | ≥3.5.0 | edgeR正規化CPMモード |
+| pyranges | ゲノム領域の操作 | ≥0.14 | BigWig方式のみ |
 
 ```bash
 # pipでのインストール例
 pip install pandas numpy natsort
+pip install rpy2  # edgeR正規化CPMモードで必要
 pip install pyranges  # BigWig方式で必要
 ```
 
 ```bash
 # condaでのインストール例
 conda install pandas numpy natsort
+conda install -c conda-forge rpy2  # edgeR正規化CPMモードで必要
 conda install -c bioconda pyranges  # BigWig方式で必要
 ```
 
-### 外部ツール（conda やバイナリでインストール）
-| ツール名             | 用途                              | 推奨バージョン     | 必要な機能                 |
-|----------------------|-----------------------------------|-------------------|---------------------------|
-| samtools             | BAM操作                           | ≥1.13             | CPM方式                    |
-| featureCounts        | CPMカウント                       | ≥2.0.0            | CPM方式                    |
-| deeptools            | BigWig生成・差分解析              | ≥3.5.0            | BigWig方式                 |
-| - bamCoverage        | BAMからbigWig変換                 | (deeptoolsに含む)  | BigWig単一サンプル解析      |
-| - multiBigwigSummary | bigWigからのシグナル集計          | (deeptoolsに含む)  | BigWig単一サンプル解析      |
-| - bamCompare         | サンプル/コントロール比較         | (deeptoolsに含む)  | BigWig差分解析(bamdiff)     |
+### 外部ツール（condaやバイナリでインストール）
+| ツール名 | 用途 | 推奨バージョン | 必要な機能 |
+|----------|------|---------------|------------|
+| samtools | BAM操作 | ≥1.13 | CPM方式 |
+| featureCounts | CPMカウント | ≥2.0.0 | CPM方式 |
+| R | 統計解析環境 | ≥4.2.0 | edgeR正規化CPMモード |
+| edgeR | RNA-seq解析用Bioconductorパッケージ | ≥3.40.0 | edgeR正規化CPMモード |
+| deeptools | BigWig生成・差分解析 | ≥3.5.0 | BigWig方式 |
+| - bamCoverage | BAMからbigWig変換 | (deeptoolsに含む) | BigWig単一サンプル解析 |
+| - multiBigwigSummary | bigWigからのシグナル集計 | (deeptoolsに含む) | BigWig単一サンプル解析 |
+| - bamCompare | サンプル/コントロール比較 | (deeptoolsに含む) | BigWig差分解析(bamdiff) |
 
 ```bash
-# conda でのインストール例
-conda install -c bioconda samtools subread  # CPM方式
-conda install -c bioconda deeptools         # BigWig方式
+# condaでのインストール例
+# CPM方式の基本ツール
+conda install -c bioconda samtools subread
+
+# edgeR正規化CPMモードのためのR/edgeR
+conda install -c conda-forge r-base=4.2
+conda install -c conda-forge r-essentials
+conda install -c bioconda bioconductor-edger=3.40
+
+# BigWig方式
+conda install -c bioconda deeptools
 ```
 
 ### 共通の入力ファイル
 
 両方の実装方法で、以下の入力ファイルが必要です：
 
-1. **BAMファイル**: マッピング済みのシーケンスデータファイル（推奨：インデックス付き.baiファイル）
+1. **BAMファイル**: マッピング済みのシーケンスデータファイル（推奨：インデックス付き`.bai`ファイル）
 2. **アノテーションファイル**: ゲノム領域を定義するファイルで、以下の形式に対応:
    - **BED形式**: 標準的なBEDフォーマット（0-based開始座標）
      ```
@@ -107,19 +130,24 @@ conda install -c bioconda deeptools         # BigWig方式
 
 ## CPM方式（cpm_peakprep）
 
-CPM方式は、`featureCounts`を使用して指定ゲノム領域（BED/SAF/merge_SE.tsv形式）におけるリードを直接カウントし、CPM値とその対数変換値を計算します。
+CPM方式は、`featureCounts`を使用して指定ゲノム領域（BED/SAF/merge_SE.tsv形式）におけるリードを直接カウントし、以下の2つのモードで正規化値を計算します：
 
-### 基本的な使用方法
+1. **Standard log2-CPM**（デフォルト）: 総リード数に基づくシンプルなCPM（Counts Per Million）計算とlog2変換
+2. **edgeR正規化CPM**（以下、**calcnorm CPM**と略）: edgeRパッケージのスケーリングファクターでライブラリサイズ補正を行ったCPM
+
+モードは`--calcnorm`オプションで切り替えます：
 
 ```bash
 python cpm_peakprep.py \
     --bam_dir /path/to/bam_files \
     --annotation_file peaks.bed \
     --output_dir results \
-    --filename_pattern "Sample*.sorted.bam" \
-    --sample_delimiter=".sorted.bam" \
+    --calcnorm \
+    --calcnorm_method upperquartile \
     --threads 10
 ```
+
+calcnorm CPMを使用するには、Rおよび必要なパッケージ（edgeR）がインストールされている必要があります。詳細については、[CPM方式詳細ガイド](./cpm_README_ja.md)を参照してください。
 
 ### 主要な引数
 
@@ -139,13 +167,19 @@ python cpm_peakprep.py \
 | `--featurecounts_path` | featureCountsの実行ファイルへのパス | "featureCounts" |
 | `--threads` / `-T` | スレッド数 | 4 |
 | `--single_end` | シングルエンドモードで実行（指定しない場合はペアエンド） | False |
+| **edgeR正規化CPM（calcnorm）関連** |||
+| `--calcnorm` | Standard log2-CPM計算の代わりにedgeR正規化CPMを使用する | False |
+| `--calcnorm_method` | 正規化手法（upperquartile, TMM, RLE, none） | "upperquartile" |
+| `--min_cpm` | フィルタリングのための最小CPM閾値 | 1.0 |
+| `--min_samples` | CPM閾値を超えるべき最小サンプル数（0=フィルタリングなし） | 0 |
+| `--calcnorm_output_name` | calcnorm CPM出力ファイル名（空文字列で保存しない） | "calcnorm.tsv" |
 
 全てのオプションを確認するには、以下のコマンドを実行してください：
 ```bash
 python cpm_peakprep.py --help
 ```
 
-より詳細な設定オプションや出力の説明(jupyter notebook実行例含む)については、[CPM方式の詳細ドキュメント](./cpm_README_ja.md)を参照してください。
+より詳細な設定オプションや出力の説明(jupyter notebook実行例含む)については、[CPM方式詳細ガイド](./cpm_README_ja.md)を参照してください。また、edgeR正規化CPMの詳細については[edgeR正規化CPMガイド](./cpm_calcnorm_README_ja.md)を参照してください。
 
 ## BigWig方式（bigwig_peakprep）
 
@@ -161,7 +195,7 @@ BigWig方式は2つの主要な実行パスを提供しています：
      1. `bigwig_peakprep_bamconvert.py`: BAMファイルからbigWigファイルへの変換
      2. `bigwig_peakprep_summary.py`: bigWigファイルからピーク領域のカウント値テーブルを生成
 
-2. **差分解析パイプライン** (`bigwig_peakprep_bamdiff.py`) - **新機能**
+2. **差分解析パイプライン** (`bigwig_peakprep_bamdiff.py`)
    - ChIP-seqサンプルとInputコントロールのlog2比較解析を実行
    - 内部的に以下のスクリプトを順次実行：
      1. `bigwig_peakprep_bamdiff_generatediff.py`: サンプルとコントロールのlog2比bigWigファイルを生成
@@ -263,11 +297,15 @@ python bigwig_peakprep_bamdiff.py --help
 
 ### CPM方式の出力
 
-1. **logCPMテーブル** (デフォルト: `logCPM.tsv`):
+1. **Standard log2-CPM** (デフォルト: `logCPM.tsv`):
    - 各ピーク/領域におけるログ変換済みCPM値を含むテーブル
-   - 列: PeakID、Chr、Start（0-based、BED形式基準）、End、各サンプルのlogCPM値
+   - 列: PeakID、Chr、Start（0-based、BED形式基準）、End、各サンプルのlog2-CPM値
 
-2. **中間ファイル**:
+2. **edgeR正規化CPM（calcnorm）** (デフォルト: `calcnorm.tsv`):
+   - edgeRの正規化メソッドを適用したCPM値を含むテーブル
+   - 列: PeakID、Chr、Start（0-based、BED形式基準）、End、各サンプルの正規化CPM値
+
+3. **中間ファイル**:
    - flagstat出力ファイル（総マップ済みリード数）
    - featureCounts出力ファイル（生のリードカウント）
 
@@ -389,11 +427,11 @@ output_dir/
    - ファイル名に共通の識別子（T1, T2など）があることを確認する
    - 単一のコントロールを全サンプルに使用する場合は、コントロールディレクトリに1つのファイルだけが含まれるようにする
 
-## 引用
-
-このツールを研究に使用する場合は、以下を引用してください：
-**(論文は現在準備中です)**
+## 詳細ドキュメント
+* [cpm_README_ja.md](./cpm_README_ja.md) – CPM方式の詳細な使い方
+* [cpm_calcnorm_README_ja.md](./cpm_calcnorm_README_ja.md) – edgeR正規化CPMのアルゴリズム解説
+* [bigwig_README_ja.md](./bigwig_README_ja.md) – BigWig方式の詳細な使い方
 
 ## ライセンス
 
-このプログラムはMITライセンスで公開されています。詳細については、[LICENSE](./LICENSE)をご覧ください。
+このプログラムはMITライセンスで公開されています。詳細については、[LICENSE](https://github.com/hamamoto-lab/SEgene/blob/main/LICENSE)をご覧ください。

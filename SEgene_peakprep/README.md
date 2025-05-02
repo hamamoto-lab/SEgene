@@ -2,7 +2,7 @@
 
 *(For the Japanese version of this README, please see [README_ja.md](./README_ja.md).)*
 
-**SEgene_peakprep** is a Python pipeline for quantifying and normalizing signal values in specified genomic regions from sequence data (BAM files), and formatting them for downstream SEgene analysis. This tool is not dependent on any specific reference genome and can be used with data mapped to genomes such as hg38.
+**SEgene_peakprep** is a Python pipeline for quantifying and normalizing signal values in specified genomic regions from sequence data (BAM files), and formatting them for downstream SEgene analysis. This tool can generate three types of quantification tables: **(i) BigWig**, **(ii) Standard log2-CPM**, and **(iii) edgeR normalized CPM (calcnorm CPM)**. Use the `--calcnorm` option to additionally output edgeR normalized CPM.
 
 ## Development Status
 
@@ -18,11 +18,21 @@ SEgene_peakprep serves as the initial data preparation step in the [SEgene proje
 
 This pipeline offers two implementation methods:
 
-1. **CPM Method**: Uses `featureCounts` to directly calculate Counts Per Million (CPM) values
-2. **BigWig Method**: Uses `deeptools` to convert BAM to bigWig files, then quantifies peaks using `multiBigwigSummary`
+1. **CPM Method** (`cpm_peakprep.py`): Uses `featureCounts` to directly calculate Counts Per Million (CPM) values
+2. **BigWig Method** (`bigwig_peakprep.py`): Uses `deeptools` to convert BAM to bigWig files, then quantifies peaks using `multiBigwigSummary`
 
 Both methods support BED, SAF, and merge_SE format annotation files. You can choose the appropriate method based on your needs.  
 **Note:** The merge_SE format is specific to the SEgene project and is used as output and intermediate files in the pipeline.
+
+## Two Modes in CPM Method
+
+| Mode | Option | Normalization Method | Default Filename |
+|--------|---------------|------------|-------------|
+| Standard log2-CPM | (none) | Library total reads CPM → log₂ transform | `logCPM.tsv` |
+| edgeR normalized CPM<br>(calcnorm CPM) | `--calcnorm` | edgeR `calcNormFactors()` (UQ/TMM/RLE) → CPM | `calcnorm.tsv` |
+
+Adding `--calcnorm` will **output both tables simultaneously**.  
+Filenames can be changed using `--logcpm_output_name` and `--calcnorm_output_name` options.
 
 ## Common Requirements and Dependencies
 
@@ -37,17 +47,20 @@ The following common requirements must be met:
 | pandas     | Table manipulation                | ≥1.5                | All functionality        |
 | numpy      | Numerical computation             | ≥1.23               | All functionality        |
 | natsort    | Natural sorting                   | ≥8.3                | All functionality        |
+| rpy2       | R language interface              | ≥3.5.0              | edgeR normalized CPM mode|
 | pyranges   | Genomic region operations         | ≥0.14               | BigWig method only      |
 
 ```bash
 # Installation with pip
 pip install pandas numpy natsort
+pip install rpy2  # Required for edgeR normalized CPM mode
 pip install pyranges  # Required for BigWig method
 ```
 
 ```bash
 # Installation with conda
 conda install pandas numpy natsort
+conda install -c conda-forge rpy2  # Required for edgeR normalized CPM mode
 conda install -c bioconda pyranges  # Required for BigWig method
 ```
 
@@ -56,6 +69,8 @@ conda install -c bioconda pyranges  # Required for BigWig method
 |---------------------|----------------------------------|--------------------:|------------------------|
 | samtools            | BAM manipulation                 | ≥1.13               | CPM method             |
 | featureCounts       | CPM counting                     | ≥2.0.0              | CPM method             |
+| R                   | Statistical computing environment | ≥4.2.0              | edgeR normalized CPM mode|
+| edgeR               | RNA-seq analysis Bioconductor package | ≥3.40.0        | edgeR normalized CPM mode|
 | deeptools           | BigWig generation & diff analysis| ≥3.5.0              | BigWig method          |
 | - bamCoverage       | BAM to bigWig conversion         | (included in deeptools) | BigWig single sample analysis |
 | - multiBigwigSummary| bigWig signal aggregation        | (included in deeptools) | BigWig single sample analysis |
@@ -63,8 +78,16 @@ conda install -c bioconda pyranges  # Required for BigWig method
 
 ```bash
 # Installation with conda
-conda install -c bioconda samtools subread  # CPM method
-conda install -c bioconda deeptools         # BigWig method
+# Basic tools for CPM method
+conda install -c bioconda samtools subread
+
+# R/edgeR for edgeR normalized CPM mode
+conda install -c conda-forge r-base=4.2
+conda install -c conda-forge r-essentials
+conda install -c bioconda bioconductor-edger=3.40
+
+# For BigWig method
+conda install -c bioconda deeptools
 ```
 
 ### Common Input Files
@@ -107,19 +130,24 @@ Both implementation methods require the following input files:
 
 ## CPM Method (cpm_peakprep)
 
-The CPM method uses `featureCounts` to directly count reads in specified genomic regions (BED/SAF/merge_SE.tsv format) and calculates CPM values and their log-transformed values.
+The CPM method uses `featureCounts` to directly count reads in specified genomic regions (BED/SAF/merge_SE.tsv format) and calculates normalized values using two modes:
 
-### Basic Usage
+1. **Standard log2-CPM** (default): Simple CPM (Counts Per Million) calculation based on total read counts with log2 transformation
+2. **edgeR normalized CPM** (abbreviated as **calcnorm CPM**): CPM with library size correction using edgeR package scaling factors
+
+The mode can be switched with the `--calcnorm` option:
 
 ```bash
 python cpm_peakprep.py \
     --bam_dir /path/to/bam_files \
     --annotation_file peaks.bed \
     --output_dir results \
-    --filename_pattern "Sample*.sorted.bam" \
-    --sample_delimiter=".sorted.bam" \
+    --calcnorm \
+    --calcnorm_method upperquartile \
     --threads 10
 ```
+
+To use calcnorm CPM, R and the required packages (edgeR) must be installed. For more details, see the [CPM Method Detailed Documentation](./cpm_README.md).
 
 ### Key Arguments
 
@@ -139,13 +167,19 @@ python cpm_peakprep.py \
 | `--featurecounts_path` | Path to featureCounts executable | "featureCounts" |
 | `--threads` / `-T` | Number of threads | 4 |
 | `--single_end` | Run in single-end mode (default is paired-end) | False |
+| **edgeR normalized CPM (calcnorm) Related** |||
+| `--calcnorm` | Use edgeR normalized CPM instead of standard log2-CPM calculation | False |
+| `--calcnorm_method` | Normalization method (upperquartile, TMM, RLE, none) | "upperquartile" |
+| `--min_cpm` | Minimum CPM threshold for filtering | 1.0 |
+| `--min_samples` | Minimum number of samples that should exceed CPM threshold (0=no filtering) | 0 |
+| `--calcnorm_output_name` | calcnorm CPM output filename (empty string to disable saving) | "calcnorm.tsv" |
 
 To see all options, run:
 ```bash
 python cpm_peakprep.py --help
 ```
 
-For more detailed configuration options and output explanations (including Jupyter notebook examples), refer to the [CPM Method Detailed Documentation](./cpm_README.md).
+For more detailed configuration options and output explanations (including Jupyter notebook examples), refer to the [CPM Method Detailed Documentation](./cpm_README.md). For details on edgeR normalized CPM, see the [edgeR Normalized CPM Guide](./cpm_calcnorm_README.md).
 
 ## BigWig Method (bigwig_peakprep)
 
@@ -161,7 +195,7 @@ The BigWig method offers two main execution paths:
      1. `bigwig_peakprep_bamconvert.py`: Converts BAM files to bigWig files
      2. `bigwig_peakprep_summary.py`: Generates count tables for peak regions from bigWig files
 
-2. **Differential Analysis Pipeline** (`bigwig_peakprep_bamdiff.py`) - **New Feature**
+2. **Differential Analysis Pipeline** (`bigwig_peakprep_bamdiff.py`)
    - Performs log2 ratio analysis of ChIP-seq samples and Input controls
    - Internally executes the following scripts in sequence:
      1. `bigwig_peakprep_bamdiff_generatediff.py`: Generates log2 ratio bigWig files from sample and control
@@ -242,7 +276,7 @@ python bigwig_peakprep_bamdiff.py \
 | `--output_dir` | Directory to save results | - |
 | **File Selection** |||
 | `--sample_pattern` | Glob pattern for sample BAM files | "*.bam" |
-| `--control_pattern` | Glob pattern for control BAM files | "\*Input\*.bam" |
+| `--control_pattern` | Glob pattern for control BAM files | "*Input*.bam" |
 | **Processing Related** |||
 | `--operation` | bamCompare operation method (log2, ratio, subtract, add, mean, etc.) | "log2" |
 | `--bin_size` | bamCompare bin size (in bases) | 50 |
@@ -263,11 +297,15 @@ For more detailed configuration options and output explanations, refer to the [B
 
 ### CPM Method Output
 
-1. **logCPM Table** (default: `logCPM.tsv`):
+1. **Standard log2-CPM** (default: `logCPM.tsv`):
    - Table containing log-transformed CPM values for each peak/region
-   - Columns: PeakID, Chr, Start (0-based, BED format), End, logCPM values for each sample
+   - Columns: PeakID, Chr, Start (0-based, BED format), End, log2-CPM values for each sample
 
-2. **Intermediate Files**:
+2. **edgeR normalized CPM (calcnorm)** (default: `calcnorm.tsv`):
+   - Table containing CPM values with edgeR normalization methods applied
+   - Columns: PeakID, Chr, Start (0-based, BED format), End, normalized CPM values for each sample
+
+3. **Intermediate Files**:
    - flagstat output files (total mapped read counts)
    - featureCounts output files (raw read counts)
 
@@ -388,6 +426,11 @@ Common issues and solutions:
    - Explicitly specify file name patterns with `--sample_pattern` and `--control_pattern`
    - Ensure file names have common identifiers (T1, T2, etc.)
    - For using a single control for all samples, ensure the control directory contains only one file
+
+## Detailed Documentation
+* [cpm_README.md](./cpm_README.md) – Detailed usage of CPM method
+* [cpm_calcnorm_README.md](./cpm_calcnorm_README.md) – Algorithm explanation of edgeR normalized CPM
+* [bigwig_README.md](./bigwig_README.md) – Detailed usage of BigWig method
 
 ## Citation
 

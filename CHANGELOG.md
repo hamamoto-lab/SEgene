@@ -6,6 +6,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [1.10.0] - 2025-05-02
+
+### Added
+- **Enhanced SEgene_peakprep with edgeR normalized CPM**:
+  - Added edgeR normalized CPM (calcnorm CPM) as the third quantification method in addition to Standard log2-CPM and BigWig methods
+  - Implemented integration with R's edgeR package via rpy2 for advanced normalization of ChIP-seq count data
+  - Added multiple normalization methods from edgeR: upperquartile (default), TMM, RLE
+  - Implemented optional filtering capabilities based on CPM values across samples
+  - Added comprehensive documentation in both English and Japanese
+  - Created a dedicated edgeR normalized CPM guide (cpm_calcnorm_README.md)
+
+### Changed
+- **Updated SEgene_peakprep code and documentation**:
+  - Reorganized CPM method to support both standard log2-CPM and edgeR normalized CPM calculations
+  - Updated command-line interface with new `--calcnorm` parameter and related options for normalization control
+  - Improved sample name handling for better compatibility with complex file naming conventions
+  - Updated all relevant documentation (README.md, README_ja.md, cpm_README.md, cpm_README_ja.md) to explain the new capabilities
+- **Dependencies**:
+  - Added R (≥4.2.0), edgeR (≥3.40.0), and rpy2 (≥3.5.0) as new dependencies for the edgeR normalized CPM functionality
+  - Updated installation instructions to explain the setup of R and Bioconductor environments
+
 ## [1.9.0] - 2025-04-24
 
 ### Added
@@ -209,6 +230,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Interactive analysis with Jupyter Notebook
 - Detailed installation instructions and documentation in the GitHub repository
 
+[1.10.0]: https://github.com/hamamoto-lab/SEgene/compare/v1.9.0...v1.10.0
 [1.9.0]: https://github.com/hamamoto-lab/SEgene/compare/v1.8.0...v1.9.0
 [1.8.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.8.0
 [1.7.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.7.0

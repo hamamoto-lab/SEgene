@@ -84,7 +84,11 @@ graph TD
 
 ### P2GL Data Preparation
 
-- [**SEgene_peakprep**](https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_peakprep): Quantifies and normalizes signal values from ChIP-seq data (BAM files) for specified genomic regions.
+- [**SEgene_peakprep**](https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_peakprep)  
+  Quantifies and normalizes signal values from ChIP‑seq data (BAM files) for specified genomic regions  
+  (supports **Standard log2‑CPM**, **edgeR‑normalized CPM**, and **BigWig** methods).  
+  *For edgeR‑normalized CPM details, see*  
+  [`SEgene_peakprep/cpm_calcnorm_README.md`](./SEgene_peakprep/cpm_calcnorm_README.md)
 - [**SEgene_geneprep**](https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_geneprep): Adds genomic region information to RNA-seq data (TPM-TSV files) for P2GL input preparation.
 
 ### P2GL Correlation Analysis
@@ -181,6 +185,12 @@ This project imports and relies on a variety of open-source libraries. Below is 
     - [**stringr**](https://cran.r-project.org/web/packages/stringr/index.html) - MIT License
     - [**GenomicRanges**](https://bioconductor.org/packages/release/bioc/html/GenomicRanges.html) - GPL License
     - [**rhdf5**](https://bioconductor.org/packages/release/bioc/html/rhdf5.html) - Artistic License 2.0
+    - [**edgeR**](https://bioconductor.org/packages/release/bioc/html/edgeR.html) - GPL License
+
+### Python‑R Interop
+- **rpy2** – GNU GPL v2+ License  
+  Provides the Python ↔︎ R interface used by the edgeR‑normalized CPM feature.
+
 
 ### Julia
 
