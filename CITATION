@@ -1,6 +1,28 @@
 # Citation
 
-**This repository is associated with a paper currently in preparation. Once the paper is published, please cite the paper.** Please cite this repository as follows until the paper is officially published.
+**Please cite the following paper when using this repository:**
+
+Shinkai, N., Asada, K., Machino, H., Takasawa, K., Takahashi, S., Kouno, N., Komatsu, M., Hamamoto, R., & Kaneko, S. (2025). SEgene identifies links between super enhancers and gene expression across cell types. *npj Systems Biology and Applications*, 11(1), 49. https://doi.org/10.1038/s41540-025-00533-x
+
+## BibTeX
+
+```bibtex
+@article{shinkai2025segene,
+  title={SEgene identifies links between super enhancers and gene expression across cell types},
+  author={Shinkai, Norio and Asada, Ken and Machino, Hidenori and Takasawa, Ken and Takahashi, Satoshi and Kouno, Nobuji and Komatsu, Masaaki and Hamamoto, Ryuji and Kaneko, Syuzo},
+  journal={npj Systems Biology and Applications},
+  volume={11},
+  number={1},
+  pages={49},
+  year={2025},
+  publisher={Nature Publishing Group},
+  doi={10.1038/s41540-025-00533-x}
+}
+```
+
+## Data Availability
+
+Test sample data and additional resources are available on Figshare: https://doi.org/10.6084/m9.figshare.28171127
 
 # Additional Information
 
@@ -13,7 +35,6 @@ In addition, for the method implemented in the `peak_to_gene_links` folder, we h
 ## Data Sources
 
 Additionally, the test sample data linked from this repository on Figshare is derived from data obtained from the following public dataset:
-*Note: The customed sample data will be released upon the publication of our SEgene paper.*
 
 - **GSE156614**: Available at [NCBI GEO](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE156614).
 

@@ -525,10 +525,11 @@ python bigwig_peakprep_bamdiff.py \
    - サンプルとコントロールの差分解析には、`bigwig_peakprep.py`ではなく`bigwig_peakprep_bamdiff.py`を使用していることを確認
    - 逆に、単一サンプル解析には`bigwig_peakprep.py`を使用
 
-## 引用
+## 引用 / Citation
 
-この研究ツールを使用する場合は、以下を引用してください：
-**(論文は現在準備中です)**
+このツールを研究に使用する場合は、以下を引用してください：
+
+Shinkai, N., Asada, K., Machino, H., Takasawa, K., Takahashi, S., Kouno, N., Komatsu, M., Hamamoto, R., & Kaneko, S. (2025). SEgene identifies links between super enhancers and gene expression across cell types. *npj Systems Biology and Applications*, 11(1), 49. https://doi.org/10.1038/s41540-025-00533-x
 
 ## ライセンス
 

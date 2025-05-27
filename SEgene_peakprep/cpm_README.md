@@ -338,7 +338,8 @@ peak2   chr1    2999    4000    4.21     3.98     4.56
 ## Citation
 
 If you use this tool in your research, please cite:
-**(Paper in preparation)**
+
+Shinkai, N., Asada, K., Machino, H., Takasawa, K., Takahashi, S., Kouno, N., Komatsu, M., Hamamoto, R., & Kaneko, S. (2025). SEgene identifies links between super enhancers and gene expression across cell types. *npj Systems Biology and Applications*, 11(1), 49. https://doi.org/10.1038/s41540-025-00533-x
 
 ## License
 

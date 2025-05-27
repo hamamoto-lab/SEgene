@@ -125,12 +125,6 @@ graph TD
 
 それぞれのバージョンで追加された機能・修正点などの詳細を知りたい場合は、上記のファイルを参照してください。
 
-## CITATION
-
-このツールを研究に使用する場合は、以下のCITATIONファイルを参照してください：
-[CITATION](https://github.com/hamamoto-lab/SEgene/blob/main/CITATION)
-**(論文は現在準備中です。)**
-
 ## ライブラリとライセンス
 
 このプロジェクトでは様々なオープンソースライブラリを用いています。以下は使用されているライブラリとそれぞれのライセンスの一覧です：
@@ -233,6 +227,14 @@ SE_to_gene_links の依存関係の全リストについては、[SE_to_gene_lin
 - **[Conda Forge](https://conda-forge.org/)**  
   - Conda Forge は幅広いプラットフォームサポートを持つ、コミュニティ管理のパッケージコレクションを提供します。
   - BSD 3-Clause License の下でライセンスされています。
+
+## 引用 / Citation
+
+このツールを研究に使用する場合は、以下を引用してください：
+
+Shinkai, N., Asada, K., Machino, H., Takasawa, K., Takahashi, S., Kouno, N., Komatsu, M., Hamamoto, R., & Kaneko, S. (2025). SEgene identifies links between super enhancers and gene expression across cell types. *npj Systems Biology and Applications*, 11(1), 49. https://doi.org/10.1038/s41540-025-00533-x
+
+詳細な引用情報や追加の参考文献については、[CITATION](https://github.com/hamamoto-lab/SEgene/blob/main/CITATION)ファイルを参照してください。
 
 ## ライセンス
 

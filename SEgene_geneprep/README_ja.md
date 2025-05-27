@@ -222,11 +222,12 @@ TPMにあってGTFにない遺伝子数: 508
 - 遺伝子の位置情報はエクソンの情報から統合され、最小の開始位置と最大の終了位置が使用されます。
 - **出力ディレクトリが存在しない場合、デフォルトで自動的に作成されます**。この動作は`--no-create-dirs`オプションで無効化できます。
 
-## 引用
-
-このツールを研究に使用する場合は、以下を引用してください：
-**(論文は現在準備中です)**
-
 ## ライセンス
 
-このプログラムはMITライセンスで公開されています。詳細については、[LICENSE](https://github.com/hamamoto-lab/SEgene/blob/main/LICENSE)をご覧ください。
+このプロジェクトはMITライセンスの下で公開されています。詳細については、[`LICENSE`](https://github.com/hamamoto-lab/SEgene/blob/main/LICENSE)をご覧ください。
+
+## 引用 / Citation
+
+このツールを研究に使用する場合は、以下を引用してください：
+
+Shinkai, N., Asada, K., Machino, H., Takasawa, K., Takahashi, S., Kouno, N., Komatsu, M., Hamamoto, R., & Kaneko, S. (2025). SEgene identifies links between super enhancers and gene expression across cell types. *npj Systems Biology and Applications*, 11(1), 49. https://doi.org/10.1038/s41540-025-00533-x

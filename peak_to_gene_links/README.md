@@ -51,8 +51,7 @@ Pkg.add(["ArgParse", "HDF5", "RData", "StatsBase"])
 This program runs inside a Docker container. Follow the steps below to run the test.
 
 ### 1. Download the Test Data
-Please download the following test files from Figshare: [Figshare Link](#)  
-*Note: The link will be made available once our SEgene paper has been published.*
+Please download the following test files from Figshare: https://doi.org/10.6084/m9.figshare.28171127
 - `GSE156614_rna_tumor.csv`
 - `GSE156614_ChIP_tumor.tsv`
 
@@ -112,15 +111,17 @@ exit
 ## Notes
 - Ensure Docker is installed and properly configured on your system.
 - Modify `/path/to/data` and `/path/to/output` to match your local environment.
-- The `sample_2000000.tsv` file generated will be similar to the one on [Figshare](#). However, random seeds can affect the output slightly. To fix the output in your environment, use the `--seed` option. Note that the seed's effect may vary across different systems.
-*Note: The link will be made available once our SEgene paper has been published.*
+- The `sample_2000000.tsv` file generated will be similar to the one on [Figshare](https://doi.org/10.6084/m9.figshare.28171127). However, random seeds can affect the output slightly. To fix the output in your environment, use the `--seed` option. Note that the seed's effect may vary across different systems.
 
 ---
 
 ## Citation
 
-Please refer to the [CITATION](https://github.com/hamamoto-lab/SEgene/blob/main/CITATION) of SEgene.
+If you use this tool in your research, please cite:
 
+Shinkai, N., Asada, K., Machino, H., Takasawa, K., Takahashi, S., Kouno, N., Komatsu, M., Hamamoto, R., & Kaneko, S. (2025). SEgene identifies links between super enhancers and gene expression across cell types. *npj Systems Biology and Applications*, 11(1), 49. https://doi.org/10.1038/s41540-025-00533-x
+
+---
 
 ## License
 

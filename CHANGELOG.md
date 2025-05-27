@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.11.0] - 2025-05-27
+
+### Published
+- **🎉 SEgene paper officially published**: 
+  - Shinkai, N., Asada, K., Machino, H., Takasawa, K., Takahashi, S., Kouno, N., Komatsu, M., Hamamoto, R., & Kaneko, S. (2025). SEgene identifies links between super enhancers and gene expression across cell types. *npj Systems Biology and Applications*, 11(1), 49. https://doi.org/10.1038/s41540-025-00533-x
+  - Test data and supplementary materials released on Figshare: https://doi.org/10.6084/m9.figshare.28171127
+
+### Changed
+- **Documentation updated following paper publication**:
+  - Updated all README files to include the official paper citation
+  - Replaced all "manuscript in preparation" notices with published paper information
+  - Updated CITATION file with complete publication details and BibTeX format
+  - Standardized citation section titles in Japanese READMEs to "引用 / Citation"
+  - Updated Figshare links throughout documentation from placeholders to official DOI
+
+### Added
+- **Citation sections**: Added missing citation sections to ensure all components include proper citation information
 
 ## [1.10.0] - 2025-05-02
 
@@ -230,8 +247,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Interactive analysis with Jupyter Notebook
 - Detailed installation instructions and documentation in the GitHub repository
 
-[1.10.0]: https://github.com/hamamoto-lab/SEgene/compare/v1.9.0...v1.10.0
-[1.9.0]: https://github.com/hamamoto-lab/SEgene/compare/v1.8.0...v1.9.0
+[1.11.0]: https://github.com/hamamoto-lab/SEgene/compare/v1.10.0...v1.11.0
+[1.10.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.10.0
+[1.9.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.9.0
 [1.8.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.8.0
 [1.7.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.7.0
 [1.6.1]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.6.1

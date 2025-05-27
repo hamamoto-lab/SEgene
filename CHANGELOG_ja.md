@@ -5,6 +5,24 @@
 形式は [Keep a Changelog](https://keepachangelog.com/ja/1.1.0/) をベースとし、
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html) に準拠しています。
 
+## [1.11.0] - 2025-05-27
+
+### Published
+- **🎉 SEgene論文正式出版**:
+  - Shinkai, N., Asada, K., Machino, H., Takasawa, K., Takahashi, S., Kouno, N., Komatsu, M., Hamamoto, R., & Kaneko, S. (2025). SEgene identifies links between super enhancers and gene expression across cell types. *npj Systems Biology and Applications*, 11(1), 49. https://doi.org/10.1038/s41540-025-00533-x
+  - テストデータと補足資料をFigshareで公開: https://doi.org/10.6084/m9.figshare.28171127
+
+### Changed
+- **論文出版に伴うドキュメント更新**:
+  - 全READMEファイルに正式な論文引用情報を追加
+  - 全ての「論文準備中」記載を出版済み論文情報に置き換え
+  - CITATIONファイルを完全な出版詳細とBibTeX形式で更新
+  - 日本語READMEの引用セクションタイトルを「引用 / Citation」に統一
+  - ドキュメント全体でFigshareリンクをプレースホルダーから公式DOIに更新
+
+### Added
+- **引用セクション**: 全コンポーネントに適切な引用情報が含まれるよう、不足していた引用セクションを追加
+
 ## [1.10.0] - 2025-05-02
 
 ### Added
@@ -229,8 +247,9 @@
     - Jupyter Notebook での対話的解析
 - GitHub リポジトリ内の詳細なインストール手順とドキュメント
 
-[1.10.0]: https://github.com/hamamoto-lab/SEgene/compare/v1.9.0...v1.10.0
-[1.9.0]: https://github.com/hamamoto-lab/SEgene/compare/v1.8.0...v1.9.0
+[1.11.0]: https://github.com/hamamoto-lab/SEgene/compare/v1.10.0...v1.11.0
+[1.10.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.10.0
+[1.9.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.9.0
 [1.8.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.8.0
 [1.7.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.7.0
 [1.6.1]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.6.1

@@ -186,5 +186,6 @@ This project is licensed under the MIT License. See the [`LICENSE`](https://gith
 
 ## Citation
 
-If you use this tool for your research, please refer to the following CITATION file:
-[CITATION](https://github.com/hamamoto-lab/SEgene/blob/main/CITATION)
+If you use this tool in your research, please cite:
+
+Shinkai, N., Asada, K., Machino, H., Takasawa, K., Takahashi, S., Kouno, N., Komatsu, M., Hamamoto, R., & Kaneko, S. (2025). SEgene identifies links between super enhancers and gene expression across cell types. *npj Systems Biology and Applications*, 11(1), 49. https://doi.org/10.1038/s41540-025-00533-x

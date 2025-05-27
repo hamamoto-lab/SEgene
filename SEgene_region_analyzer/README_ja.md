@@ -295,8 +295,8 @@ SEgene_RegionAnalyzerは現在も開発が進められており、以下のよ�
 
 このプログラムはMITライセンスで公開されています。詳細については、[LICENSE](https://github.com/hamamoto-lab/SEgene/blob/main/LICENSE)をご覧ください。
 
-## 引用 (Citation)
+## 引用 / Citation
 
-このツールを研究に使用する場合は、以下のCITATIONファイルを参照してください：
-[CITATION](https://github.com/hamamoto-lab/SEgene/blob/main/CITATION)
-**(論文は現在投稿準備中です。)**
+このツールを研究に使用する場合は、以下を引用してください：
+
+Shinkai, N., Asada, K., Machino, H., Takasawa, K., Takahashi, S., Kouno, N., Komatsu, M., Hamamoto, R., & Kaneko, S. (2025). SEgene identifies links between super enhancers and gene expression across cell types. *npj Systems Biology and Applications*, 11(1), 49. https://doi.org/10.1038/s41540-025-00533-x

@@ -123,11 +123,6 @@ This project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html),
 
 Refer to these files for information on added features, fixes, and other notable changes in each version.
 
-## Citation
-
-If you use this tool in your research, please refer to the following CITATION file:
-[CITATION](https://github.com/hamamoto-lab/SEgene/blob/main/CITATION)
-**(Manuscript in preparation.)**
 
 ## Libraries and Licenses
 
@@ -233,6 +228,14 @@ This project uses Miniforge3 for dependency management in **SE_to_gene_links**. 
   - Licensed under the BSD 3-Clause License.
 - **Bioconda**  
   - A channel for the Conda package manager specializing in bioinformatics software.
+
+## Citation
+
+If you use this tool in your research, please cite:
+
+Shinkai, N., Asada, K., Machino, H., Takasawa, K., Takahashi, S., Kouno, N., Komatsu, M., Hamamoto, R., & Kaneko, S. (2025). SEgene identifies links between super enhancers and gene expression across cell types. *npj Systems Biology and Applications*, 11(1), 49. https://doi.org/10.1038/s41540-025-00533-x
+
+For detailed citation information and additional references, please refer to the [CITATION](https://github.com/hamamoto-lab/SEgene/blob/main/CITATION) file.
 
 ## License
 

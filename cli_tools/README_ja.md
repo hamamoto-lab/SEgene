@@ -209,3 +209,13 @@ python correlation_analysis.py \
 - 各処理の途中で必要に応じて権限変更（`chmod +x`）やパス設定を行ってください。
 
 以上の手順を踏むことで、ChIP-SeqおよびRNAデータを用いた一連の解析（GTF生成、featureCountsジョブ、CPM計算、相関解析）を実行することが可能です。
+
+## ライセンス
+
+このプロジェクトはMITライセンスの下で公開されています。詳細については、[`LICENSE`](https://github.com/hamamoto-lab/SEgene/blob/main/LICENSE)をご覧ください。
+
+## 引用 / Citation
+
+このツールを研究に使用する場合は、以下を引用してください：
+
+Shinkai, N., Asada, K., Machino, H., Takasawa, K., Takahashi, S., Kouno, N., Komatsu, M., Hamamoto, R., & Kaneko, S. (2025). SEgene identifies links between super enhancers and gene expression across cell types. *npj Systems Biology and Applications*, 11(1), 49. https://doi.org/10.1038/s41540-025-00533-x
