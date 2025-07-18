@@ -1,0 +1,60 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Data files (SEdb and other large datasets)
+data/SEdb/
+temp/
+*.bed
+*.txt
+*.tsv
+
+# Results and output
+results/
+output/
+report/
+reports/
+cache/
+*.pkl
+*.csv
+*.html
+*.png
+*.svg
+*.pdf
+*.eps
+
+# Log files
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

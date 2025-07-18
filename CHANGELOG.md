@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.12.0] - 2025-07-18
+
+### Added
+- **New development version: SEgene_analyzer**:
+  - Development version of SEgene_region_analyzer with enhanced CLI interface and modern Python packaging
+  - Command-line interface with 4 specialized commands: `prepare-stats`, `batch`, `single`, `report`
+  - pip-installable package with `sedb-analyzer` system-wide command
+  - Advanced caching system for improved batch processing performance
+  - Comprehensive bilingual documentation (English and Japanese)
+  - Test suite with 29 test cases covering core functionality
+  - Enhanced matplotlib backend configuration for WSL environments
+  - Multiple output formats: PNG, SVG, PDF, EPS
+  - Positioned as experimental development version alongside stable SEgene_region_analyzer
+
+### Changed
+- **Documentation structure updates**:
+  - Added "Development Versions" section to main README files
+  - Updated Program Structure section to mention development versions availability
+  - Enhanced README files with bold emphasis on development program information
+  - Improved navigation with direct links to development version documentation
+
 ## [1.11.0] - 2025-05-27
 
 ### Published
@@ -247,6 +268,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Interactive analysis with Jupyter Notebook
 - Detailed installation instructions and documentation in the GitHub repository
 
+[1.12.0]: https://github.com/hamamoto-lab/SEgene/compare/v1.11.0...v1.12.0
 [1.11.0]: https://github.com/hamamoto-lab/SEgene/compare/v1.10.0...v1.11.0
 [1.10.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.10.0
 [1.9.0]: https://github.com/hamamoto-lab/SEgene/releases/tag/v1.9.0

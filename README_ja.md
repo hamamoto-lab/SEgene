@@ -13,7 +13,7 @@
 
 ## プログラム構成
 
-SEgene は現在、四つの主要コンポーネント（P2GLデータ準備、P2GL相関解析、スーパーエンハンサー解析、領域評価分析）から構成されています。
+SEgene は現在、四つの主要コンポーネント（P2GLデータ準備、P2GL相関解析、スーパーエンハンサー解析、領域評価分析）から構成されています。**その他、開発版プログラムが存在しており、随時追加開発しています。詳細は [開発版プログラム](#開発版プログラム) セクションを参照してください。**
 
 ### ワークフロー概要
 
@@ -106,6 +106,10 @@ graph TD
 
 -  [**SEgene_RegionAnalyzer**](https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_region_analyzer/README_ja.md) 同定されたSE領域の公共データベース情報による分析評価
 
+### 開発版プログラム
+
+- [**SEgene_analyzer**](https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_analyzer/README_ja.md): SEgene_region_analyzerの開発版。強化されたCLIインターフェース、現代的なPythonパッケージング、キャッシュ機能や包括的テストを含む高度な機能を提供
+
 ## 使用方法
 
 インストールおよび使用方法については、それぞれの `README` を参照してください。
@@ -115,6 +119,7 @@ graph TD
 - [peak_to_gene_links](https://github.com/hamamoto-lab/SEgene/blob/main/peak_to_gene_links/README_ja.md)
 - [SE_to_gene_links](https://github.com/hamamoto-lab/SEgene/blob/main/SE_to_gene_links/README_ja.md)
 - [SEgene_RegionAnalyzer](https://github.com/hamamoto-lab/SEgene/blob/main/SEgene_region_analyzer/README_ja.md)
+- [SEgene_analyzer](https://github.com/hamamoto-lab/SEgene/blob/main/SEgene_analyzer/README_ja.md) (開発版)
 
 ## 変更履歴
 

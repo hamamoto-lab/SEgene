@@ -1,0 +1,7 @@
+include README.md
+include requirements.txt
+include LICENSE
+recursive-include segene_analyzer *.py
+recursive-include tests *.py
+recursive-include examples *.sh *.tsv
+recursive-include docs *.md

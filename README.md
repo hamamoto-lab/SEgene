@@ -13,7 +13,7 @@ This repository contains tools and scripts for **SEgene**.
 
 ## Program Structure
 
-SEgene currently consists of four primary components (P2GL data preparation, P2GL correlation analysis, Super-enhancer analysis, and Region evaluation analysis).
+SEgene currently consists of four primary components (P2GL data preparation, P2GL correlation analysis, Super-enhancer analysis, and Region evaluation analysis). **Additionally, development versions of programs are available and are continuously being developed and enhanced. See the [Development Versions](#development-versions) section for more information.**
 
 ### Workflow Overview
 
@@ -104,6 +104,10 @@ graph TD
 
 - [**SEgene_RegionAnalyzer**](https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_region_analyzer): Allows for detailed characterization of identified SE regions and their integration with public databases.
 
+### Development Versions
+
+- [**SEgene_analyzer**](https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_analyzer): Development version of SEgene_region_analyzer with enhanced CLI interface, modern Python packaging, and advanced features including caching and comprehensive testing.
+
 ## Usage
 
 For installation and usage instructions, please refer to the respective `README` files:
@@ -113,6 +117,7 @@ For installation and usage instructions, please refer to the respective `README`
 - [peak_to_gene_links](https://github.com/hamamoto-lab/SEgene/blob/main/peak_to_gene_links/README.md)
 - [SE_to_gene_links](https://github.com/hamamoto-lab/SEgene/blob/main/SE_to_gene_links/README.md)
 - [SEgene_RegionAnalyzer](https://github.com/hamamoto-lab/SEgene/blob/main/SEgene_region_analyzer/README.md)
+- [SEgene_analyzer](https://github.com/hamamoto-lab/SEgene/blob/main/SEgene_analyzer/README.md) (Development version)
 
 ## Changelog
 
