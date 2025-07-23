@@ -5,6 +5,28 @@
 形式は [Keep a Changelog](https://keepachangelog.com/ja/1.1.0/) をベースとし、
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html) に準拠しています。
 
+## [1.13.0] - 2025-07-23
+
+### Added
+- **新しい開発版: SEgene_analyzer_erna**:
+  - SEgene_region_packageから派生したeRNAbase専用解析ツール
+  - 4つの専用コマンドを持つコマンドラインインターフェース: `report`, `single`, `batch`, `prepare-stats`
+  - `erna-analyzer`システム全体コマンドによるpipインストール対応パッケージ
+  - eRNAbase特有の複数BEDファイルとParquetメタデータ形式のサポート
+  - eRNAbaseデータセット用の生物種フィルタリング機能（human/mouse）
+  - 包括的な二言語対応ドキュメント（英語・日本語）
+  - ゲノム領域解析のための強化された染色体フィルタリングと検証機能
+  - ヘッドレス環境対応のWSL互換matplotlibバックエンド設定
+  - 実eRNAbaseデータによる完全なテストスイート（858サンプル検証）
+  - Fisher's exact testとFDR補正による統計的エンリッチメント解析
+  - 複数出力形式: PNG, SVG, PDF, CSV, HTMLレポート
+  - SEgene_analyzerのeRNAbase特化版カウンターパートとして位置づけ
+
+### Changed
+- **ドキュメントの更新**:
+  - メインREADMEファイルの「開発版プログラム」セクションにSEgene_analyzer_ernaを追加
+  - 新しい開発版ドキュメントへのリンクを含むよう使用方法リンクを更新
+
 ## [1.12.0] - 2025-07-18
 
 ### Added

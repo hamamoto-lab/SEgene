@@ -107,6 +107,7 @@ graph TD
 ### Development Versions
 
 - [**SEgene_analyzer**](https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_analyzer): Development version of SEgene_region_analyzer with enhanced CLI interface, modern Python packaging, and advanced features including caching and comprehensive testing.
+- [**SEgene_analyzer_erna**](https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_analyzer_erna): eRNAbase-specific analysis tool derived from SEgene_region_package, providing specialized functionality for eRNA database integration and region overlap analysis with enhanced CLI interface.
 
 ## Usage
 
@@ -118,6 +119,7 @@ For installation and usage instructions, please refer to the respective `README`
 - [SE_to_gene_links](https://github.com/hamamoto-lab/SEgene/blob/main/SE_to_gene_links/README.md)
 - [SEgene_RegionAnalyzer](https://github.com/hamamoto-lab/SEgene/blob/main/SEgene_region_analyzer/README.md)
 - [SEgene_analyzer](https://github.com/hamamoto-lab/SEgene/blob/main/SEgene_analyzer/README.md) (Development version)
+- [SEgene_analyzer_erna](https://github.com/hamamoto-lab/SEgene/blob/main/SEgene_analyzer_erna/README.md) (Development version)
 
 ## Changelog
 

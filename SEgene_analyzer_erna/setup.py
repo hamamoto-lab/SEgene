@@ -1,0 +1,43 @@
+from setuptools import setup, find_packages
+import os
+
+# プロジェクトルートのパスを取得
+here = os.path.abspath(os.path.dirname(__file__))
+
+# README.mdを読み込み
+with open(os.path.join(here, "README.md"), "r", encoding="utf-8") as fh:
+    long_description = fh.read()
+
+# requirements.txtを読み込み
+with open(os.path.join(here, "requirements.txt"), "r", encoding="utf-8") as fh:
+    requirements = [line.strip() for line in fh if line.strip() and not line.startswith("#")]
+
+setup(
+    name="segene-analyzer-erna",
+    version="1.0.0",
+    author="norio shinkai",
+    description="eRNAbase Region Analyzer - Analyze genomic regions using eRNAbase data",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    url="https://github.com/hamamoto-lab/SEgene_analyzer_erna",
+    packages=find_packages(where="src"),
+    package_dir={"": "src"},
+    classifiers=[
+        "Development Status :: 4 - Beta",
+        "Intended Audience :: Science/Research",
+        "Topic :: Scientific/Engineering :: Bio-Informatics",
+        "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
+    ],
+    python_requires=">=3.11",
+    install_requires=requirements,
+    entry_points={
+        'console_scripts': [
+            'erna-analyzer=cli:main',
+        ],
+    },
+    include_package_data=True,
+)

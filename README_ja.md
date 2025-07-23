@@ -109,6 +109,7 @@ graph TD
 ### 開発版プログラム
 
 - [**SEgene_analyzer**](https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_analyzer/README_ja.md): SEgene_region_analyzerの開発版。強化されたCLIインターフェース、現代的なPythonパッケージング、キャッシュ機能や包括的テストを含む高度な機能を提供
+- [**SEgene_analyzer_erna**](https://github.com/hamamoto-lab/SEgene/tree/main/SEgene_analyzer_erna/README_ja.md): SEgene_region_packageから派生したeRNAbase専用解析ツール。eRNAデータベース統合と領域重複解析に特化した機能を強化されたCLIインターフェースで提供
 
 ## 使用方法
 
@@ -120,6 +121,7 @@ graph TD
 - [SE_to_gene_links](https://github.com/hamamoto-lab/SEgene/blob/main/SE_to_gene_links/README_ja.md)
 - [SEgene_RegionAnalyzer](https://github.com/hamamoto-lab/SEgene/blob/main/SEgene_region_analyzer/README_ja.md)
 - [SEgene_analyzer](https://github.com/hamamoto-lab/SEgene/blob/main/SEgene_analyzer/README_ja.md) (開発版)
+- [SEgene_analyzer_erna](https://github.com/hamamoto-lab/SEgene/blob/main/SEgene_analyzer_erna/README_ja.md) (開発版)
 
 ## 変更履歴
 

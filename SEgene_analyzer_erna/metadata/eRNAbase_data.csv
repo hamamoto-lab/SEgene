@@ -1,0 +1,1013 @@
+Sample ID,Species,Tissue Type,Biosample Type,Cell Type,Experiment Type
+Sample-01-0001,Homo sapiens,Lung,Cell line,A549,CAGE
+Sample-01-0002,Homo sapiens,Lung,Cell line,A549,CAGE
+Sample-01-0003,Homo sapiens,Lung,Cell line,A549,CAGE
+Sample-01-0004,Homo sapiens,Lung,Cell line,AG04450,CAGE
+Sample-01-0005,Homo sapiens,Skin,Cell line,BJ,CAGE
+Sample-01-0006,Homo sapiens,Bone marrow,Cell line,GM12878,CAGE
+Sample-01-0007,Homo sapiens,Bone marrow,Primary cell,B cell,CAGE
+Sample-01-0008,Homo sapiens,Bone marrow,Cell line,GM12878,CAGE
+Sample-01-0009,Homo sapiens,Embryo,In vitro differentiated cells,hematopoietic multipotent progenitor cell,CAGE
+Sample-01-0010,Homo sapiens,Bone marrow,Cell line,GM12878,CAGE
+Sample-01-0011,Homo sapiens,Bone marrow,Cell line,GM12878,CAGE
+Sample-01-0012,Homo sapiens,Bone marrow,Cell line,GM12878,CAGE
+Sample-01-0013,Homo sapiens,Bone marrow,Cell line,GM12878,CAGE
+Sample-01-0014,Homo sapiens,Embryo,Cell line,H1,CAGE
+Sample-01-0015,Homo sapiens,Embryo,Cell line,H1,CAGE
+Sample-01-0016,Homo sapiens,Embryo,Cell line,H1,CAGE
+Sample-01-0017,Homo sapiens,Embryo,Cell line,H1,CAGE
+Sample-01-0018,Homo sapiens,Aortic adventitia,Primary cell,fibroblast of the aortic adventitia,CAGE
+Sample-01-0019,Homo sapiens,Thoracic aorta,Primary cell,Thoracic aorta endothelial cell,CAGE
+Sample-01-0020,Homo sapiens,Knee,Primary cell,articular chondrocyte of knee joint,CAGE
+Sample-01-0021,Homo sapiens,Cervix,Cell line,HeLa-S3,CAGE
+Sample-01-0022,Homo sapiens,Cervix,Cell line,HeLa-S3,CAGE
+Sample-01-0023,Homo sapiens,Cervix,Cell line,HeLa-S3,CAGE
+Sample-01-0024,Homo sapiens,Cervix,Cell line,HeLa-S3,CAGE
+Sample-01-0025,Homo sapiens,Cervix,Cell line,HeLa-S3,CAGE
+Sample-01-0026,Homo sapiens,Cervix,Cell line,HeLa-S3,CAGE
+Sample-01-0027,Homo sapiens,Liver,Cell line,HepG2,CAGE
+Sample-01-0028,Homo sapiens,Liver,Cell line,HepG2,CAGE
+Sample-01-0029,Homo sapiens,Liver,Cell line,HepG2,CAGE
+Sample-01-0030,Homo sapiens,Liver,Cell line,HepG2,CAGE
+Sample-01-0031,Homo sapiens,Liver,Cell line,HepG2,CAGE
+Sample-01-0032,Homo sapiens,Hair follicle,Primary cell,hair follicle dermal papilla cell,CAGE
+Sample-01-0033,Homo sapiens,Liver,Cell line,HepG2,CAGE
+Sample-01-0034,Homo sapiens,Mammary gland,Primary cell,mammary epithelial cell,CAGE
+Sample-01-0035,Homo sapiens,Adipose,Primary cell,Mesenchymal stem cell,CAGE
+Sample-01-0036,Homo sapiens,Bone marrow,Primary cell,Mesenchymal stem cell,CAGE
+Sample-01-0037,Homo sapiens,Bone,Primary cell,osteoblast,CAGE
+Sample-01-0038,Homo sapiens,Placenta,Primary cell,Placental epithelial cell,CAGE
+Sample-01-0039,Homo sapiens,Placenta,Primary cell,Placental pericyte,CAGE
+Sample-01-0040,Homo sapiens,Umbilical vein,Primary cell,Endothelial cell of umbilical vein,CAGE
+Sample-01-0041,Homo sapiens,Umbilical vein,Primary cell,Endothelial cell of umbilical vein,CAGE
+Sample-01-0042,Homo sapiens,Umbilical vein,Primary cell,Endothelial cell of umbilical vein,CAGE
+Sample-01-0043,Homo sapiens,Umbilical vein,Primary cell,Endothelial cell of umbilical vein,CAGE
+Sample-01-0044,Homo sapiens,Umbilical vein,Primary cell,Endothelial cell of umbilical vein,CAGE
+Sample-01-0045,Homo sapiens,Umbilical vein,Primary cell,Endothelial cell of umbilical vein,CAGE
+Sample-01-0046,Homo sapiens,Villous mesenchyme,Primary cell,fibroblast of villous mesenchyme,CAGE
+Sample-01-0047,Homo sapiens,Skin,Primary cell,Subcutaneous preadipocyte,CAGE
+Sample-01-0048,Homo sapiens,Lung,Cell line,IMR-90,CAGE
+Sample-01-0049,Homo sapiens,Lung,Cell line,IMR-90,CAGE
+Sample-01-0050,Homo sapiens,Lung,Cell line,IMR-90,CAGE
+Sample-01-0051,Homo sapiens,Bone marrow,Cell line,K562,CAGE
+Sample-01-0052,Homo sapiens,Bone marrow,Cell line,K562,CAGE
+Sample-01-0053,Homo sapiens,Bone marrow,Cell line,K562,CAGE
+Sample-01-0054,Homo sapiens,Bone marrow,Cell line,K562,CAGE
+Sample-01-0055,Homo sapiens,Bone marrow,Cell line,K562,CAGE
+Sample-01-0056,Homo sapiens,Bone marrow,Cell line,K562,CAGE
+Sample-01-0057,Homo sapiens,Bone marrow,Cell line,K562,CAGE
+Sample-01-0058,Homo sapiens,Mammary gland,Cell line,MCF-7,CAGE
+Sample-01-0059,Homo sapiens,Mammary gland,Cell line,MCF-7,CAGE
+Sample-01-0060,Homo sapiens,Mammary gland,Cell line,MCF-7,CAGE
+Sample-01-0061,Homo sapiens,Bone marrow,Primary cell,CD14-positive monocyte,CAGE
+Sample-01-0062,Homo sapiens,Skin,Primary cell,fibroblast of dermis,CAGE
+Sample-01-0063,Homo sapiens,Ectoderm,Primary cell,Keratinocyte,CAGE
+Sample-01-0064,Homo sapiens,Ectoderm,Primary cell,Keratinocyte,CAGE
+Sample-01-0065,Homo sapiens,Ectoderm,Primary cell,Keratinocyte,CAGE
+Sample-01-0066,Homo sapiens,Ectoderm,Primary cell,Keratinocyte,CAGE
+Sample-01-0067,Homo sapiens,Ectoderm,Primary cell,Keratinocyte,CAGE
+Sample-01-0068,Homo sapiens,Skin,Primary cell,Melanocyte of skin,CAGE
+Sample-01-0069,Homo sapiens,Skin,Primary cell,Melanocyte of skin,CAGE
+Sample-01-0070,Homo sapiens,Skeletal muscle,Primary cell,skeletal muscle satellite cell,CAGE
+Sample-01-0071,Homo sapiens,Brain,Cell line,SK-N-SH,CAGE
+Sample-01-0072,Homo sapiens,Brain,Cell line,SK-N-SH,CAGE
+Sample-01-0073,Homo sapiens,Brain,Cell line,SK-N-SH,CAGE
+Sample-01-0074,Homo sapiens,Brain,Cell line,SK-N-SH,CAGE
+Sample-01-0075,Homo sapiens,Colon,Cell line,HCT116,PRO-cap
+Sample-01-0076,Homo sapiens,Lung,Cell line,PC-9,Bru-seq
+Sample-01-0077,Homo sapiens,Bone marrow,Cell line,K562,GRO-cap
+Sample-01-0078,Homo sapiens,Bone marrow,Cell line,K562,GRO-cap
+Sample-01-0079,Homo sapiens,Colon,Cell line,HCT116,Bru-seq
+Sample-01-0080,Homo sapiens,Colon,Cell line,HCT116,BruUV-seq
+Sample-01-0081,Homo sapiens,Lung,Cell line,Calu3,Bru-seq
+Sample-01-0082,Homo sapiens,Mammary gland,Cell line,MCF-10A,BruChase-seq
+Sample-01-0083,Homo sapiens,Lung,Cell line,IMR-90,Bru-seq
+Sample-01-0084,Homo sapiens,Colorectum,Cell line,Caco-2,BruChase-seq
+Sample-01-0085,Homo sapiens,Osteosarcoma,Cell line,U2OS,PRO-seq
+Sample-01-0086,Homo sapiens,Liver,Cell line,HepG2,Bru-seq
+Sample-01-0087,Homo sapiens,Bone marrow,Cell line,GM12878,GRO-cap
+Sample-01-0088,Homo sapiens,Mammary gland,Cell line,MCF-10A,Bru-seq
+Sample-01-0089,Homo sapiens,Colon,Cell line,HCT116,PRO-cap
+Sample-01-0090,Homo sapiens,Liver,Cell line,HepG2,BruChase-seq
+Sample-01-0091,Homo sapiens,Bone marrow,Cell line,K562,PRO-cap
+Sample-01-0092,Homo sapiens,Colon,Cell line,HCT116,Bru-seq
+Sample-01-0093,Homo sapiens,Lung,Cell line,PC-9,BruChase-seq
+Sample-01-0094,Homo sapiens,Mammary gland,Cell line,MCF-10A,Bru-seq
+Sample-01-0095,Homo sapiens,Colon,Cell line,HCT116,PRO-seq
+Sample-01-0096,Homo sapiens,Colon,Cell line,HCT116,PRO-cap
+Sample-01-0097,Homo sapiens,Colon,Cell line,HCT116,PRO-cap
+Sample-01-0098,Homo sapiens,Umbilical vein,Primary cell,Endothelial cell of umbilical vein,Bru-seq
+Sample-01-0099,Homo sapiens,Colon,Cell line,HCT116,PRO-cap
+Sample-01-0100,Homo sapiens,Lung,Cell line,A549,PRO-seq
+Sample-01-0101,Homo sapiens,Striated muscle,Cell line,A673,Bru-seq
+Sample-01-0102,Homo sapiens,Bone marrow,Cell line,K562,BruUV-seq
+Sample-01-0103,Homo sapiens,Bone marrow,Cell line,K562,Bru-seq
+Sample-01-0104,Homo sapiens,Pancreas,Cell line,Panc1,BruChase-seq
+Sample-01-0105,Homo sapiens,Colon,Cell line,HCT116,BruChase-seq
+Sample-01-0106,Homo sapiens,Lung,Cell line,A549,PRO-seq
+Sample-01-0107,Homo sapiens,Mammary gland,Cell line,MCF-10A,BruChase-seq
+Sample-01-0108,Homo sapiens,Colon,Cell line,HCT116,Bru-seq
+Sample-01-0109,Homo sapiens,Colon,Cell line,HCT116,Bru-seq
+Sample-01-0110,Homo sapiens,Colon,Cell line,HCT116,PRO-seq
+Sample-01-0111,Homo sapiens,Colorectum,Cell line,Caco-2,Bru-seq
+Sample-01-0112,Homo sapiens,Umbilical vein,Primary cell,Endothelial cell of umbilical vein,Bru-seq
+Sample-01-0113,Homo sapiens,Colon,Cell line,HCT116,PRO-cap
+Sample-01-0114,Homo sapiens,Lymph,Cell line,OCI-LY7,Bru-seq
+Sample-01-0115,Homo sapiens,Colon,Cell line,HCT116,PRO-seq
+Sample-01-0116,Homo sapiens,Bone marrow,Cell line,GM12878,BruChase-seq
+Sample-01-0117,Homo sapiens,Colon,Cell line,HCT116,Bru-seq
+Sample-01-0118,Homo sapiens,Liver,Cell line,HepG2,BruUV-seq
+Sample-01-0119,Homo sapiens,Lung,Cell line,IMR-90,BruChase-seq
+Sample-01-0120,Homo sapiens,Colon,Cell line,HCT116,Bru-seq
+Sample-01-0121,Homo sapiens,Colon,Cell line,HCT116,PRO-cap
+Sample-01-0122,Homo sapiens,Colorectum,Cell line,Caco-2,BruChase-seq
+Sample-01-0123,Homo sapiens,Colon,Cell line,HCT116,Bru-seq
+Sample-01-0124,Homo sapiens,Mammary gland,Cell line,MCF-7,Bru-seq
+Sample-01-0125,Homo sapiens,Umbilical vein,Primary cell,Endothelial cell of umbilical vein,PRO-cap
+Sample-01-0126,Homo sapiens,Pancreas,Cell line,Panc1,BruChase-seq
+Sample-01-0127,Homo sapiens,Colon,Cell line,HCT116,PRO-seq
+Sample-01-0128,Homo sapiens,Umbilical vein,Primary cell,Endothelial cell of umbilical vein,BruUV-seq
+Sample-01-0129,Homo sapiens,Osteosarcoma,Cell line,U2OS,PRO-seq
+Sample-01-0130,Homo sapiens,Colon,Cell line,HCT116,PRO-seq
+Sample-01-0131,Homo sapiens,Liver,Cell line,HepG2,Bru-seq
+Sample-01-0132,Homo sapiens,Colon,Cell line,HCT116,PRO-cap
+Sample-01-0133,Homo sapiens,Pancreas,Cell line,Panc1,Bru-seq
+Sample-01-0134,Homo sapiens,Colon,Cell line,HCT116,Bru-seq
+Sample-01-0135,Homo sapiens,Colon,Cell line,HCT116,Bru-seq
+Sample-01-0136,Homo sapiens,Colon,Cell line,HCT116,PRO-seq
+Sample-01-0137,Homo sapiens,Umbilical vein,Primary cell,Endothelial cell of umbilical vein,BruChase-seq
+Sample-01-0138,Homo sapiens,Lung,Cell line,Calu3,Bru-seq
+Sample-01-0139,Homo sapiens,Colon,Cell line,HCT116,Bru-seq
+Sample-01-0140,Homo sapiens,Colon,Cell line,HCT116,Bru-seq
+Sample-01-0141,Homo sapiens,Mammary gland,Cell line,MCF-7,BruUV-seq
+Sample-01-0142,Homo sapiens,Colon,Cell line,HCT116,PRO-seq
+Sample-01-0143,Homo sapiens,Lymph,Cell line,OCI-LY7,Bru-seq
+Sample-01-0144,Homo sapiens,Colon,Cell line,HCT116,PRO-cap
+Sample-01-0145,Homo sapiens,Striated muscle,Cell line,A673,PRO-cap
+Sample-01-0146,Homo sapiens,Colon,Cell line,HCT116,Bru-seq
+Sample-01-0147,Homo sapiens,Prostate,Cell line,PC-3,BruChase-seq
+Sample-01-0148,Homo sapiens,Colorectum,Cell line,Caco-2,BruUV-seq
+Sample-01-0149,Homo sapiens,Prostate,Cell line,PC-3,Bru-seq
+Sample-01-0150,Homo sapiens,Colon,Cell line,HCT116,PRO-seq
+Sample-01-0151,Homo sapiens,Colon,Cell line,HCT116,PRO-seq
+Sample-01-0152,Homo sapiens,Colorectum,Cell line,Caco-2,Bru-seq
+Sample-01-0153,Homo sapiens,Lung,Cell line,PC-9,BruUV-seq
+Sample-01-0154,Homo sapiens,Umbilical vein,Primary cell,Endothelial cell of umbilical vein,BruChase-seq
+Sample-01-0155,Homo sapiens,Lung,Cell line,Calu3,PRO-cap
+Sample-01-0156,Homo sapiens,Striated muscle,Cell line,A673,BruUV-seq
+Sample-01-0157,Homo sapiens,Colon,Cell line,HCT116,PRO-cap
+Sample-01-0158,Homo sapiens,Lung,Cell line,Calu3,BruUV-seq
+Sample-01-0159,Homo sapiens,Bone marrow,Cell line,GM12878,BruUV-seq
+Sample-01-0160,Homo sapiens,Colon,Cell line,HCT116,PRO-seq
+Sample-01-0161,Homo sapiens,Colon,Cell line,HCT116,BruChase-seq
+Sample-01-0162,Homo sapiens,Pancreas,Cell line,Panc1,BruUV-seq
+Sample-01-0163,Homo sapiens,Colon,Cell line,HCT116,Bru-seq
+Sample-01-0164,Homo sapiens,Colon,Cell line,HCT116,PRO-seq
+Sample-01-0165,Homo sapiens,Colon,Cell line,HCT116,PRO-seq
+Sample-01-0166,Homo sapiens,Mammary gland,Cell line,MCF-7,BruChase-seq
+Sample-01-0167,Homo sapiens,Lung,Cell line,PC-9,Bru-seq
+Sample-01-0168,Homo sapiens,Colon,Cell line,HCT116,Bru-seq
+Sample-01-0169,Homo sapiens,Bone marrow,Cell line,K562,PRO-cap
+Sample-01-0170,Homo sapiens,Colon,Cell line,HCT116,PRO-cap
+Sample-01-0171,Homo sapiens,Colon,Cell line,HCT116,PRO-seq
+Sample-01-0172,Homo sapiens,Lung,Cell line,IMR-90,Bru-seq
+Sample-01-0173,Homo sapiens,Prostate,Cell line,PC-3,BruChase-seq
+Sample-01-0174,Homo sapiens,Lung,Cell line,Calu3,BruChase-seq
+Sample-01-0175,Homo sapiens,Colorectum,Cell line,Caco-2,PRO-cap
+Sample-01-0176,Homo sapiens,Bone marrow,Cell line,K562,BruChase-seq
+Sample-01-0177,Homo sapiens,Embryo,Cell line,WTC11,Bru-seq
+Sample-01-0178,Homo sapiens,Pancreas,Cell line,Panc1,Bru-seq
+Sample-01-0179,Homo sapiens,Bone marrow,Cell line,GM12878,Bru-seq
+Sample-01-0180,Homo sapiens,Lymph,Cell line,OCI-LY7,BruChase-seq
+Sample-01-0181,Homo sapiens,Mammary gland,Primary cell,mammary epithelial cell,BruChase-seq
+Sample-01-0182,Homo sapiens,Mammary gland,Cell line,MCF-7,Bru-seq
+Sample-01-0183,Homo sapiens,Lung,Cell line,PC-9,BruChase-seq
+Sample-01-0184,Homo sapiens,Colon,Cell line,HCT116,Bru-seq
+Sample-01-0185,Homo sapiens,Colon,Cell line,HCT116,PRO-cap
+Sample-01-0186,Homo sapiens,Colon,Cell line,HCT116,PRO-seq
+Sample-01-0187,Homo sapiens,Mammary gland,Primary cell,mammary epithelial cell,BruChase-seq
+Sample-01-0188,Homo sapiens,Mammary gland,Primary cell,mammary epithelial cell,BruUV-seq
+Sample-01-0189,Homo sapiens,Prostate,Cell line,PC-3,BruUV-seq
+Sample-01-0190,Homo sapiens,Colon,Cell line,HCT116,PRO-cap
+Sample-01-0191,Homo sapiens,Mammary gland,Cell line,MCF-10A,BruUV-seq
+Sample-01-0192,Homo sapiens,Bone marrow,Cell line,K562,PRO-cap
+Sample-01-0193,Homo sapiens,Mammary gland,Primary cell,mammary epithelial cell,Bru-seq
+Sample-01-0194,Homo sapiens,Liver,Cell line,HepG2,BruChase-seq
+Sample-01-0195,Homo sapiens,Bone marrow,Cell line,GM12878,Bru-seq
+Sample-01-0196,Homo sapiens,Bone marrow,Cell line,K562,PRO-cap
+Sample-01-0197,Homo sapiens,Colon,Cell line,HCT116,PRO-seq
+Sample-01-0198,Homo sapiens,Striated muscle,Cell line,A673,BruChase-seq
+Sample-01-0199,Homo sapiens,Lung,Cell line,A549,PRO-seq
+Sample-01-0200,Homo sapiens,Lymph,Cell line,OCI-LY7,BruUV-seq
+Sample-01-0201,Homo sapiens,Colon,Cell line,HCT116,Bru-seq
+Sample-01-0202,Homo sapiens,Striated muscle,Cell line,A673,Bru-seq
+Sample-01-0203,Homo sapiens,Bone marrow,Cell line,K562,Bru-seq
+Sample-01-0204,Homo sapiens,Colon,Cell line,HCT116,PRO-seq
+Sample-01-0205,Homo sapiens,Lung,Cell line,IMR-90,BruChase-seq
+Sample-01-0206,Homo sapiens,Prostate,Cell line,PC-3,Bru-seq
+Sample-01-0207,Homo sapiens,Bone marrow,Cell line,K562,BruChase-seq
+Sample-01-0208,Homo sapiens,Bone marrow,Cell line,GM12878,GRO-cap
+Sample-01-0209,Homo sapiens,Striated muscle,Cell line,A673,BruChase-seq
+Sample-01-0210,Homo sapiens,Colon,Cell line,HCT116,PRO-cap
+Sample-01-0211,Homo sapiens,Bone marrow,Cell line,GM12878,BruChase-seq
+Sample-01-0212,Homo sapiens,Mammary gland,Primary cell,mammary epithelial cell,Bru-seq
+Sample-01-0213,Homo sapiens,Bone marrow,Cell line,K562,PRO-cap
+Sample-01-0214,Homo sapiens,Colon,Cell line,HCT116,Bru-seq
+Sample-01-0215,Homo sapiens,Colon,Cell line,HCT116,Bru-seq
+Sample-01-0216,Homo sapiens,Lung,Cell line,Calu3,BruChase-seq
+Sample-01-0217,Homo sapiens,Lung,Cell line,IMR-90,BruUV-seq
+Sample-01-0218,Homo sapiens,Osteosarcoma,Cell line,U2OS,PRO-seq
+Sample-01-0219,Homo sapiens,Lymph,Cell line,OCI-LY7,BruChase-seq
+Sample-01-0220,Homo sapiens,Mammary gland,Cell line,MCF-7,BruChase-seq
+Sample-01-0221,Homo sapiens,Bone marrow,Cell line,K562,PRO-cap
+Sample-01-0222,Homo sapiens,Bone marrow,Cell line,K562,mNET-seq
+Sample-01-0223,Homo sapiens,Colorectum,Cell line,DLD-1,PRO-Seq
+Sample-01-0224,Homo sapiens,Colorectum,Cell line,DLD-1,PRO-Seq
+Sample-01-0225,Homo sapiens,Colorectum,Cell line,DLD-1,PRO-Seq
+Sample-01-0226,Homo sapiens,Colorectum,Cell line,DLD-1,PRO-Seq
+Sample-01-0227,Homo sapiens,Colorectum,Cell line,DLD-1,PRO-Seq
+Sample-01-0228,Homo sapiens,Colorectum,Cell line,DLD-1,PRO-Seq
+Sample-01-0229,Homo sapiens,Colorectum,Cell line,DLD-1,PRO-Seq
+Sample-01-0230,Homo sapiens,Colorectum,Cell line,DLD-1,PRO-Seq
+Sample-01-0231,Homo sapiens,Colorectum,Cell line,DLD-1,PRO-Seq
+Sample-01-0232,Homo sapiens,Colorectum,Cell line,DLD-1,PRO-Seq
+Sample-01-0233,Homo sapiens,Colorectum,Cell line,DLD-1,PRO-Seq
+Sample-01-0234,Homo sapiens,Colorectum,Cell line,DLD-1,PRO-Seq
+Sample-01-0235,Homo sapiens,Colorectum,Cell line,DLD-1,PRO-Seq
+Sample-01-0236,Homo sapiens,Colorectum,Cell line,DLD-1,PRO-Seq
+Sample-01-0237,Homo sapiens,Colorectum,Cell line,DLD-1,PRO-Seq
+Sample-01-0238,Homo sapiens,Colorectum,Cell line,DLD-1,PRO-Cap
+Sample-01-0239,Homo sapiens,Colorectum,Cell line,DLD-1,PRO-Cap
+Sample-01-0240,Homo sapiens,Bone marrow,Cell line,HAP1,mNET-seq
+Sample-01-0241,Homo sapiens,Bone marrow,Cell line,HAP1,mNET-seq
+Sample-01-0242,Homo sapiens,Bone marrow,Cell line,HAP1,mNET-seq
+Sample-01-0243,Homo sapiens,Bone marrow,Cell line,HAP1,mNET-seq
+Sample-01-0244,Homo sapiens,Bone marrow,Cell line,HAP1,mNET-seq
+Sample-01-0245,Homo sapiens,Bone marrow,Cell line,HAP1,mNET-seq
+Sample-01-0246,Homo sapiens,Bone marrow,Cell line,HAP1,mNET-seq
+Sample-01-0247,Homo sapiens,Bone marrow,Cell line,HAP1,mNET-seq
+Sample-01-0248,Homo sapiens,Heart,Tissue,Cardiac Ventricle,CAGE
+Sample-01-0249,Homo sapiens,Heart,Tissue,Cardiac Ventricle,CAGE
+Sample-01-0250,Homo sapiens,Bone marrow,Cell line,K562,mNET-seq
+Sample-01-0251,Homo sapiens,Striated muscle,Cell line,A673,Bru-Seq
+Sample-01-0252,Homo sapiens,Striated muscle,Cell line,A673,Bru-Seq
+Sample-01-0253,Homo sapiens,Bone marrow,Primary cell,Jurkat T cells,CAGE
+Sample-01-0254,Homo sapiens,Bone marrow,Primary cell,Jurkat T cells,CAGE
+Sample-01-0255,Homo sapiens,Bone marrow,Primary cell,Jurkat T cells,CAGE
+Sample-01-0256,Homo sapiens,Colon,Cell line,HCT116,mNET-seq
+Sample-01-0257,Homo sapiens,Foreskin,Primary cell,Foreskin fibroblasts,Bru-Seq
+Sample-01-0258,Homo sapiens,Foreskin,Primary cell,Foreskin fibroblasts,Bru-Seq
+Sample-01-0259,Homo sapiens,Foreskin,Primary cell,Foreskin fibroblasts,Bru-Seq
+Sample-01-0260,Homo sapiens,Skin,Primary cell,Primary adult skin fibroblast,Bru-Seq
+Sample-01-0261,Homo sapiens,Skin,Primary cell,Primary adult skin fibroblast,Bru-Seq
+Sample-01-0262,Homo sapiens,Skin,Primary cell,Primary adult skin fibroblast,Bru-Seq
+Sample-01-0263,Homo sapiens,Bone marrow,Cell line,GM12878,Bru-Seq
+Sample-01-0264,Homo sapiens,Cervix,Cell line,HeLa,Bru-Seq
+Sample-01-0265,Homo sapiens,Cervix,Cell line,HeLa,Bru-Seq
+Sample-01-0266,Homo sapiens,Cervix,Cell line,HeLa,Bru-Seq
+Sample-01-0267,Homo sapiens,Cervix,Cell line,HeLa,Bru-Seq
+Sample-01-0268,Homo sapiens,Cervix,Cell line,HeLa,Bru-Seq
+Sample-01-0269,Homo sapiens,Cervix,Cell line,HeLa,Bru-Seq
+Sample-01-0270,Homo sapiens,Cervix,Cell line,HeLa,Bru-Seq
+Sample-01-0271,Homo sapiens,Cervix,Cell line,HeLa,Bru-Seq
+Sample-01-0272,Homo sapiens,Cervix,Cell line,HeLa,Bru-Seq
+Sample-01-0273,Homo sapiens,Cervix,Cell line,HeLa,Bru-Seq
+Sample-01-0274,Homo sapiens,Cervix,Cell line,HeLa,Bru-Seq
+Sample-01-0275,Homo sapiens,Cervix,Cell line,HeLa,Bru-Seq
+Sample-01-0276,Homo sapiens,Cervix,Cell line,HeLa,Bru-Seq
+Sample-01-0277,Homo sapiens,Cervix,Cell line,HeLa,Bru-Seq
+Sample-01-0278,Homo sapiens,Cervix,Cell line,HeLa,Bru-Seq
+Sample-01-0279,Homo sapiens,Mammary gland,Cell line,MCF-7,Bru-Seq
+Sample-01-0280,Homo sapiens,Mammary gland,Cell line,MCF-7,Bru-Seq
+Sample-01-0281,Homo sapiens,Myotube,Cell line,immortalized myotubes,Bru-Seq
+Sample-01-0282,Homo sapiens,Myotube,Cell line,immortalized myotubes,Bru-Seq
+Sample-01-0283,Homo sapiens,Osteosarcoma,Cell line,U2OS,Bru-Seq
+Sample-01-0284,Homo sapiens,Osteosarcoma,Cell line,U3OS,Bru-Seq
+Sample-01-0285,Homo sapiens,Bone marrow,Cell line,K562,mNET-seq
+Sample-01-0286,Homo sapiens,Bone marrow,Cell line,K562,mNET-seq
+Sample-01-0287,Homo sapiens,Bone marrow,Cell line,K562,mNET-seq
+Sample-01-0288,Homo sapiens,Bone marrow,Cell line,K562,mNET-seq
+Sample-01-0289,Homo sapiens,Colon,Cell line,HCT116,Bru-Seq
+Sample-01-0290,Homo sapiens,Cervix,Cell line,HeLa,Bru-Seq
+Sample-01-0291,Homo sapiens,Foreskin,Cell line,HF1,Bru-Seq
+Sample-01-0292,Homo sapiens,Bone marrow,Cell line,K562,Bru-Seq
+Sample-01-0293,Homo sapiens,Pancreas,Cell line,MiaPaCa,Bru-Seq
+Sample-01-0294,Homo sapiens,Pancreas,Cell line,Panc1,Bru-Seq
+Sample-01-0295,Homo sapiens,Colon,Cell line,HCT116,BruChase-seq
+Sample-01-0296,Homo sapiens,Cervix,Cell line,HeLa,BruChase-seq
+Sample-01-0297,Homo sapiens,Foreskin,Cell line,HF1,BruChase-seq
+Sample-01-0298,Homo sapiens,Bone marrow,Cell line,K562,BruChase-seq
+Sample-01-0299,Homo sapiens,Pancreas,Cell line,MiaPaCa,BruChase-seq
+Sample-01-0300,Homo sapiens,Pancreas,Cell line,Panc1,BruChase-seq
+Sample-01-0301,Homo sapiens,Blood,In vitro differentiated cells,Monocyte derived macrophages,csRNA-Seq
+Sample-01-0302,Homo sapiens,Blood,In vitro differentiated cells,Monocyte derived macrophages,csRNA-Seq
+Sample-01-0303,Homo sapiens,Blood,In vitro differentiated cells,Monocyte derived macrophages,csRNA-Seq
+Sample-01-0304,Homo sapiens,Blood,In vitro differentiated cells,Monocyte derived macrophages,csRNA-Seq
+Sample-01-0305,Homo sapiens,Blood,In vitro differentiated cells,Monocyte derived macrophages,csRNA-Seq
+Sample-01-0306,Homo sapiens,Blood,In vitro differentiated cells,Monocyte derived macrophages,csRNA-Seq
+Sample-01-0307,Homo sapiens,Synovium,Primary cell,Synovial fibroblasts,CAGE
+Sample-01-0308,Homo sapiens,Synovium,Primary cell,Synovial fibroblasts,CAGE
+Sample-01-0309,Homo sapiens,Synovium,Primary cell,Synovial fibroblasts,CAGE
+Sample-01-0310,Homo sapiens,Synovium,Primary cell,Synovial fibroblasts,CAGE
+Sample-01-0311,Homo sapiens,Synovium,Primary cell,Synovial fibroblasts,CAGE
+Sample-01-0312,Homo sapiens,Synovium,Primary cell,Synovial fibroblasts,CAGE
+Sample-01-0313,Homo sapiens,Synovium,Primary cell,Synovial fibroblasts,CAGE
+Sample-01-0314,Homo sapiens,Synovium,Primary cell,Synovial fibroblasts,CAGE
+Sample-01-0315,Homo sapiens,Synovium,Primary cell,Synovial fibroblasts,CAGE
+Sample-01-0316,Homo sapiens,Synovium,Primary cell,Synovial fibroblasts,CAGE
+Sample-01-0317,Homo sapiens,Synovium,Primary cell,Synovial fibroblasts,CAGE
+Sample-01-0318,Homo sapiens,Synovium,Primary cell,Synovial fibroblasts,CAGE
+Sample-01-0319,Homo sapiens,Synovium,Primary cell,Synovial fibroblasts,CAGE
+Sample-01-0320,Homo sapiens,Synovium,Primary cell,Synovial fibroblasts,CAGE
+Sample-01-0321,Homo sapiens,Eye,Cell line,RPE1-iCas9,Bru-Seq
+Sample-01-0322,Homo sapiens,Bone marrow,Primary cell,Jurkat T cells,csRNA-Seq
+Sample-01-0323,Homo sapiens,Macrophages,In vitro differentiated cells,hESC-derived macrophages,csRNA-Seq
+Sample-01-0324,Homo sapiens,Macrophages,In vitro differentiated cells,hESC-derived macrophages,csRNA-Seq
+Sample-01-0325,Homo sapiens,Macrophages,In vitro differentiated cells,hESC-derived macrophages,csRNA-Seq
+Sample-01-0326,Homo sapiens,Mammary gland,Cell line,MCF-7,PRO-Cap
+Sample-01-0327,Homo sapiens,Mammary gland,Cell line,MCF-7,PRO-Cap
+Sample-01-0328,Homo sapiens,Mammary gland,Cell line,MCF-7,PRO-Cap
+Sample-01-0329,Homo sapiens,Mammary gland,Cell line,MCF-7,PRO-Cap
+Sample-01-0330,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0331,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0332,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0333,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0334,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0335,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0336,Homo sapiens,Foreskin,Cell line,HaCaT,CAGE
+Sample-01-0337,Homo sapiens,Foreskin,Cell line,HaCaT,CAGE
+Sample-01-0338,Homo sapiens,Foreskin,Cell line,HaCaT,CAGE
+Sample-01-0339,Homo sapiens,Foreskin,Cell line,HaCaT,CAGE
+Sample-01-0340,Homo sapiens,Kidney,Cell line,HEK293T,CAGE
+Sample-01-0341,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0342,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0343,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0344,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0345,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0346,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0347,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0348,Homo sapiens,Bone marrow,Cell line,K562,GRO-Cap
+Sample-01-0349,Homo sapiens,Bone marrow,Cell line,GM12878,GRO-Cap
+Sample-01-0350,Homo sapiens,Bone marrow,Cell line,K562,GRO-Seq
+Sample-01-0351,Homo sapiens,Bone marrow,Cell line,GM12878,GRO-Seq
+Sample-01-0352,Homo sapiens,Cervix,Cell line,HeLa WT,Bru-Seq
+Sample-01-0353,Homo sapiens,Cervix,Cell line,HeLa WT,Bru-Seq
+Sample-01-0354,Homo sapiens,Cervix,Cell line,HeLa NDF knockout,Bru-Seq
+Sample-01-0355,Homo sapiens,Cervix,Cell line,HeLa NDF knockout,Bru-Seq
+Sample-01-0356,Homo sapiens,Cervix,Cell line,HeLa WT,Bru-Seq
+Sample-01-0357,Homo sapiens,Cervix,Cell line,HeLa NDF knockout,Bru-Seq
+Sample-01-0358,Homo sapiens,Cervix,Cell line,HeLa NDF knockout,Bru-Seq
+Sample-01-0359,Homo sapiens,Foreskin,Primary cell,HFF,PRO-Seq
+Sample-01-0360,Homo sapiens,Foreskin,Primary cell,HFF,PRO-Seq
+Sample-01-0361,Homo sapiens,Foreskin,Primary cell,HFF,PRO-Seq
+Sample-01-0362,Homo sapiens,Foreskin,Primary cell,HFF,PRO-Seq
+Sample-01-0363,Homo sapiens,Foreskin,Primary cell,HFF,PRO-Seq
+Sample-01-0364,Homo sapiens,Foreskin,Primary cell,HFF,PRO-Seq
+Sample-01-0365,Homo sapiens,Foreskin,Primary cell,HFF,PRO-Seq
+Sample-01-0366,Homo sapiens,Foreskin,Primary cell,HFF,PRO-Seq
+Sample-01-0367,Homo sapiens,Foreskin,Primary cell,HFF,PRO-Seq
+Sample-01-0368,Homo sapiens,Foreskin,Primary cell,HFF,PRO-Cap
+Sample-01-0369,Homo sapiens,Prostate,Cell line,LNCaP,GRO-Seq
+Sample-01-0370,Homo sapiens,Prostate,Cell line,LNCaP,GRO-Seq
+Sample-01-0371,Homo sapiens,Prostate,Cell line,LNCaP,GRO-Seq
+Sample-01-0372,Homo sapiens,Prostate,Cell line,LNCaP,GRO-Seq
+Sample-01-0373,Homo sapiens,Prostate,Cell line,LNCaP,GRO-Seq
+Sample-01-0374,Homo sapiens,Prostate,Cell line,LNCaP,GRO-Seq
+Sample-01-0375,Homo sapiens,Prostate,Cell line,LNCaP,PRO-Cap
+Sample-01-0376,Homo sapiens,Prostate,Cell line,LNCaP,PRO-Cap
+Sample-01-0377,Homo sapiens,Foreskin,Primary cell,KP,CAGE
+Sample-01-0378,Homo sapiens,Bone marrow,Cell line,K562,BruChase-seq
+Sample-01-0379,Homo sapiens,Bone marrow,Cell line,K562,BruChase-seq
+Sample-01-0380,Homo sapiens,Bone marrow,Cell line,K562,Bru-Seq
+Sample-01-0381,Homo sapiens,Bone marrow,Cell line,K562,Bru-Seq
+Sample-01-0382,Homo sapiens,Foreskin,Cell line,HF1,BruChase-seq
+Sample-01-0383,Homo sapiens,Foreskin,Cell line,HF1,Bru-Seq
+Sample-01-0384,Homo sapiens,Foreskin,Cell line,HF1,Bru-Seq
+Sample-01-0385,Homo sapiens,Cervix,Cell line,HeLa,Bru-Seq
+Sample-01-0386,Homo sapiens,Cervix,Cell line,HeLa,Bru-Seq
+Sample-01-0387,Homo sapiens,Cervix,Cell line,HeLa,BruChase-seq
+Sample-01-0388,Homo sapiens,Cervix,Cell line,HeLa,BruChase-seq
+Sample-01-0389,Homo sapiens,Foreskin,Cell line,HF1,BruChase-seq
+Sample-01-0390,Homo sapiens,Cervix,Cell line,HeLa,BruChase-seq
+Sample-01-0391,Homo sapiens,Cervix,Cell line,HeLa,Bru-Seq
+Sample-01-0392,Homo sapiens,Cervix,Cell line,HeLa,BruChase-seq
+Sample-01-0393,Homo sapiens,Cervix,Cell line,HeLa,Bru-Seq
+Sample-01-0394,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0395,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0396,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0397,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0398,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0399,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0400,Homo sapiens,Bladder,Cell line,HT-1376,CAGE
+Sample-01-0401,Homo sapiens,Bladder,Cell line,RT-112,CAGE
+Sample-01-0402,Homo sapiens,Colorectal,Cell line,SW480 WT,Bru-Seq
+Sample-01-0403,Homo sapiens,Colorectal,Cell line,SW480 NDF Knockout,Bru-Seq
+Sample-01-0404,Homo sapiens,Colorectal,Cell line,SW480 NDF KO rescue by WT NDF,Bru-Seq
+Sample-01-0405,Homo sapiens,AML,Cell line,OCI-AML3 NPM1c degron2,Bru-Seq
+Sample-01-0406,Homo sapiens,AML,Cell line,OCI-AML3 NPM1c degron2,Bru-Seq
+Sample-01-0407,Homo sapiens,AML,Cell line,OCI-AML3 NPM1c degron2,Bru-Seq
+Sample-01-0408,Homo sapiens,Prostate,Cell line,LNCaP,PRO-Cap
+Sample-01-0409,Homo sapiens,Prostate,Cell line,LNCaP,PRO-Cap
+Sample-01-0410,Homo sapiens,Prostate,Cell line,LNCaP,PRO-Cap
+Sample-01-0411,Homo sapiens,Bone marrow,Cell line,K562,mNET-seq
+Sample-01-0412,Homo sapiens,Bone marrow,Cell line,K562,mNET-seq
+Sample-01-0413,Homo sapiens,Bone marrow,Cell line,HCT116,mNET-seq
+Sample-01-0414,Homo sapiens,Bone marrow,Cell line,Jurkat,mNET-seq
+Sample-01-0415,Homo sapiens,Bone marrow,Cell line,Jurkat,mNET-seq
+Sample-01-0416,Homo sapiens,Bone marrow,Cell line,Jurkat,mNET-seq
+Sample-01-0417,Homo sapiens,Colon,Cell line,HCT116,mNET-seq
+Sample-01-0418,Homo sapiens,Kidney,Cell line,HEK293,mNET-seq
+Sample-01-0419,Homo sapiens,Kidney,Cell line,HEK293,mNET-seq
+Sample-01-0420,Homo sapiens,Macrophages,Cell line,THP-1,CAGE
+Sample-01-0421,Homo sapiens,Macrophages,Cell line,THP-1,CAGE
+Sample-01-0422,Homo sapiens,Macrophages,Cell line,THP-1,CAGE
+Sample-01-0423,Homo sapiens,AML,Tissue,High MECOM MLL-AF9,CAGE
+Sample-01-0424,Homo sapiens,AML,Tissue,High MECOM MLL-AF9,CAGE
+Sample-01-0425,Homo sapiens,AML,Tissue,High MECOM MLL-AF9,CAGE
+Sample-01-0428,Homo sapiens,Cervix,Cell line,HeLa,Bru-Seq
+Sample-01-0429,Homo sapiens,Cervix,Cell line,HeLa,Bru-Seq
+Sample-01-0430,Homo sapiens,Cervix,Cell line,HeLa,Bru-Seq
+Sample-01-0431,Homo sapiens,Lung,Cell line,NCI-H1299,CAGE
+Sample-01-0432,Homo sapiens,Lung,Cell line,NCI-H1299,CAGE
+Sample-01-0433,Homo sapiens,Lung,Cell line,NCI-H1299,CAGE
+Sample-01-0434,Homo sapiens,Lung,Cell line,NCI-H1299,CAGE
+Sample-01-0435,Homo sapiens,Lung,Cell line,NCI-H1299,CAGE
+Sample-01-0436,Homo sapiens,Lung,Cell line,NCI-H1299,CAGE
+Sample-01-0437,Homo sapiens,Lung,Cell line,NCI-H1299,CAGE
+Sample-01-0438,Homo sapiens,Lung,Cell line,NCI-H1299,CAGE
+Sample-01-0439,Homo sapiens,Colon,Cell line,HCT116,Bru-Seq
+Sample-01-0440,Homo sapiens,Colon,Cell line,HCT116,Bru-Seq
+Sample-01-0441,Homo sapiens,Colon,Cell line,HCT116,Bru-Seq
+Sample-01-0442,Homo sapiens,Colon,Cell line,HCT116,Bru-Seq
+Sample-01-0444,Homo sapiens,Osteosarcoma,Cell line,U2OS,mNET-seq
+Sample-01-0445,Homo sapiens,Lymph,Cell line,Raji,mNET-seq
+Sample-01-0446,Homo sapiens,Lymph,Cell line,Raji,mNET-seq
+Sample-01-0447,Homo sapiens,Osteosarcoma,Cell line,U2OS,mNET-seq
+Sample-01-0448,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0449,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0450,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0451,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0452,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0453,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0454,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0455,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0456,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0457,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0458,Homo sapiens,Pancreas,Cell line,NY8,Bru-Seq
+Sample-01-0459,Homo sapiens,Pancreas,Cell line,NY8,Bru-Seq
+Sample-01-0460,Homo sapiens,Pancreas,Cell line,NY15,Bru-Seq
+Sample-01-0461,Homo sapiens,Pancreas,Cell line,NY15,Bru-Seq
+Sample-01-0462,Homo sapiens,Pancreas,Cell line,NY15,Bru-Seq
+Sample-01-0463,Homo sapiens,Colon,Cell line,HCT116,mNET-seq
+Sample-01-0464,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0465,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0466,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0467,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0468,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0469,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0470,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0471,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0472,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0473,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0474,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0475,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0476,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0477,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0478,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0479,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0480,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0481,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0482,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0483,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0484,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0485,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0486,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0487,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0488,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0489,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0490,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0491,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0492,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0493,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0494,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0495,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0496,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0497,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0498,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0499,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0500,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0501,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0502,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0503,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0504,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0505,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0506,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0507,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0508,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0509,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0510,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0511,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0512,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0513,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0514,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0515,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0516,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0517,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0518,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0519,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0520,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0521,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0522,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0523,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0524,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Cap
+Sample-01-0525,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Seq
+Sample-01-0526,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Seq
+Sample-01-0527,Homo sapiens,Lymph,Cell line,lymphoblastoid cell line,PRO-Seq
+Sample-01-0528,Homo sapiens,Foreskin,Cell line,foreskin fibroblast,PRO-Seq
+Sample-01-0535,Homo sapiens,Macrophages,Cell line,THP-1 monocyte AML cell line,Start-Seq
+Sample-01-0536,Homo sapiens,Macrophages,Cell line,THP-1 monocyte AML cell line,Start-Seq
+Sample-01-0537,Homo sapiens,Macrophages,Cell line,THP-1 monocyte AML cell line,Start-Seq
+Sample-01-0538,Homo sapiens,Macrophages,Cell line,THP-1 monocyte AML cell line,Start-Seq
+Sample-01-0539,Homo sapiens,Bone marrow,Primary cell,Resting CD4 T cells,Bru-Seq
+Sample-01-0540,Homo sapiens,Bone marrow,Primary cell,Resting CD4 T cells,BruChase-seq
+Sample-01-0541,Homo sapiens,Bone marrow,Primary cell,Activated CD4 T cells,Bru-Seq
+Sample-01-0542,Homo sapiens,Bone marrow,Primary cell,Activated CD4 T cells,BruChase-seq
+Sample-01-0543,Homo sapiens,Bone marrow,Primary cell,Activated CD4 T cells,BruChase-seq
+Sample-01-0544,Homo sapiens,Bone marrow,Primary cell,CD4 T cell,Bru-Seq
+Sample-01-0545,Homo sapiens,Bone marrow,Primary cell,CD4 T cell,BruChase-seq
+Sample-01-0546,Homo sapiens,Bone marrow,Primary cell,CD4 T cell,BruChase-seq
+Sample-01-0547,Homo sapiens,Bone marrow,Primary cell,CD4 T cell,BruChase-seq
+Sample-01-0548,Homo sapiens,Bone marrow,Primary cell,CD4 T cell,Bru-Seq
+Sample-01-0549,Homo sapiens,Bone marrow,Primary cell,CD4 T cell,BruChase-seq
+Sample-01-0550,Homo sapiens,Bone marrow,Primary cell,CD4 T cell,BruChase-seq
+Sample-01-0551,Homo sapiens,Bone marrow,Primary cell,CD4 T cell,BruChase-seq
+Sample-01-0552,Homo sapiens,lung,Cell line,H838,CAGE
+Sample-01-0553,Homo sapiens,Kidney,Cell line,HEK293,mNET-seq
+Sample-01-0554,Homo sapiens,Kidney,Cell line,HEK293,mNET-seq
+Sample-01-0555,Homo sapiens,Kidney,Cell line,HEK293,mNET-seq
+Sample-01-0556,Homo sapiens,Kidney,Cell line,HEK293,mNET-seq
+Sample-01-0557,Homo sapiens,Kidney,Cell line,HEK293,mNET-seq
+Sample-01-0558,Homo sapiens,Kidney,Cell line,HEK293,mNET-seq
+Sample-01-0559,Homo sapiens,Mesoderm,Primary cell,Fibroblast,BruChase-seq
+Sample-01-0560,Homo sapiens,Mesoderm,Primary cell,Fibroblast,Bru-Seq
+Sample-01-0561,Homo sapiens,Mesoderm,Primary cell,Fibroblast,BruChase-seq
+Sample-01-0562,Homo sapiens,Mesoderm,Primary cell,Fibroblast,Bru-Seq
+Sample-01-0563,Homo sapiens,Mesoderm,Primary cell,Fibroblast,BruChase-seq
+Sample-01-0564,Homo sapiens,Mesoderm,Primary cell,Fibroblast,Bru-Seq
+Sample-01-0565,Homo sapiens,Embryo,Primary cell,iPSC,BruChase-seq
+Sample-01-0566,Homo sapiens,Embryo,Primary cell,iPSC,Bru-Seq
+Sample-01-0567,Homo sapiens,Embryo,Primary cell,iPSC,BruChase-seq
+Sample-01-0568,Homo sapiens,Embryo,Primary cell,iPSC,BruChase-seq
+Sample-01-0569,Homo sapiens,Embryo,Primary cell,iPSC,BruChase-seq
+Sample-01-0570,Homo sapiens,Embryo,Primary cell,iPSC,Bru-Seq
+Sample-01-0571,Homo sapiens,Embryo,Primary cell,iPSC,Bru-Seq
+Sample-01-0572,Homo sapiens,Bone marrow,Cell line,K562,CoPRO
+Sample-01-0573,Homo sapiens,Bone marrow,Cell line,K562,CoPRO
+Sample-01-0574,Homo sapiens,Bone marrow,Cell line,K562,CoPRO
+Sample-01-0575,Homo sapiens,Mammary gland,Cell line,MCF-7,NET-CAGE
+Sample-01-0576,Homo sapiens,Mammary gland,Cell line,MCF-7,NET-CAGE
+Sample-01-0577,Homo sapiens,Mammary gland,Cell line,MCF-7,NET-CAGE
+Sample-01-0578,Homo sapiens,Mammary gland,Cell line,MCF-7,NET-CAGE
+Sample-01-0579,Homo sapiens,Mammary gland,Cell line,MCF-7,NET-CAGE
+Sample-01-0580,Homo sapiens,Mammary gland,Cell line,MCF-7,NET-CAGE
+Sample-01-0581,Homo sapiens,Mammary gland,Cell line,MCF-7,NET-CAGE
+Sample-01-0582,Homo sapiens,Mammary gland,Cell line,MCF-7,NET-CAGE
+Sample-01-0583,Homo sapiens,Mammary gland,Cell line,MCF-7,NET-CAGE
+Sample-01-0584,Homo sapiens,Mammary gland,Cell line,MCF-7,NET-CAGE
+Sample-01-0585,Homo sapiens,Mammary gland,Cell line,MCF-7,NET-CAGE
+Sample-01-0586,Homo sapiens,Mammary gland,Cell line,MCF-7,NET-CAGE
+Sample-01-0587,Homo sapiens,Mammary gland,Cell line,MCF-7,NET-CAGE
+Sample-01-0588,Homo sapiens,Mammary gland,Cell line,MCF-7,NET-CAGE
+Sample-01-0589,Homo sapiens,Mammary gland,Cell line,MCF-7,NET-CAGE
+Sample-01-0590,Homo sapiens,Mammary gland,Cell line,MCF-7,NET-CAGE
+Sample-01-0591,Homo sapiens,Mammary gland,Cell line,MCF-7,NET-CAGE
+Sample-01-0592,Homo sapiens,Mammary gland,Cell line,MCF-7,NET-CAGE
+Sample-01-0593,Homo sapiens,Mammary gland,Cell line,MCF-7,NET-CAGE
+Sample-01-0594,Homo sapiens,Mammary gland,Cell line,MCF-7,NET-CAGE
+Sample-01-0595,Homo sapiens,Mammary gland,Cell line,MCF-7,NET-CAGE
+Sample-01-0596,Homo sapiens,Mammary gland,Cell line,MCF-7,NET-CAGE
+Sample-01-0597,Homo sapiens,Mammary gland,Cell line,MCF-7,NET-CAGE
+Sample-01-0598,Homo sapiens,Mammary gland,Cell line,MCF-7,NET-CAGE
+Sample-01-0599,Homo sapiens,Mammary gland,Cell line,MCF-7,NET-CAGE
+Sample-01-0600,Homo sapiens,Bone marrow,Cell line,GM12878,NET-CAGE
+Sample-01-0601,Homo sapiens,Bone marrow,Cell line,GM12878,NET-CAGE
+Sample-01-0602,Homo sapiens,Bone marrow,Cell line,GM12878,NET-CAGE
+Sample-01-0603,Homo sapiens,Bone marrow,Cell line,GM12878,NET-CAGE
+Sample-01-0604,Homo sapiens,Bone marrow,Cell line,GM12878,NET-CAGE
+Sample-01-0605,Homo sapiens,Bone marrow,Cell line,GM12878,NET-CAGE
+Sample-01-0606,Homo sapiens,Bone marrow,Cell line,GM12878,NET-CAGE
+Sample-01-0607,Homo sapiens,Cervix,Cell line,HeLa-S3,NET-CAGE
+Sample-01-0608,Homo sapiens,Cervix,Cell line,HeLa-S3,NET-CAGE
+Sample-01-0609,Homo sapiens,Cervix,Cell line,HeLa-S3,NET-CAGE
+Sample-01-0610,Homo sapiens,Cervix,Cell line,HeLa-S3,NET-CAGE
+Sample-01-0611,Homo sapiens,Liver,Cell line,HepG2,NET-CAGE
+Sample-01-0612,Homo sapiens,Liver,Cell line,HepG2,NET-CAGE
+Sample-01-0613,Homo sapiens,Liver,Cell line,HepG2,NET-CAGE
+Sample-01-0614,Homo sapiens,Liver,Cell line,HepG2,NET-CAGE
+Sample-01-0615,Homo sapiens,Bone marrow,Cell line,K562,NET-CAGE
+Sample-01-0616,Homo sapiens,Bone marrow,Cell line,K562,NET-CAGE
+Sample-01-0617,Homo sapiens,Bone marrow,Cell line,K562,NET-CAGE
+Sample-01-0618,Homo sapiens,Bone marrow,Cell line,K562,NET-CAGE
+Sample-01-0619,Homo sapiens,Mammary gland,Cell line,MCF-7,NET-CAGE
+Sample-01-0620,Homo sapiens,Mammary gland,Cell line,MCF-7,NET-CAGE
+Sample-01-0621,Homo sapiens,Mammary gland,Cell line,MCF-7,NET-CAGE
+Sample-01-0622,Homo sapiens,Kidney,Cell line,HEK293,Bru-Seq
+Sample-01-0623,Homo sapiens,Kidney,Cell line,HEK293,Bru-Seq
+Sample-01-0624,Homo sapiens,Kidney,Cell line,HEK293,Bru-Seq
+Sample-01-0625,Homo sapiens,Kidney,Cell line,HEK293,Bru-Seq
+Sample-01-0626,Homo sapiens,Kidney,Cell line,HEK293,Bru-Seq
+Sample-01-0627,Homo sapiens,Kidney,Cell line,HEK293,Bru-Seq
+Sample-01-0628,Homo sapiens,Kidney,Cell line,HEK293,Bru-Seq
+Sample-01-0629,Homo sapiens,Kidney,Cell line,HEK293,Bru-Seq
+Sample-01-0630,Homo sapiens,Kidney,Cell line,HEK293,Bru-Seq
+Sample-01-0631,Homo sapiens,Kidney,Cell line,HEK293,Bru-Seq
+Sample-01-0632,Homo sapiens,Kidney,Cell line,HEK293,mNET-seq
+Sample-01-0633,Homo sapiens,Kidney,Cell line,HEK293,mNET-seq
+Sample-01-0634,Homo sapiens,Cervix,Cell line,HeLa,CAGE
+Sample-01-0635,Homo sapiens,Cervix,Cell line,HeLa,CAGE
+Sample-01-0636,Homo sapiens,Cervix,Cell line,HeLa,CAGE
+Sample-01-0637,Homo sapiens,Cervix,Cell line,HeLa,CAGE
+Sample-01-0638,Homo sapiens,Cervix,Cell line,HeLa,CAGE
+Sample-01-0639,Homo sapiens,Cervix,Cell line,HeLa,CAGE
+Sample-01-0640,Homo sapiens,Cervix,Cell line,HeLa,CAGE
+Sample-01-0641,Homo sapiens,Cervix,Cell line,HeLa,CAGE
+Sample-01-0642,Homo sapiens,Kidney,Cell line,HEK293,mNET-seq
+Sample-01-0643,Homo sapiens,Kidney,Cell line,HEK293,mNET-seq
+Sample-01-0644,Homo sapiens,Kidney,Cell line,HEK293,mNET-seq
+Sample-01-0645,Homo sapiens,Bone marrow,Cell line,K562,mNET-seq
+Sample-01-0646,Homo sapiens,Foreskin,Cell line,HFF,PRO-seq
+Sample-01-0647,Homo sapiens,Foreskin,Cell line,HFF,PRO-seq
+Sample-01-0648,Homo sapiens,Foreskin,Cell line,HFF,PRO-seq
+Sample-01-0649,Homo sapiens,Foreskin,Cell line,HFF,PRO-seq
+Sample-01-0650,Homo sapiens,Foreskin,Cell line,HFF,PRO-Cap
+Sample-01-0651,Homo sapiens,Foreskin,Cell line,HFF,PRO-Cap
+Sample-01-0652,Homo sapiens,Foreskin,Cell line,HFF,PRO-seq
+Sample-01-0653,Homo sapiens,Foreskin,Cell line,HFF,PRO-seq
+Sample-01-0654,Homo sapiens,Foreskin,Cell line,HFF,PRO-Cap
+Sample-01-0655,Homo sapiens,Foreskin,Cell line,HFF,PRO-Cap
+Sample-01-0656,Homo sapiens,Cervix,Cell line,HeLa,CAGE
+Sample-01-0657,Homo sapiens,Cervix,Cell line,HeLa,CAGE
+Sample-01-0658,Homo sapiens,Lympha,Cell line,BCBL1,RAMPAGE
+Sample-01-0659,Homo sapiens,Lympha,Cell line,BCBL1,RAMPAGE
+Sample-01-0660,Homo sapiens,Lympha,Cell line,BCBL1,RAMPAGE
+Sample-01-0661,Homo sapiens,Lympha,Cell line,BCBL1,RAMPAGE
+Sample-01-0662,Homo sapiens,Lympha,Cell line,BCBL1,RAMPAGE
+Sample-01-0663,Homo sapiens,Lympha,Cell line,BCBL1,RAMPAGE
+Sample-01-0664,Homo sapiens,Skin,Cell line,A2058,Bru-Seq
+Sample-01-0665,Homo sapiens,Skin,Cell line,A375,Bru-Seq
+Sample-01-0666,Homo sapiens,Striated muscle,Cell line,A673,Bru-Seq
+Sample-01-0667,Homo sapiens,Striated muscle,Cell line,A673,Bru-Seq
+Sample-01-0668,Homo sapiens,Pancreas,Cell line,BxPC3,Bru-Seq
+Sample-01-0669,Homo sapiens,Pancreas,Cell line,BxPC3,Bru-Seq
+Sample-01-0670,Homo sapiens,Skin,Cell line,Endothelial,Bru-Seq
+Sample-01-0671,Homo sapiens,Bone marrow,Cell line,GM12878,Bru-Seq
+Sample-01-0672,Homo sapiens,Bone marrow,Cell line,GM12878,Bru-Seq
+Sample-01-0673,Homo sapiens,Bone marrow,Cell line,GM12891,Bru-Seq
+Sample-01-0674,Homo sapiens,Bone marrow,Cell line,HAP1,Bru-Seq
+Sample-01-0675,Homo sapiens,Colon,Cell line,HCT116,Bru-Seq
+Sample-01-0676,Homo sapiens,Colon,Cell line,HCT116,Bru-Seq
+Sample-01-0677,Homo sapiens,Kidney,Cell line,HEK293,Bru-Seq
+Sample-01-0678,Homo sapiens,Kidney,Cell line,HEK293,Bru-Seq
+Sample-01-0679,Homo sapiens,Liver,Cell line,HEPB3,Bru-Seq
+Sample-01-0680,Homo sapiens,Liver,Cell line,HEPG2,Bru-Seq
+Sample-01-0681,Homo sapiens,Skin,Cell line,HF,Bru-Seq
+Sample-01-0682,Homo sapiens,Mammary gland,Cell line,HME,Bru-Seq
+Sample-01-0683,Homo sapiens,Pancreas,Cell line,HPDE,Bru-Seq
+Sample-01-0684,Homo sapiens,Pancreas,Cell line,HPDE,Bru-Seq
+Sample-01-0685,Homo sapiens,Pancreas,Cell line,HPNE,Bru-Seq
+Sample-01-0686,Homo sapiens,Pancreas,Cell line,HPNE,Bru-Seq
+Sample-01-0687,Homo sapiens,Bone marrow,Cell line,K562,Bru-Seq
+Sample-01-0688,Homo sapiens,Bone marrow,Cell line,K562,Bru-Seq
+Sample-01-0689,Homo sapiens,Mammary gland,Cell line,MCF-7,Bru-Seq
+Sample-01-0690,Homo sapiens,Pancreas,Cell line,MiaPaCa,Bru-Seq
+Sample-01-0691,Homo sapiens,Pancreas,Cell line,MiaPaCa,Bru-Seq
+Sample-01-0692,Homo sapiens,Pancreas,Cell line,panc1,Bru-Seq
+Sample-01-0693,Homo sapiens,Pancreas,Cell line,panc1,Bru-Seq
+Sample-01-0694,Homo sapiens,mammary gland,Cell line,T-47D,Bru-Seq
+Sample-01-0695,Homo sapiens,Brain,Cell line,U87,Bru-Seq
+Sample-01-0696,Homo sapiens,Pancreas,Cell line,UM16,Bru-Seq
+Sample-01-0697,Homo sapiens,Pancreas,Cell line,UM16,Bru-Seq
+Sample-01-0698,Homo sapiens,Pancreas,Cell line,UM28,Bru-Seq
+Sample-01-0699,Homo sapiens,Pancreas,Cell line,UM28,Bru-Seq
+Sample-01-0700,Homo sapiens,Pancreas,Cell line,UM5,Bru-Seq
+Sample-01-0701,Homo sapiens,Pancreas,Cell line,UM5,Bru-Seq
+Sample-01-0702,Homo sapiens,Pancreas,Cell line,UM59,Bru-Seq
+Sample-01-0703,Homo sapiens,Pancreas,Cell line,UM59,Bru-Seq
+Sample-01-0704,Homo sapiens,Blood,Cell line,UML49,Bru-Seq
+Sample-01-0705,Homo sapiens,Bladder,Cell line,UMUC9,Bru-Seq
+Sample-01-0706,Homo sapiens,Skin,Cell line,Epithelial,Bru-Seq
+Sample-01-0707,Homo sapiens,Kidney,Cell line,HEK293,Bru-Seq
+Sample-01-0708,Homo sapiens,Colon,Cell line,HCT116 CMV-osTIR1 RAD21-mAC,csRNA-Seq
+Sample-01-0709,Homo sapiens,blood,Cell line,H9 cell,csRNA-Seq
+Sample-01-0710,Homo sapiens,blood,Cell line,H9 cell,csRNA-Seq
+Sample-01-0711,Homo sapiens,Kidney,Cell line,HEK293,Bru-Seq
+Sample-01-0712,Homo sapiens,Kidney,Cell line,HEK293,BruChase-seq
+Sample-01-0713,Homo sapiens,Kidney,Cell line,HEK293,Bru-Seq
+Sample-01-0714,Homo sapiens,Kidney,Cell line,HEK293,BruChase-seq
+Sample-01-0715,Homo sapiens,Foreskin,Cell line,HF1,Bru-Seq
+Sample-01-0716,Homo sapiens,Foreskin,Cell line,HF1,Bru-Seq
+Sample-01-0717,Homo sapiens,Skin,Primary cell,Fibroblasts,Bru-Seq
+Sample-01-0718,Homo sapiens,Skin,Primary cell,Fibroblasts,Bru-Seq
+Sample-01-0719,Homo sapiens,Skin,Primary cell,Fibroblasts,Bru-Seq
+Sample-01-0720,Homo sapiens,Skin,Primary cell,Fibroblasts,Bru-Seq
+Sample-01-0721,Homo sapiens,Bone marrow,Cell line,K562,Bru-Seq
+Sample-01-0722,Homo sapiens,Bone marrow,Cell line,K562,Bru-Seq
+Sample-01-0723,Homo sapiens,Mammary gland,Cell line,MCF-7,Bru-Seq
+Sample-01-0724,Homo sapiens,Mammary gland,Cell line,MCF-7,Bru-Seq
+Sample-01-0725,Homo sapiens,Bone marrow,Cell line,GM12878,Bru-Seq
+Sample-01-0726,Homo sapiens,Bone marrow,Cell line,GM12878,Bru-Seq
+Sample-01-0727,Homo sapiens,Bone marrow,Cell line,GM12878,Bru-Seq
+Sample-01-0728,Homo sapiens,Blood,In vitro differentiated cells,Monocyte derived macrophages,csRNA-Seq
+Sample-01-0729,Homo sapiens,Blood,In vitro differentiated cells,Monocyte derived macrophages,csRNA-Seq
+Sample-01-0730,Homo sapiens,Blood,In vitro differentiated cells,Monocyte derived macrophages,csRNA-Seq
+Sample-01-0731,Homo sapiens,Embryo,Primary cell,H9 hESC,CAGE
+Sample-01-0732,Homo sapiens,Embryo,Primary cell,H9 hESC,CAGE
+Sample-01-0733,Homo sapiens,Embryo,Primary cell,H9 hESC,NET-CAGE
+Sample-01-0734,Homo sapiens,Embryo,Primary cell,H9 hESC,NET-CAGE
+Sample-01-0735,Homo sapiens,Bone marrow,Cell line,K562,PRO-Seq
+Sample-01-0736,Homo sapiens,Embryo,In vitro differentiated cells,ESCs and NESCs,CAGE
+Sample-01-0737,Homo sapiens,Foreskin,Cell line,HFF,PRO-Seq
+Sample-01-0738,Homo sapiens,Lymph,Cell line,Karpas 299,Bru-Seq
+Sample-01-0739,Homo sapiens,Lymph,Cell line,Karpas 299,Bru-Seq
+Sample-01-0740,Homo sapiens,Lymph,Cell line,Karpas 299,Bru-Seq
+Sample-01-0741,Homo sapiens,Lymph,Cell line,Karpas 299,Bru-Seq
+Sample-01-0742,Homo sapiens,Foreskin,Cell line,HF1,Bru-Seq
+Sample-01-0743,Homo sapiens,Foreskin,Cell line,HF1,Bru-Seq
+Sample-01-0744,Homo sapiens,Foreskin,Cell line,HF1,Bru-Seq
+Sample-01-0745,Homo sapiens,Foreskin,Cell line,HF1,Bru-Seq
+Sample-01-0746,Homo sapiens,Foreskin,Cell line,HF1,Bru-Seq
+Sample-01-0747,Homo sapiens,Foreskin,Cell line,HF1,Bru-Seq
+Sample-01-0748,Homo sapiens,Foreskin,Cell line,HF1,Bru-Seq
+Sample-01-0749,Homo sapiens,Foreskin,Cell line,HF1,Bru-Seq
+Sample-01-0750,Homo sapiens,Foreskin,Cell line,HF1,Bru-Seq
+Sample-01-0751,Homo sapiens,Foreskin,Cell line,HF1,Bru-Seq
+Sample-01-0752,Homo sapiens,Skin,Cell line,GM14867,Bru-Seq
+Sample-01-0753,Homo sapiens,Skin,Cell line,GM14867,Bru-Seq
+Sample-01-0754,Homo sapiens,Skin,Cell line,GM14867,Bru-Seq
+Sample-01-0755,Homo sapiens,Skin,Cell line,GM14867,Bru-Seq
+Sample-01-0756,Homo sapiens,Skin,Cell line,GM14867,Bru-Seq
+Sample-01-0757,Homo sapiens,Skin,Primary cell,Fibroblast,Bru-Seq
+Sample-01-0758,Homo sapiens,Skin,Primary cell,Fibroblast,Bru-Seq
+Sample-01-0759,Homo sapiens,Skin,Primary cell,Fibroblast,Bru-Seq
+Sample-01-0760,Homo sapiens,Skin,Primary cell,Fibroblast,Bru-Seq
+Sample-01-0761,Homo sapiens,Skin,Primary cell,Fibroblast,Bru-Seq
+Sample-01-0762,Homo sapiens,Mammary gland,Cell line,T-47D,Start-Seq
+Sample-01-0763,Homo sapiens,Bone marrow,Cell line,K562,Bru-Seq
+Sample-01-0764,Homo sapiens,Foreskin,Cell line,HF1,Bru-Seq
+Sample-01-0765,Homo sapiens,Foreskin,Cell line,HF1,Bru-Seq
+Sample-01-0766,Homo sapiens,Foreskin,Cell line,HF1,Bru-Seq
+Sample-01-0767,Homo sapiens,Foreskin,Cell line,HF1,Bru-Seq
+Sample-01-0768,Homo sapiens,Foreskin,Cell line,HF1,Bru-Seq
+Sample-01-0769,Homo sapiens,Foreskin,Cell line,HF1,Bru-Seq
+Sample-01-0770,Homo sapiens,Foreskin,Cell line,HF1,Bru-Seq
+Sample-01-0771,Homo sapiens,Foreskin,Cell line,HF1,Bru-Seq
+Sample-01-0772,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0773,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0774,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0775,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0776,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0777,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0778,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0779,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0780,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0781,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0782,Homo sapiens,Cervix,Cell line,HeLa,mNET-seq
+Sample-01-0783,Homo sapiens,Colon,Cell line,HCT116,Bru-Seq
+Sample-01-0784,Homo sapiens,Bone marrow,Cell line,K562,CAGE
+Sample-01-0785,Homo sapiens,Bone marrow,Primary cell,B cell,PRO-Cap
+Sample-01-0786,Homo sapiens,Bone marrow,Primary cell,B cell,PRO-Cap
+Sample-01-0787,Homo sapiens,Bone marrow,Primary cell,B cell,PRO-Cap
+Sample-01-0788,Homo sapiens,Bone marrow,Primary cell,B cell,PRO-Cap
+Sample-01-0789,Homo sapiens,Bone marrow,Primary cell,B cell,PRO-Cap
+Sample-01-0790,Homo sapiens,Bone marrow,Primary cell,B cell,PRO-Cap
+Sample-01-0791,Homo sapiens,Bone marrow,Primary cell,B cell,PRO-Cap
+Sample-01-0792,Homo sapiens,Bone marrow,Primary cell,B cell,PRO-Cap
+Sample-01-0793,Homo sapiens,Bone marrow,Primary cell,B cell,PRO-Cap
+Sample-01-0794,Homo sapiens,Lymph,Cell line,Lymphoblastoid cell line,PRO-Seq
+Sample-01-0795,Homo sapiens,Lymph,Cell line,Lymphoblastoid cell line,PRO-Seq
+Sample-01-0796,Homo sapiens,Lymph,Cell line,Lymphoblastoid cell line,PRO-Seq
+Sample-01-0797,Homo sapiens,Lymph,Cell line,Lymphoblastoid cell line,PRO-Seq
+Sample-01-0798,Homo sapiens,Lymph,Cell line,Lymphoblastoid cell line,PRO-Seq
+Sample-01-0799,Homo sapiens,Lymph,Cell line,Lymphoblastoid cell line,PRO-Seq
+Sample-01-0800,Homo sapiens,Lymph,Cell line,Lymphoblastoid cell line,PRO-Seq
+Sample-01-0801,Homo sapiens,Bone marrow,Cell line,K562,CoPRO
+Sample-01-0802,Homo sapiens,Bone marrow,Cell line,K562,CoPRO
+Sample-01-0803,Homo sapiens,Bone marrow,Cell line,K562,CoPRO
+Sample-01-0804,Homo sapiens,Cervix,Cell line,HeLa cells,mNET-seq
+Sample-01-0805,Homo sapiens,Cervix,Cell line,HeLa cells,mNET-seq
+Sample-01-0806,Homo sapiens,Cervix,Cell line,HeLa cells,mNET-seq
+Sample-01-0807,Homo sapiens,Cervix,Cell line,HeLa cells,mNET-seq
+Sample-01-0808,Homo sapiens,kidney,Cell line,HEK293_T-Rex_Flp-in,PRO-Cap
+Sample-01-0809,Homo sapiens,kidney,Cell line,HEK293_T-Rex_Flp-in,PRO-Cap
+Sample-01-0810,Homo sapiens,kidney,Cell line,HEK293_T-Rex_Flp-in,PRO-Cap
+Sample-01-0811,Homo sapiens,kidney,Cell line,HEK293_T-Rex_Flp-in,PRO-Seq
+Sample-01-0812,Homo sapiens,kidney,Cell line,HEK293_T-Rex_Flp-in,PRO-Seq
+Sample-01-0813,Homo sapiens,kidney,Cell line,HEK293_T-Rex_Flp-in,PRO-Seq
+Sample-01-0814,Homo sapiens,Heart,Tissue,Cardiac Ventricle,CAGE
+Sample-01-0815,Homo sapiens,Heart,Tissue,Cardiac Ventricle,CAGE
+Sample-01-0816,Homo sapiens,Heart,Tissue,Cardiac Ventricle,CAGE
+Sample-01-0817,Homo sapiens,Heart,Tissue,Cardiac Ventricle,CAGE
+Sample-01-0818,Homo sapiens,Heart,Tissue,Cardiac Ventricle,CAGE
+Sample-01-0819,Homo sapiens,Bone marrow,Cell line,K562,mNET-seq
+Sample-01-0820,Homo sapiens,Bone marrow,Cell line,K562,mNET-seq
+Sample-01-0821,Homo sapiens,Bone marrow,Cell line,K562,mNET-seq
+Sample-01-0822,Homo sapiens,Bone marrow,Cell line,genome edited K562,mNET-seq
+Sample-01-0823,Homo sapiens,Bone marrow,Cell line,genome edited K562,mNET-seq
+Sample-01-0824,Homo sapiens,Bone marrow,Cell line,genome edited K562,mNET-seq
+Sample-01-0825,Homo sapiens,Bone marrow,Cell line,genome edited K562,mNET-seq
+Sample-01-0826,Homo sapiens,Bone marrow,Cell line,genome edited K562,mNET-seq
+Sample-01-0827,Homo sapiens,Bone marrow,Cell line,genome edited K562,mNET-seq
+Sample-01-0828,Homo sapiens,Bone marrow,Cell line,genome edited K562,mNET-seq
+Sample-01-0829,Homo sapiens,Bone marrow,Cell line,genome edited K562,mNET-seq
+Sample-01-0830,Homo sapiens,Colon,Cell line,HCT116,Bru-Seq
+Sample-01-0831,Homo sapiens,Colon,Cell line,HCT116,Bru-Seq
+Sample-01-0832,Homo sapiens,Colon,Cell line,HCT116,Bru-Seq
+Sample-01-0833,Homo sapiens,Colon,Cell line,HCT116,Bru-Seq
+Sample-01-0834,Homo sapiens,Cervix,Cell line,HeLa,Bru-Seq
+Sample-01-0835,Homo sapiens,Cervix,Cell line,HeLa,Bru-Seq
+Sample-01-0836,Homo sapiens,Cervix,Cell line,HeLa,Bru-Seq
+Sample-01-0837,Homo sapiens,Cervix,Cell line,HeLa,Bru-Seq
+Sample-01-0838,Homo sapiens,Cervix,Cell line,HeLa,Bru-Seq
+Sample-01-0839,Homo sapiens,Cervix,Cell line,HeLa,Bru-Seq
+Sample-01-0840,Homo sapiens,Foreskin,Cell line,HF1,Bru-Seq
+Sample-01-0841,Homo sapiens,Foreskin,Cell line,HF1,Bru-Seq
+Sample-01-0842,Homo sapiens,Foreskin,Cell line,HF1,Bru-Seq
+Sample-01-0843,Homo sapiens,Bone marrow,Cell line,K562,Bru-Seq
+Sample-01-0844,Homo sapiens,Bone marrow,Cell line,K562,Bru-Seq
+Sample-01-0845,Homo sapiens,Bone marrow,Cell line,K562,Bru-Seq
+Sample-01-0846,Homo sapiens,Bone marrow,Cell line,K562,Bru-Seq
+Sample-01-0847,Homo sapiens,Pancreas,Cell line,MiaPaCa,Bru-Seq
+Sample-01-0848,Homo sapiens,Pancreas,Cell line,MiaPaCa,Bru-Seq
+Sample-01-0849,Homo sapiens,Pancreas,Cell line,MiaPaCa,Bru-Seq
+Sample-01-0850,Homo sapiens,Pancreas,Cell line,MiaPaCa,Bru-Seq
+Sample-01-0851,Homo sapiens,Pancreas,Cell line,MiaPaCa,Bru-Seq
+Sample-01-0852,Homo sapiens,Pancreas,Cell line,MiaPaCa,Bru-Seq
+Sample-01-0853,Homo sapiens,Pancreas,Cell line,MiaPaCa,Bru-Seq
+Sample-01-0854,Homo sapiens,Pancreas,Cell line,Panc1,Bru-Seq
+Sample-01-0855,Homo sapiens,Pancreas,Cell line,Panc1,Bru-Seq
+Sample-01-0857,Homo sapiens,Bone marrow,Cell line,K562,GRO-Cap
+Sample-01-0858,Homo sapiens,Bone marrow,Cell line,GM12878,GRO-Cap
+Sample-01-0859,Homo sapiens,Cervix,Cell line,HeLa WT,Bru-Seq
+Sample-01-0860,Homo sapiens,Cervix,Cell line,HeLa NDF knockout,Bru-Seq
+Sample-01-0863,Homo sapiens,Prostate,Cell line,LNCaP,GRO-Seq
+Sample-01-0864,Homo sapiens,Prostate,Cell line,LNCaP,GRO-Seq
+Sample-01-0865,Homo sapiens,Prostate,Cell line,LNCaP,GRO-Seq
+Sample-01-0866,Homo sapiens,Prostate,Cell line,LNCaP,GRO-Seq
+Sample-01-0873,Homo sapiens,kidney,Cell line,HEK293,Bru-Seq
+Sample-01-0874,Homo sapiens,kidney,Cell line,HEK293,Bru-Seq
+Sample-01-0875,Homo sapiens,kidney,Cell line,HEK293,Bru-Seq
+Sample-01-0876,Homo sapiens,kidney,Cell line,HEK293,Bru-Seq
+Sample-02-0004,Mus musculus,Liver,Cell line,fetal liver erythroid cells,mNET-seq
+Sample-02-0005,Mus musculus,Liver,Cell line,fetal liver erythroid cells,mNET-seq
+Sample-02-0006,Mus musculus,Liver,Cell line,fetal liver erythroid cells,mNET-seq
+Sample-02-0007,Mus musculus,Embryo,Primary cell,E14 cells,CAGE
+Sample-02-0008,Mus musculus,Embryo,Primary cell,E14 cells,CAGE
+Sample-02-0009,Mus musculus,Skin,Cell line,B16F10,mNET-seq
+Sample-02-0010,Mus musculus,Skin,Cell line,B16F10,mNET-seq
+Sample-02-0011,Mus musculus,Skin,Cell line,B16F10,mNET-seq
+Sample-02-0012,Mus musculus,Skin,Cell line,B16F10,mNET-seq
+Sample-02-0013,Mus musculus,Gonad,Primary cell,E11.5 gonadal somatic cells,CAGE
+Sample-02-0014,Mus musculus,Gonad,Primary cell,E11.5 gonadal somatic cells,CAGE
+Sample-02-0015,Mus musculus,Embryo,Primary cell,embryonic stem cells,Bru-Seq
+Sample-02-0016,Mus musculus,Embryo,Primary cell,embryonic stem cells,Bru-Seq
+Sample-02-0017,Mus musculus,Embryo,Primary cell,embryonic stem cells,Bru-Seq
+Sample-02-0018,Mus musculus,Embryo,Primary cell,embryonic stem cells,Bru-Seq
+Sample-02-0019,Mus musculus,Embryo,Primary cell,embryonic stem cells,Bru-Seq
+Sample-02-0020,Mus musculus,Embryo,Primary cell,embryonic stem cells,Bru-Seq
+Sample-02-0021,Mus musculus,Embryo,Primary cell,mES,Bru-Seq
+Sample-02-0022,Mus musculus,Embryo,Primary cell,mES,Bru-Seq
+Sample-02-0023,Mus musculus,Vertebral spinal column,Primary cell,CH12,PRO-Cap
+Sample-02-0024,Mus musculus,Embryo,Cell line,JM8.N4,mNET-seq
+Sample-02-0025,Mus musculus,Embryo,Cell line,JM8.N4,mNET-seq
+Sample-02-0026,Mus musculus,Embryo,Cell line,JM8.N4,mNET-seq
+Sample-02-0027,Mus musculus,Embryo,Cell line,JM8.N4,mNET-seq
+Sample-02-0028,Mus musculus,Embryo,Cell line,JM8.N4,mNET-seq
+Sample-02-0029,Mus musculus,Embryo,Cell line,JM8.N4,mNET-seq
+Sample-02-0030,Mus musculus,Embryo,Cell line,JM8.N4,mNET-seq
+Sample-02-0031,Mus musculus,Embryo,Cell line,JM8.N4,mNET-seq
+Sample-02-0032,Mus musculus,Embryo,Primary cell,ESC,NET-CAGE
+Sample-02-0033,Mus musculus,Embryo,Primary cell,EpiLC,NET-CAGE
+Sample-02-0034,Mus musculus,Embryo,Cell line,PGCLC,NET-CAGE
+Sample-02-0035,Mus musculus,Embryo,Primary cell,GSC,NET-CAGE
+Sample-02-0036,Mus musculus,Embryo,Primary cell,GSCLC,NET-CAGE
+Sample-02-0037,Mus musculus,Embryo,Tissue,E11.5 somites and neural tube,CAGE
+Sample-02-0038,Mus musculus,Bone marrow,Primary cell,B cell,CAGE
+Sample-02-0039,Mus musculus,Bone marrow,Primary cell,B cell,CAGE
+Sample-02-0040,Mus musculus,Embryo,Cell line,JM8.N4,mNET-seq
+Sample-02-0041,Mus musculus,Embryo,Cell line,JM8.N4,mNET-seq
+Sample-02-0042,Mus musculus,Embryo,Cell line,JM8.N4,mNET-seq
+Sample-02-0043,Mus musculus,Embryo,Cell line,JM8.N4,mNET-seq
+Sample-02-0044,Mus musculus,Embryo,Cell line,JM8.N4,mNET-seq
+Sample-02-0045,Mus musculus,Embryo,Cell line,JM8.N4,mNET-seq
+Sample-02-0046,Mus musculus,Embryo,Cell line,JM8.N4,mNET-seq
+Sample-02-0047,Mus musculus,Embryo,Cell line,JM8.N4,mNET-seq
+Sample-02-0048,Mus musculus,Embryo,Cell line,JM8.N4,mNET-seq
+Sample-02-0049,Mus musculus,Embryo,Cell line,JM8.N4,mNET-seq
+Sample-02-0050,Mus musculus,Embryo,Cell line,JM8.N4,mNET-seq
+Sample-02-0051,Mus musculus,Embryo,Cell line,JM8.N4,mNET-seq
+Sample-02-0052,Mus musculus,Embryo,Cell line,JM8.N4,mNET-seq
+Sample-02-0053,Mus musculus,Embryo,Cell line,JM8.N4,mNET-seq
+Sample-02-0054,Mus musculus,Embryo,Cell line,JM8.N4,mNET-seq
+Sample-02-0055,Mus musculus,Embryo,Cell line,JM8.N4,mNET-seq
+Sample-02-0056,Mus musculus,Embryo,Cell line,JM8.N4,mNET-seq
+Sample-02-0057,Mus musculus,Embryo,Primary cell,ESC,PRO-Cap
+Sample-02-0058,Mus musculus,Peritone,Primary cell,Peritoneal macrophage,PRO-Cap
+Sample-02-0059,Mus musculus,Blood,Cell line,NB490 expressing inducible PDX1 shRNA,Bru-Seq
+Sample-02-0060,Mus musculus,Blood,Cell line,NB490 expressing inducible PDX1 shRNA,Bru-Seq
+Sample-02-0061,Mus musculus,Blood,Cell line,NB490 expressing inducible PDX2 shRNA,Bru-Seq
+Sample-02-0062,Mus musculus,Embryo,Tissue,E16.5 mouse embryonic cortex,Bru-Seq
+Sample-02-0063,Mus musculus,Embryo,Tissue,E16.5 mouse embryonic cortex,Bru-Seq
+Sample-02-0064,Mus musculus,Embryo,Tissue,E16.5 mouse embryonic cortex,Bru-Seq
+Sample-02-0065,Mus musculus,Embryo,Tissue,E16.5 mouse embryonic cortex,Bru-Seq
+Sample-02-0069,Mus musculus,Embryo,Cell line,CCE28,Bru-Seq
+Sample-02-0070,Mus musculus,Embryo,Cell line,CJ7,Bru-Seq
+Sample-02-0071,Mus musculus,Embryo,Cell line,CJ7,Bru-Seq
+Sample-02-0072,Mus musculus,Embryo,Cell line,CJ7,Bru-Seq
+Sample-02-0073,Mus musculus,Embryo,Cell line,CCE28,Bru-Seq
+Sample-02-0074,Mus musculus,Lympha,Cell line,TAP cells,mNET-seq
+Sample-02-0075,Mus musculus,Lympha,Cell line,TAP cells,mNET-seq
+Sample-02-0076,Mus musculus,Lympha,Cell line,TAP cells,mNET-seq
+Sample-02-0077,Mus musculus,Lympha,Cell line,TAP cells,mNET-seq
+Sample-02-0078,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0079,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0080,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0081,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0082,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0083,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0084,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0085,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0086,Mus musculus,Embryo,Cell line,E14Tg2a,Start-Seq
+Sample-02-0087,Mus musculus,Embryo,Cell line,ES-E14TG2a,CAGE
+Sample-02-0088,Mus musculus,Embryo,Cell line,ES-E14TG2a,CAGE
+Sample-02-0089,Mus musculus,Embryo,Cell line,ES-E14TG2a,CAGE
+Sample-02-0090,Mus musculus,Embryo,Cell line,ES-E14TG2a,CAGE
+Sample-02-0091,Mus musculus,Embryo,Cell line,ES-E14TG2a,CAGE
+Sample-02-0092,Mus musculus,Embryo,Cell line,ES-E14TG2a,CAGE
+Sample-02-0093,Mus musculus,Embryo,Cell line,ES-E14TG2a,CAGE
+Sample-02-0094,Mus musculus,Embryo,Cell line,ES-E14TG2a,CAGE
+Sample-02-0095,Mus musculus,Embryo,Cell line,ES-E14TG2a,PRO-Seq
+Sample-02-0096,Mus musculus,Embryo,Cell line,ES-E14TG2a,PRO-Seq
+Sample-02-0097,Mus musculus,Embryo,Cell line,ES-E14TG2a,PRO-Seq
+Sample-02-0098,Mus musculus,Embryo,Cell line,ES-E14TG2a,PRO-Seq
+Sample-02-0099,Mus musculus,Embryo,Cell line,ES-E14TG2a,PRO-Seq
+Sample-02-0100,Mus musculus,Embryo,Cell line,ES-E14TG2a,PRO-Seq
+Sample-02-0101,Mus musculus,Embryo,Cell line,ES-E14TG2a,PRO-Seq
+Sample-02-0102,Mus musculus,Embryo,Cell line,MEF NHS,CoPRO
+Sample-02-0103,Mus musculus,Embryo,Cell line,MEF HS,CoPRO
+Sample-02-0104,Mus musculus,Embryo,Cell line,ES-E14TG2a,CAGE
+Sample-02-0105,Mus musculus,Embryo,Cell line,ES-E14TG2a,CAGE
+Sample-02-0106,Mus musculus,Embryo,Cell line,ES-E14TG3a,PRO-Seq
+Sample-02-0107,Mus musculus,Embryo,Cell line,ES-E14TG4a,PRO-Seq
+Sample-02-0108,Mus musculus,Embryo,Cell line,ES-E14TG5a,PRO-Seq
+Sample-02-0109,Mus musculus,Embryo,Cell line,ES-E14TG6a,PRO-Seq
+Sample-02-0110,Mus musculus,Brain,Tissue,Brain,NET-CAGE
+Sample-02-0111,Mus musculus,Kidney,Tissue,Kidney,NET-CAGE
+Sample-02-0112,Mus musculus,Brain,Tissue,Brain,NET-CAGE
+Sample-02-0113,Mus musculus,Kidney,Tissue,Kidney,NET-CAGE
+Sample-02-0114,Mus musculus,Brain,Tissue,Brain,NET-CAGE
+Sample-02-0115,Mus musculus,Kidney,Tissue,Kidney,NET-CAGE
+Sample-02-0116,Mus musculus,Brain,Tissue,Mouse forebrain,Bru-Seq
+Sample-02-0117,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0118,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0119,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0120,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0121,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0122,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0123,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0124,Mus musculus,Bone marrow,Tissue,Bone Marrow Derived Macrophages,csRNA-Seq
+Sample-02-0125,Mus musculus,Bone marrow,Tissue,Bone Marrow Derived Macrophages,csRNA-Seq
+Sample-02-0126,Mus musculus,Embryo,Primary cell,R1 ESC,Start-Seq
+Sample-02-0127,Mus musculus,Embryo,Primary cell,R1 ESC,Start-Seq
+Sample-02-0128,Mus musculus,Embryo,Primary cell,R1 ESC,Start-Seq
+Sample-02-0129,Mus musculus,Embryo,Cell line,E14Tg2a,Start-Seq
+Sample-02-0130,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0131,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0132,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0133,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0134,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0135,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0136,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0137,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0138,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0139,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0140,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0141,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0142,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0143,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0144,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0145,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0146,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0147,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0148,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0149,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0150,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0151,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0152,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0153,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0154,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0155,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0156,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0157,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0158,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0159,Mus musculus,Embryo,Primary cell,mESC,Bru-Seq
+Sample-02-0160,Mus musculus,Embryo,Primary cell,R1 ESC,GRO-Seq

@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.13.0] - 2025-07-23
+
+### Added
+- **New development version: SEgene_analyzer_erna**:
+  - eRNAbase-specific analysis tool derived from SEgene_region_package
+  - Command-line interface with 4 specialized commands: `report`, `single`, `batch`, `prepare-stats`
+  - pip-installable package with `erna-analyzer` system-wide command
+  - Support for multiple BED files and Parquet metadata format specific to eRNAbase
+  - Species filtering functionality (human/mouse) for eRNAbase datasets
+  - Comprehensive bilingual documentation (English and Japanese)
+  - Enhanced chromosome filtering and validation for genomic region analysis
+  - WSL-compatible matplotlib backend configuration for headless environments
+  - Complete test suite with real eRNAbase data validation (858 samples)
+  - Statistical enrichment analysis with Fisher's exact test and FDR correction
+  - Multiple output formats: PNG, SVG, PDF, CSV, HTML reports
+  - Positioned as eRNAbase-specialized counterpart to SEgene_analyzer
+
+### Changed
+- **Documentation updates**:
+  - Added SEgene_analyzer_erna to "Development Versions" section in main README files
+  - Updated usage links to include the new development version documentation
+
 ## [1.12.0] - 2025-07-18
 
 ### Added
