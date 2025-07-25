@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.13.1] - 2025-07-25
+
+### Added
+- **SEgene_analyzer_erna metadata documentation**:
+  - Added `SEgene_analyzer_erna/metadata/README.md` - Documentation for eRNAbase metadata files
+  - Added `SEgene_analyzer_erna/metadata/README_ja.md` - Japanese documentation for eRNAbase metadata files
+  - Both files include data source links to eRNAbase and version information (July 22, 2025)
+  - Streamlined documentation by removing verbose technical descriptions and focusing on essential information
+
 ## [1.13.0] - 2025-07-23
 
 ### Added

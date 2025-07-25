@@ -35,8 +35,8 @@ SEgene_analyzer_ernaは、ゲノム領域と**eRNAbaseデータベース**の重
 
 **必須のメタデータファイル:**
 - `metadata/` 内のメタデータファイルを使用:
-  - `eRNAbase_data.csv` - 人間が読みやすい形式
-  - `eRNAbase_data.parquet` - 圧縮形式（推奨）
+  - `eRNAbase_data.csv` - CSV形式
+  - `eRNAbase_data.parquet` - Parquet形式
 
 **データバージョン:** このツールは **2025年7月22日時点** のeRNAbaseデータに対して開発・テストされています。
 
@@ -76,11 +76,9 @@ SEgene_analyzer_erna/
 ### 必要条件
 
 - Python 3.11以上
-- bedtools（pybedtoolsが使用）
+- bedtools
 
 ### 推奨: Conda/Miniforge を使用
-
-バイオインフォマティクスワークフローには、conda/miniforge の使用を強く推奨します：
 
 ```bash
 # conda環境の作成
@@ -106,10 +104,10 @@ cd SEgene_analyzer_erna
 ### 2. 依存パッケージのインストール
 
 ```bash
-# 開発モードでインストール（推奨）
+# 開発モードでインストール
 pip install -e .
 
-# または requirements.txt を使用
+# または
 pip install -r requirements.txt
 ```
 

@@ -5,6 +5,15 @@
 形式は [Keep a Changelog](https://keepachangelog.com/ja/1.1.0/) をベースとし、
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html) に準拠しています。
 
+## [1.13.1] - 2025-07-25
+
+### Added
+- **SEgene_analyzer_erna メタデータドキュメント**:
+  - `SEgene_analyzer_erna/metadata/README.md` を追加 - eRNAbaseメタデータファイルのドキュメント
+  - `SEgene_analyzer_erna/metadata/README_ja.md` を追加 - eRNAbaseメタデータファイルの日本語ドキュメント
+  - 両ファイルにeRNAbaseへのデータソースリンクとバージョン情報（2025年7月22日時点）を含む
+  - 冗長な技術的説明を削除し、必要な情報に集約してドキュメントを簡素化
+
 ## [1.13.0] - 2025-07-23
 
 ### Added

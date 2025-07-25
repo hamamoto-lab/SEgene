@@ -11,17 +11,11 @@
 - Python 3.11+
 - pip 20.0+
 - Git
-- bedtools (required for pybedtools)
-
-### Hardware Requirements
-- Memory: 8GB+ (16GB+ recommended for large-scale analysis)
-- Storage: 10GB+ free space
+- bedtools
 
 ## Installation Steps
 
 ### 1. Install bedtools
-
-bedtools is required for pybedtools functionality.
 
 #### Ubuntu/Debian
 ```bash
@@ -48,8 +42,6 @@ conda install -c bioconda bedtools
 
 #### Method 1: Using Conda/Miniforge (Recommended)
 
-For bioinformatics workflows, conda/miniforge is strongly recommended:
-
 ```bash
 # Install miniforge (if not already installed)
 # Visit: https://github.com/conda-forge/miniforge
@@ -58,7 +50,7 @@ For bioinformatics workflows, conda/miniforge is strongly recommended:
 conda create -n segene-analyzer-erna python=3.11
 conda activate segene-analyzer-erna
 
-# Install bedtools via conda (recommended)
+# Install bedtools
 conda install -c bioconda bedtools pybedtools
 
 # Clone the repository

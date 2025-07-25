@@ -31,8 +31,8 @@ This analysis tool uses data obtained from **eRNAbase** (https://bio.liclab.net/
 
 **Required metadata files:**
 - Use the metadata files in `metadata/`:
-  - `eRNAbase_data.csv` - Human-readable format
-  - `eRNAbase_data.parquet` - Compressed format (recommended)
+  - `eRNAbase_data.csv` - CSV format
+  - `eRNAbase_data.parquet` - Parquet format
 
 **Data Version:** This tool has been developed and tested against eRNAbase data as of **July 22, 2025**.
 
@@ -80,17 +80,11 @@ This analysis tool uses data obtained from **eRNAbase** (https://bio.liclab.net/
 ### Prerequisites
 
 - **Python**: 3.11+
-- **System Tools**: bedtools (for pybedtools integration)
-- **Memory**: 8GB+ recommended for large datasets
-- **Storage**: 10GB+ free space for analysis results
-
-> **System Note**: Requirements may vary depending on eRNAbase data size and analysis complexity.
+- **System Tools**: bedtools
 
 ### Installation Steps
 
 #### Method 1: Using Conda/Miniforge (Recommended)
-
-For bioinformatics workflows, conda/miniforge is strongly recommended:
 
 ```bash
 # Install miniforge (if not already installed)
@@ -100,7 +94,7 @@ For bioinformatics workflows, conda/miniforge is strongly recommended:
 conda create -n segene-analyzer-erna python=3.11
 conda activate segene-analyzer-erna
 
-# Install bedtools via conda (recommended)
+# Install bedtools
 conda install -c bioconda bedtools pybedtools
 
 # Clone the repository

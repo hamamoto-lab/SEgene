@@ -11,17 +11,11 @@
 - Python 3.11+
 - pip 20.0+
 - Git
-- bedtools (pybedtools に必要)
-
-### ハードウェア要件
-- メモリ: 8GB+ (大規模解析には 16GB+ 推奨)
-- ストレージ: 10GB+ の空き容量
+- bedtools
 
 ## インストール手順
 
 ### 1. bedtools のインストール
-
-bedtools は pybedtools 機能に必要です。
 
 #### Ubuntu/Debian
 ```bash
@@ -48,8 +42,6 @@ conda install -c bioconda bedtools
 
 #### 方法1: Conda/Miniforge を使用（推奨）
 
-バイオインフォマティクスワークフローには、conda/miniforge の使用を強く推奨します：
-
 ```bash
 # miniforge のインストール（未インストールの場合）
 # 参照: https://github.com/conda-forge/miniforge
@@ -58,7 +50,7 @@ conda install -c bioconda bedtools
 conda create -n segene-analyzer-erna python=3.11
 conda activate segene-analyzer-erna
 
-# conda 経由での bedtools インストール（推奨）
+# bedtools のインストール
 conda install -c bioconda bedtools pybedtools
 
 # リポジトリのクローン
